@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Supplier {
+  id         String    @id @default(uuid())
+  name       String
+  email      String    @unique
+  password   String
+  phone      String?
+  tinNumber  String    @unique
+  isApproved Boolean   @default(false)
+  products   Product[]
+  complaints Complaint[]
+  orders     Order[]
+  createdAt  DateTime  @default(now())
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String?
+  complaints Complaint[]
+  orders    Order[]
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id          String      @id @default(uuid())
+  name        String
+  category    String
+  price       Float
+  stock       Int         @default(0)
+  supplier    Supplier    @relation(fields: [supplierId], references: [id])
+  supplierId  String
+  orderItems  OrderItem[] // 🔹 Added to complete the relation
+  createdAt   DateTime    @default(now())
+}
+
+model Order {
+  id         String     @id @default(uuid())
+  customer   Customer   @relation(fields: [customerId], references: [id])
+  customerId String
+  supplier   Supplier   @relation(fields: [supplierId], references: [id])
+  supplierId String
+  products   OrderItem[]
+  totalPrice Float
+  payment    Payment?
+  paymentId  String?
+  status     OrderStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int
+  price     Float
+}
+
+model Payment {
+  id        String       @id @default(uuid())
+  order     Order        @relation(fields: [orderId], references: [id])
+  orderId   String       @unique  // Ensures one payment per order
+  amount    Float
+  method    String
+  status    PaymentStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+}
+
+model Message {
+  id         String    @id @default(uuid())
+  senderId   String
+  senderType UserType
+  receiverId String
+  receiverType UserType
+  content    String
+  createdAt  DateTime  @default(now())
+}
+
+
+model Complaint {
+  id          String          @id @default(uuid())
+  customer    Customer?       @relation(fields: [customerId], references: [id])
+  customerId  String?
+  supplier    Supplier?       @relation(fields: [supplierId], references: [id])
+  supplierId  String?
+  message     String
+  status      ComplaintStatus @default(PENDING)
+  createdAt   DateTime        @default(now())
+}
+
+enum UserType {
+  CUSTOMER
+  SUPPLIER
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum ComplaintStatus {
+  PENDING
+  RESOLVED
+  REJECTED
+}

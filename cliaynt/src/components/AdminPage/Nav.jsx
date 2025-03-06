@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import logo from '../imags/logo constraction.jpeg'
-import { AlignLeft, MoreVertical,Eye, Package, ShoppingCart, Box, CreditCard, MessageCircle, AlertCircle, Bell } from "lucide-react";
+import { AlignLeft, MoreVertical, Eye, Package, ShoppingCart, Box, CreditCard, MessageCircle, AlertCircle, Bell } from "lucide-react";
 
 
 function Nav() {
@@ -10,23 +10,30 @@ function Nav() {
             <div className="bg-slate-200/50 backdrop-blur-md shadow-sm fixed right-0 left-64 h-11 flex items-center">
                 <header className='w-full'>
                     <div className='flex'>
-                        <div>
+                        <div className='w-full'>
                             <button className='p-2'>
                                 <AlignLeft size={24} />
                             </button>
                         </div>
 
-                        <div className='w-full text-right'>
-                            <div>
-                                <button className='p-2'>
-                                    <MoreVertical size={24} />
-                                </button>
+                        <div className='flex text-right'>
+                            <div className='text-right'>
+                                <div>
+                                    <button className='p-2'>
+                                        <Bell size={24} />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className='text-right'>
+                                <div>
+                                    <button className='p-2'>
+                                        <MoreVertical size={24} />
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <div>
-                            
-                        </div>
                     </div>
                 </header>
             </div>
