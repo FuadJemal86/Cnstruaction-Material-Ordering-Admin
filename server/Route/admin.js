@@ -48,4 +48,205 @@ router.post('/login', async (req, res) => {
 });
 
 
-module.exports = {admin : router}
+router.post('/add-account', async (req, res) => {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+        return res.status(400).json({ status: false, message: 'Missing required fields' });
+    }
+
+    try {
+
+        const existhingUsr = await prisma.admin.findUnique({ where: { email } })
+
+        if (existhingUsr) {
+            return res.status(400).json({ status: false, message: 'Account Already Exists' })
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const account = await prisma.admin.create({
+            data: {
+                name: name,
+                email: email,
+                password: hashedPassword,
+            },
+        });
+
+        return res.status(201).json({ status: true, message: 'Account added successfully' });
+
+    } catch (err) {
+        console.error("server error:", err.message);
+        res.status(500).json({ status: false, error: err.message });
+    }
+});
+
+
+// get supplier 
+
+router.get('/get-supplier', async (req, res) => {
+    try {
+        const supplier = await prisma.supplier.findMany()
+        console.log(supplier)
+        if (supplier == 0) {
+            return res.status(404).json({ status: false, message: 'supplier not found' })
+        }
+        return res.status(200).json({ status: true, result: supplier })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ status: false, error: 'server error' })
+    }
+})
+
+// delete supplier
+
+router.delete('/delete-supplier/:id', async (req, res) => {
+
+    try {
+        const { id } = req.params
+
+        const existingSupplier = await prisma.supplier.findUnique({
+            where: { id: Number(id) }
+        });
+
+        if (!existingSupplier) {
+            return res.status(404).json({ status: false, message: 'Supplier not found' });
+        }
+
+        await prisma.supplier.delete({ where: { id: Number(id) } })
+
+        return res.status(200).json({ status: true, message: 'supplier deleted successfully!' })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ status: false, error: 'server error' })
+    }
+})
+
+// update supplier
+
+router.put('/update-supplier/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, email, password, phone, tinNumber, isApproved } = req.body;
+
+
+        const updatedSupplier = await prisma.supplier.update({
+            where: { id: Number(id) },
+            data: { name, email, password, phone, tinNumber, isApproved }
+        });
+
+        return res.status(200).json({ status: true, message: 'Supplier updated successfully!' });
+
+    } catch (err) {
+        console.error('Error updating supplier:', err);
+        return res.status(500).json({ status: false, error: 'Internal Server Error' });
+    }
+});
+
+
+
+
+// get customer
+
+router.get('/get-customer', async (req, res) => {
+    try {
+        const supplier = await prisma.customer.findMany()
+        console.log(supplier)
+        if (supplier == 0) {
+            return res.status(404).json({ status: false, message: 'customer not found' })
+        }
+        return res.status(200).json({ status: true, result: supplier })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ status: false, error: 'server error' })
+    }
+})
+
+// delete customer
+
+router.delete('/delete-customer/:id', async (req, res) => {
+
+    try {
+        const { id } = req.params
+
+        await prisma.customer.findUnique({
+            where: { id: Number(id) }
+        });
+
+        if (!existingCustomer) {
+            return res.status(404).json({ status: false, message: 'customer not found' });
+        }
+
+        await prisma.customer.delete({ where: { id: Number(id) } })
+
+        return res.status(200).json({ status: true, message: 'customer deleted successfully!' })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ status: false, error: 'server error' })
+    }
+})
+
+// update customer
+
+router.put('/update-customer/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, email, password, phone } = req.body;
+
+
+        await prisma.customer.update({
+            where: { id: Number(id) },
+            data: { name, email, password, phone }
+        });
+
+        return res.status(200).json({ status: true, message: 'customer updated successfully!' });
+
+    } catch (err) {
+        console.error('Error updating supplier:', err);
+        return res.status(500).json({ status: false, error: 'Internal Server Error' });
+    }
+});
+
+
+// get order
+
+router.get('/get-order', async (req, res) => {
+    try {
+
+        const order = await prisma.order.findMany()
+
+        return res.status(200).json({ status: true, result: order })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ status: false, error: 'server error' })
+    }
+})
+
+// update order status
+
+router.put('/update-order/:id', async (req, res) => {
+
+    try {
+        const { id } = req.params;
+        const { customerId, supplierId, totalPrice, paymentId, status } = req.body;
+
+        await prisma.order.update({
+            where: { id: Number(id) },
+            data: { customerId, supplierId, totalPrice, paymentId, status }
+        });
+
+        return res.status(200).json({ status: true, message: 'order updated successfully!' });
+
+    } catch (err) {
+        console.error('Error updating order:', err);
+        return res.status(500).json({ status: false, error: 'Internal Server Error' });
+    }
+});
+
+
+module.exports = { admin: router }

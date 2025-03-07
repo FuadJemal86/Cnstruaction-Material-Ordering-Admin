@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Admin {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
   password  String
@@ -16,7 +16,7 @@ model Admin {
 }
 
 model Supplier {
-  id         String    @id @default(uuid())
+  id          Int      @id @default(autoincrement())
   name       String
   email      String    @unique
   password   String
@@ -30,7 +30,7 @@ model Supplier {
 }
 
 model Customer {
-  id        String   @id @default(uuid())
+  id         Int      @id @default(autoincrement())
   name      String
   email     String   @unique
   password  String
@@ -41,23 +41,23 @@ model Customer {
 }
 
 model Product {
-  id          String      @id @default(uuid())
+  id           Int      @id @default(autoincrement())
   name        String
   category    String
   price       Float
   stock       Int         @default(0)
   supplier    Supplier    @relation(fields: [supplierId], references: [id])
-  supplierId  String
+  supplierId  Int
   orderItems  OrderItem[] // 🔹 Added to complete the relation
   createdAt   DateTime    @default(now())
 }
 
 model Order {
-  id         String     @id @default(uuid())
+  id          Int      @id @default(autoincrement())
   customer   Customer   @relation(fields: [customerId], references: [id])
-  customerId String
+  customerId Int
   supplier   Supplier   @relation(fields: [supplierId], references: [id])
-  supplierId String
+  supplierId Int
   products   OrderItem[]
   totalPrice Float
   payment    Payment?
@@ -67,19 +67,19 @@ model Order {
 }
 
 model OrderItem {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   order     Order    @relation(fields: [orderId], references: [id])
-  orderId   String
+  orderId   Int
   product   Product  @relation(fields: [productId], references: [id])
-  productId String
+  productId Int
   quantity  Int
   price     Float
 }
 
 model Payment {
-  id        String       @id @default(uuid())
+  id         Int      @id @default(autoincrement())
   order     Order        @relation(fields: [orderId], references: [id])
-  orderId   String       @unique  // Ensures one payment per order
+  orderId   Int       @unique  // Ensures one payment per order
   amount    Float
   method    String
   status    PaymentStatus @default(PENDING)
@@ -87,22 +87,22 @@ model Payment {
 }
 
 model Message {
-  id         String    @id @default(uuid())
-  senderId   String
-  senderType UserType
-  receiverId String
+  id           Int      @id @default(autoincrement())
+  senderId     Int      
+  senderType   UserType
+  receiverId   Int      
   receiverType UserType
-  content    String
-  createdAt  DateTime  @default(now())
+  content      String
+  createdAt    DateTime  @default(now())
 }
 
 
 model Complaint {
-  id          String          @id @default(uuid())
+  id           Int      @id @default(autoincrement())
   customer    Customer?       @relation(fields: [customerId], references: [id])
-  customerId  String?
+  customerId  Int?
   supplier    Supplier?       @relation(fields: [supplierId], references: [id])
-  supplierId  String?
+  supplierId  Int?
   message     String
   status      ComplaintStatus @default(PENDING)
   createdAt   DateTime        @default(now())

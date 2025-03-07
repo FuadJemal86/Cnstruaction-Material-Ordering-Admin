@@ -4,7 +4,14 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
+      },
+      backgroundImage: {
+        'custom-radial': 'radial-gradient(circle, #472916,#AA9774)',
+      },
+    },
   },
   plugins: [],
 }
