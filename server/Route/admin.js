@@ -172,14 +172,6 @@ router.delete('/delete-customer/:id', async (req, res) => {
     try {
         const { id } = req.params
 
-        await prisma.customer.findUnique({
-            where: { id: Number(id) }
-        });
-
-        if (!existingCustomer) {
-            return res.status(404).json({ status: false, message: 'customer not found' });
-        }
-
         await prisma.customer.delete({ where: { id: Number(id) } })
 
         return res.status(200).json({ status: true, message: 'customer deleted successfully!' })
@@ -247,6 +239,63 @@ router.put('/update-order/:id', async (req, res) => {
         return res.status(500).json({ status: false, error: 'Internal Server Error' });
     }
 });
+
+// add category
+
+router.post('/add-category', async(req , res) => {
+    try {
+        const {category} = req.body
+
+        const ifExist = await prisma.category.findUnique({where:{category}})
+
+        if(ifExist) {
+            return res.status(401).json({status:false , message:'category already exist'})
+        }
+
+        const addCategory = await prisma.category.create({
+            data:{category}
+        })
+        return res.status(200).json({status:true , message:'category added'})
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({status:false , error:'server error'})
+    }
+})
+
+// get categorys
+
+router.get('/get-order', async (req, res) => {
+    try {
+
+        const category = await prisma.category.findMany()
+
+        return res.status(200).json({ status: true, result: category })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ status: false, error: 'server error' })
+    }
+})
+
+
+// delete category
+
+router.delete('/delete-category/:id', async (req, res) => {
+
+    try {
+        const { id } = req.params
+
+        await prisma.customer.delete({ where: { id: Number(id) } })
+
+        return res.status(200).json({ status: true, message: 'category deleted successfully!' })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ status: false, error: 'server error' })
+    }
+})
+
+
 
 
 module.exports = { admin: router }

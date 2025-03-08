@@ -7,129 +7,152 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
+model admin {
   id        Int      @id @default(autoincrement())
   name      String
-  email     String   @unique
+  email     String   @unique(map: "Admin_email_key")
   password  String
   createdAt DateTime @default(now())
 }
 
-model Supplier {
-  id          Int      @id @default(autoincrement())
-  name       String
-  email      String    @unique
-  password   String
-  phone      String?
-  tinNumber  String    @unique
-  isApproved Boolean   @default(false)
-  products   Product[]
-  complaints Complaint[]
-  orders     Order[]
-  createdAt  DateTime  @default(now())
+model complaint {
+  id         Int              @id @default(autoincrement())
+  customerId Int?
+  supplierId Int?
+  message    String
+  status     complaint_status @default(PENDING)
+  createdAt  DateTime         @default(now())
+  customer   customer?        @relation(fields: [customerId], references: [id], map: "Complaint_customerId_fkey")
+  supplier   supplier?        @relation(fields: [supplierId], references: [id], map: "Complaint_supplierId_fkey")
+
+  @@index([customerId], map: "Complaint_customerId_fkey")
+  @@index([supplierId], map: "Complaint_supplierId_fkey")
 }
 
-model Customer {
-  id         Int      @id @default(autoincrement())
+model customer {
+  id        Int         @id @default(autoincrement())
   name      String
-  email     String   @unique
+  email     String      @unique(map: "Customer_email_key")
   password  String
   phone     String?
-  complaints Complaint[]
-  orders    Order[]
-  createdAt DateTime @default(now())
+  createdAt DateTime    @default(now())
+  complaint complaint[]
+  order     order[]
 }
 
-model Product {
-  id           Int      @id @default(autoincrement())
-  name        String
-  category    String
-  price       Float
-  stock       Int         @default(0)
-  supplier    Supplier    @relation(fields: [supplierId], references: [id])
-  supplierId  Int
-  orderItems  OrderItem[] // 🔹 Added to complete the relation
-  createdAt   DateTime    @default(now())
+model message {
+  id           Int                  @id @default(autoincrement())
+  senderId     Int
+  senderType   message_senderType
+  receiverId   Int
+  receiverType message_receiverType
+  content      String
+  createdAt    DateTime             @default(now())
 }
 
-model Order {
-  id          Int      @id @default(autoincrement())
-  customer   Customer   @relation(fields: [customerId], references: [id])
+model order {
+  id         Int          @id @default(autoincrement())
   customerId Int
-  supplier   Supplier   @relation(fields: [supplierId], references: [id])
   supplierId Int
-  products   OrderItem[]
   totalPrice Float
-  payment    Payment?
   paymentId  String?
-  status     OrderStatus @default(PENDING)
-  createdAt  DateTime    @default(now())
+  status     order_status @default(PENDING)
+  createdAt  DateTime     @default(now())
+  customer   customer     @relation(fields: [customerId], references: [id], map: "Order_customerId_fkey")
+  supplier   supplier     @relation(fields: [supplierId], references: [id], map: "Order_supplierId_fkey")
+  orderitem  orderitem[]
+  payment    payment?
+
+  @@index([customerId], map: "Order_customerId_fkey")
+  @@index([supplierId], map: "Order_supplierId_fkey")
 }
 
-model OrderItem {
-  id        Int      @id @default(autoincrement())
-  order     Order    @relation(fields: [orderId], references: [id])
+model orderitem {
+  id        Int     @id @default(autoincrement())
   orderId   Int
-  product   Product  @relation(fields: [productId], references: [id])
   productId Int
   quantity  Int
   price     Float
+  order     order   @relation(fields: [orderId], references: [id], map: "OrderItem_orderId_fkey")
+  product   product @relation(fields: [productId], references: [id], map: "OrderItem_productId_fkey")
+
+  @@index([orderId], map: "OrderItem_orderId_fkey")
+  @@index([productId], map: "OrderItem_productId_fkey")
 }
 
-model Payment {
-  id         Int      @id @default(autoincrement())
-  order     Order        @relation(fields: [orderId], references: [id])
-  orderId   Int       @unique  // Ensures one payment per order
+model payment {
+  id        Int            @id @default(autoincrement())
+  orderId   Int            @unique(map: "Payment_orderId_key")
   amount    Float
   method    String
-  status    PaymentStatus @default(PENDING)
-  createdAt DateTime      @default(now())
+  status    payment_status @default(PENDING)
+  createdAt DateTime       @default(now())
+  order     order          @relation(fields: [orderId], references: [id], map: "Payment_orderId_fkey")
 }
 
-model Message {
-  id           Int      @id @default(autoincrement())
-  senderId     Int      
-  senderType   UserType
-  receiverId   Int      
-  receiverType UserType
-  content      String
-  createdAt    DateTime  @default(now())
+model product {
+  id         Int         @id @default(autoincrement())
+  name       String
+  categoryId  Int
+  price      Float
+  stock      Int         @default(0)
+  supplierId Int
+  image      String  
+  createdAt  DateTime    @default(now())
+  orderItems orderitem[]
+  category   category   @relation(fields: [categoryId], references: [id])
+  supplier   supplier   @relation(fields: [supplierId], references: [id])
+
+  @@index([supplierId], map: "Product_supplierId_fkey")
 }
 
-
-model Complaint {
-  id           Int      @id @default(autoincrement())
-  customer    Customer?       @relation(fields: [customerId], references: [id])
-  customerId  Int?
-  supplier    Supplier?       @relation(fields: [supplierId], references: [id])
-  supplierId  Int?
-  message     String
-  status      ComplaintStatus @default(PENDING)
-  createdAt   DateTime        @default(now())
+model supplier {
+  id         Int         @id @default(autoincrement())
+  name       String
+  email      String      @unique(map: "Supplier_email_key")
+  password   String
+  phone      String?
+  tinNumber  String      @unique(map: "Supplier_tinNumber_key")
+  isApproved Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  complaint  complaint[]
+  order      order[]
+  product    product[]
 }
 
-enum UserType {
+model category {
+  id        Int           @id @default(autoincrement())
+  category  String        @unique(map: "category_key")
+  product    product[]
+}
+
+enum message_senderType {
   CUSTOMER
   SUPPLIER
 }
 
-enum OrderStatus {
+enum complaint_status {
   PENDING
-  PROCESSING
-  SHIPPED
-  DELIVERED
-  CANCELLED
+  RESOLVED
+  REJECTED
 }
 
-enum PaymentStatus {
+enum message_receiverType {
+  CUSTOMER
+  SUPPLIER
+}
+
+enum payment_status {
   PENDING
   COMPLETED
   FAILED
   REFUNDED
 }
 
-enum ComplaintStatus {
+enum order_status {
   PENDING
-  RESOLVED
-  REJECTED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
 }
