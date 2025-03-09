@@ -296,6 +296,30 @@ router.delete('/delete-category/:id', async (req, res) => {
 })
 
 
+// add address
+
+router.post('/add-address', async(req , res) => {
+    try {
+        const {address} = req.body
+
+        const ifExist = await prisma.address.findUnique({where:{address}})
+
+        if(ifExist) {
+            return res.status(401).json({status:false , message:'address already exist'})
+        }
+
+        await prisma.category.create({
+            data:{address}
+        })
+        return res.status(200).json({status:true , message:'address added'})
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({status:false , error:'server error'})
+    }
+})
+
+
+
 
 
 module.exports = { admin: router }
