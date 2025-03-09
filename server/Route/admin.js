@@ -129,12 +129,12 @@ router.delete('/delete-supplier/:id', async (req, res) => {
 router.put('/update-supplier/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, email, password, phone, tinNumber, isApproved } = req.body;
+        const {  companyName, email, phone, address, tinNumber, licenseNumber, password  } = req.body;
 
 
         const updatedSupplier = await prisma.supplier.update({
             where: { id: Number(id) },
-            data: { name, email, password, phone, tinNumber, isApproved }
+            data: { companyName, email, phone, address, tinNumber, licenseNumber, password  }
         });
 
         return res.status(200).json({ status: true, message: 'Supplier updated successfully!' });
@@ -242,23 +242,23 @@ router.put('/update-order/:id', async (req, res) => {
 
 // add category
 
-router.post('/add-category', async(req , res) => {
+router.post('/add-category', async (req, res) => {
     try {
-        const {category} = req.body
+        const { category } = req.body
 
-        const ifExist = await prisma.category.findUnique({where:{category}})
+        const ifExist = await prisma.category.findUnique({ where: { category } })
 
-        if(ifExist) {
-            return res.status(401).json({status:false , message:'category already exist'})
+        if (ifExist) {
+            return res.status(401).json({ status: false, message: 'category already exist' })
         }
 
-        const addCategory = await prisma.category.create({
-            data:{category}
+        await prisma.category.create({
+            data: { category }
         })
-        return res.status(200).json({status:true , message:'category added'})
-    } catch(err) {
+        return res.status(200).json({ status: true, message: 'category added' })
+    } catch (err) {
         console.log(err)
-        res.status(500).json({status:false , error:'server error'})
+        res.status(500).json({ status: false, error: 'server error' })
     }
 })
 
@@ -298,26 +298,43 @@ router.delete('/delete-category/:id', async (req, res) => {
 
 // add address
 
-router.post('/add-address', async(req , res) => {
+router.post('/add-address', async (req, res) => {
     try {
-        const {address} = req.body
+        const { address } = req.body
 
-        const ifExist = await prisma.address.findUnique({where:{address}})
+        const ifExist = await prisma.address.findFirst({ where: { address } })
 
-        if(ifExist) {
-            return res.status(401).json({status:false , message:'address already exist'})
+        if (ifExist) {
+            return res.status(401).json({ status: false, message: 'address already exist' })
         }
 
-        await prisma.category.create({
-            data:{address}
+        await prisma.address.create({
+            data: { address }
         })
-        return res.status(200).json({status:true , message:'address added'})
-    } catch(err) {
+        return res.status(200).json({ status: true, message: 'address added' })
+    } catch (err) {
         console.log(err)
-        res.status(500).json({status:false , error:'server error'})
+        res.status(500).json({ status: false, error: 'server error' })
     }
 })
 
+
+// delete address
+
+router.delete('/delete-address/:id', async (req, res) => {
+
+    try {
+        const { id } = req.params
+
+        await prisma.address.delete({ where: { id: Number(id) } })
+
+        return res.status(200).json({ status: true, message: 'address deleted successfully!' })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ status: false, error: 'server error' })
+    }
+})
 
 
 
