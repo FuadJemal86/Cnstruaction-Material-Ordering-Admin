@@ -47,6 +47,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// add-account
 
 router.post('/add-account', async (req, res) => {
     const { name, email, password } = req.body;
@@ -129,12 +130,12 @@ router.delete('/delete-supplier/:id', async (req, res) => {
 router.put('/update-supplier/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const {  companyName, email, phone, address, tinNumber, licenseNumber, password  } = req.body;
+        const { companyName, email, phone, address, tinNumber, licenseNumber, password } = req.body;
 
 
         const updatedSupplier = await prisma.supplier.update({
             where: { id: Number(id) },
-            data: { companyName, email, phone, address, tinNumber, licenseNumber, password  }
+            data: { companyName, email, phone, address, tinNumber, licenseNumber, password }
         });
 
         return res.status(200).json({ status: true, message: 'Supplier updated successfully!' });
