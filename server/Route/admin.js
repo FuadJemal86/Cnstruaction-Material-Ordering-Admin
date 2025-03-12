@@ -87,18 +87,20 @@ router.post('/add-account', async (req, res) => {
 
 router.get('/get-supplier', async (req, res) => {
     try {
-        const supplier = await prisma.supplier.findMany()
-        console.log(supplier)
-        if (supplier == 0) {
-            return res.status(404).json({ status: false, message: 'supplier not found' })
+        const supplier = await prisma.supplier.findMany();
+
+        if (supplier.length === 0) { // Corrected condition
+            return res.status(404).json({ status: false, message: 'No suppliers found' });
         }
-        return res.status(200).json({ status: true, result: supplier })
+
+        return res.status(200).json({ status: true, result: supplier });
 
     } catch (err) {
-        console.log(err)
-        return res.status(500).json({ status: false, error: 'server error' })
+        console.error(err);
+        return res.status(500).json({ status: false, error: 'Server error' });
     }
-})
+});
+
 
 // delete supplier
 
@@ -143,6 +145,26 @@ router.put('/update-supplier/:id', async (req, res) => {
     } catch (err) {
         console.error('Error updating supplier:', err);
         return res.status(500).json({ status: false, error: 'Internal Server Error' });
+    }
+});
+
+
+// update customer status
+
+router.put("/update-supplier-status/:supplierId", async (req, res) => {
+    const { supplierId } = req.params;
+    const { isApproved } = req.body;
+
+    try {
+        const updatedSupplier = await prisma.supplier.update({
+            where: { id: parseInt(supplierId) }, // Ensure ID is an integer
+            data: { isApproved }, // Update the status
+        });
+
+        res.json({ status: true, message: "Supplier status updated successfully", result: updatedSupplier });
+    } catch (error) {
+        console.error("Error updating supplier status:", error);
+        res.status(500).json({ status: false, message: "Failed to update supplier status" });
     }
 });
 
