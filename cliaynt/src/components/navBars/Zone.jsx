@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
+import api from '../../api';
+import { Trash2 } from 'lucide-react';
 
 function Zone() {
 
@@ -41,7 +43,7 @@ function Zone() {
             <div className="hidden md:block overflow-x-auto">
                 <div className='flex justify-end m-1'>
                     <Link to={'/admin-page/add-zone'} className='bg-sky-900 py-2 px-2 rounded-lg text-yellow-50'>
-                    Add Zone
+                        Add Zone
                     </Link>
                 </div>
                 <table className="w-full border-collapse">
@@ -56,8 +58,7 @@ function Zone() {
                         {address.map((c, index) => (
                             <tr key={c.id || index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                                 <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
-                                <td className="p-3 text-sm text-gray-800">{c.category}</td>
-
+                                <td className="p-3 text-sm text-gray-800">{c.address}</td>
                                 <td>
                                     <div className="flex space-x-1">
                                         <button className="p-2 text-red-600 rounded-lg">
@@ -83,7 +84,7 @@ function Zone() {
                         <div className="p-3 border-b bg-gray-50 flex justify-between">
                             <span className="font-medium text-indigo-600">{c.id}</span>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(c.isApproved ? "Approved" : "Prosses")}`}>
-                                {supplier.isApproved ? "Approved" : "Prosses"}
+                                {address.isApproved ? "Approved" : "Prosses"}
                             </span>
                         </div>
                         <div className="p-3">

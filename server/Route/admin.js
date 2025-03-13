@@ -328,16 +328,33 @@ router.post('/add-address', async (req, res) => {
         const ifExist = await prisma.address.findFirst({ where: { address } })
 
         if (ifExist) {
-            return res.status(401).json({ status: false, message: 'address already exist' })
+            return res.status(401).json({ status: false, message: 'zone already exist' })
         }
 
         await prisma.address.create({
             data: { address }
         })
-        return res.status(200).json({ status: true, message: 'address added' })
+        return res.status(200).json({ status: true, message: 'zone added' })
     } catch (err) {
         console.log(err)
         res.status(500).json({ status: false, error: 'server error' })
+    }
+})
+
+
+router.get('/get-address', async (req, res) => {
+    try {
+        const address = await prisma.address.findMany();
+
+        if (address.length === 0) { // Corrected condition
+            return res.status(404).json({ status: false, message: 'No zone found' });
+        }
+
+        return res.status(200).json({ status: true, result: address });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ status: false, error: 'Server error' });
     }
 })
 
@@ -345,7 +362,7 @@ router.post('/add-address', async (req, res) => {
 
 router.get('/get-payment', async (req, res) => {
     try {
-        const address = await prisma.address.findMany();
+        const address = await prisma.payment.findMany();
 
         if (address.length === 0) { // Corrected condition
             return res.status(404).json({ status: false, message: 'No address found' });

@@ -34,7 +34,7 @@ function Payment() {
         };
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Product</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Payment</h2>
 
                 {/* Desktop View */}
                 <div className="hidden md:block overflow-x-auto">
@@ -59,6 +59,8 @@ function Payment() {
                                     <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
                                     <td className="p-3 text-sm text-gray-800">{c.bank}</td>
                                     <td className="p-3 text-sm text-gray-800">{c.createdAt}</td>
+                                    <td className="p-3 text-sm text-gray-800">{c.createdAt}</td>
+                                    <td className="p-3 text-sm text-gray-800">{c.createdAt}</td>
                                     <td className="p-3 text-sm">
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(c.status)}`}>
                                             {c.status}
@@ -66,14 +68,8 @@ function Payment() {
                                     </td>
                                     <td>
                                     <div className="flex space-x-1">
-                                        <button className="p-2 text-blue-600 rounded-l">
-                                            <Edit size={20} />
-                                        </button>
                                         <button className="p-2 text-red-600 rounded-lg">
                                             <Trash2 size={20} />
-                                        </button>
-                                        <button className="p-2 text-blue-600 rounded-l">
-                                            <Eye size={20} />
                                         </button>
                                     </div>
                                 </td>
