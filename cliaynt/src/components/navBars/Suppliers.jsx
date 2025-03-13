@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api';
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, Eye } from "lucide-react";
 
 
 function Suppliers() {
@@ -31,11 +31,15 @@ function Suppliers() {
         }
     };
 
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString('en-CA'); // 'YYYY-MM-DD'
+    };
+
     // Function to update status
     const handleStatusChange = async (supplierId, currentStatus) => {
         const newStatus = currentStatus == "Approved" ? true : false; // Toggle status
         try {
-            const result = await api.put(`/admin/update-supplier-status/${supplierId}`, { isApproved: newStatus  });
+            const result = await api.put(`/admin/update-supplier-status/${supplierId}`, { isApproved: newStatus });
 
             if (result.data.status) {
                 fetchData();
@@ -56,11 +60,12 @@ function Suppliers() {
                     <thead className="bg-gray-50">
                         <tr>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier Name</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Tin Number</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Licence Number</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">DATE</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                         </tr>
@@ -74,6 +79,7 @@ function Suppliers() {
                                 <td className="p-3 text-sm text-gray-500">{supplier.address}</td>
                                 <td className="p-3 text-sm text-gray-500">{supplier.tinNumber}</td>
                                 <td className="p-3 text-sm text-gray-500">{supplier.licenseNumber}</td>
+                                <td className="p-3 text-left text-xs font-medium text-gray-500 uppercase">{formatDate(supplier.createdAt)}</td>
 
                                 <td className="p-3 text-sm">
                                     <select
@@ -85,6 +91,7 @@ function Suppliers() {
                                         <option value="Approved">Approved</option>
                                     </select>
                                 </td>
+
                                 <td>
                                     <div className="flex space-x-1">
                                         <button className="p-2 text-blue-600 rounded-l">
@@ -92,6 +99,9 @@ function Suppliers() {
                                         </button>
                                         <button className="p-2 text-red-600 rounded-lg">
                                             <Trash2 size={20} />
+                                        </button>
+                                        <button className="p-2 text-blue-600 rounded-l">
+                                            <Eye size={20} />
                                         </button>
                                     </div>
                                 </td>

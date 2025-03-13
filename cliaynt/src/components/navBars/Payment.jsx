@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { Edit, Trash2, Eye } from "lucide-react";
+import api from '../../api';
 
-function Payment({ orders = [] }) {
+function Payment() {
+
+    const [payment , setPayment] = useState([])
     const getStatusBadgeColor = (status) => {
         const statusColors = {
             Completed: "bg-green-100 text-green-800",
@@ -11,6 +15,23 @@ function Payment({ orders = [] }) {
 
         return statusColors[status] || "bg-gray-100 text-gray-800";
     }
+
+    useEffect(() => {
+            fetchData();
+        }, []);
+    
+        const fetchData = async () => {
+            try {
+                const result = await api.get('/admin/get-payment');
+                if (result.data.status) {
+                    setPayment(result.data.result);
+                } else {
+                    console.log(result.data.message);
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        };
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
                 <h2 className="text-xl font-bold text-gray-800 mb-4">Product</h2>
@@ -21,30 +42,44 @@ function Payment({ orders = [] }) {
                         <thead className="bg-gray-50">
                             <tr>
                                 <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
+                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer Name</th>
+                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Bank</th>
+                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {orders.map((order, index) => (
+                            {payment.map((c, index) => (
                                 <tr
-                                    key={order.id || index}
+                                    key={c.id || index}
                                     className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                                 >
-                                    <td className="p-3 text-sm text-indigo-600 font-medium">{order.id}</td>
-                                    <td className="p-3 text-sm text-gray-800">{order.customer}</td>
-                                    <td className="p-3 text-sm text-gray-800">{order.address}</td>
-                                    <td className="p-3 text-sm text-gray-500">{order.date}</td>
+                                    <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
+                                    <td className="p-3 text-sm text-gray-800">{c.bank}</td>
+                                    <td className="p-3 text-sm text-gray-800">{c.createdAt}</td>
                                     <td className="p-3 text-sm">
-                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(order.status)}`}>
-                                            {order.status}
+                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(c.status)}`}>
+                                            {c.status}
                                         </span>
                                     </td>
+                                    <td>
+                                    <div className="flex space-x-1">
+                                        <button className="p-2 text-blue-600 rounded-l">
+                                            <Edit size={20} />
+                                        </button>
+                                        <button className="p-2 text-red-600 rounded-lg">
+                                            <Trash2 size={20} />
+                                        </button>
+                                        <button className="p-2 text-blue-600 rounded-l">
+                                            <Eye size={20} />
+                                        </button>
+                                    </div>
+                                </td>
                                 </tr>
                             ))}
-                            {orders.length === 0 && (
+                            {payment.length === 0 && (
                                 <tr>
                                     <td colSpan="6" className="p-4 text-center text-gray-500">
                                         No product found
@@ -57,35 +92,35 @@ function Payment({ orders = [] }) {
 
                 {/* Mobile View */}
                 <div className="md:hidden space-y-3">
-                    {orders.map((order, index) => (
-                        <div key={order.id || index} className="border rounded-lg overflow-hidden">
+                    {payment.map((c, index) => (
+                        <div key={c.id || index} className="border rounded-lg overflow-hidden">
                             <div className="p-3 border-b bg-gray-50 flex justify-between">
-                                <span className="font-medium text-indigo-600">{order.id}</span>
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(order.status)}`}>
-                                    {order.status}
+                                <span className="font-medium text-indigo-600">{c.id}</span>
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(c.status)}`}>
+                                    {c.status}
                                 </span>
                             </div>
                             <div className="p-3">
                                 <div className="grid grid-cols-3 gap-1 mb-2">
                                     <span className="text-xs text-gray-500">Customer:</span>
-                                    <span className="text-sm col-span-2">{order.customer}</span>
+                                    <span className="text-sm col-span-2">{c.customer}</span>
                                 </div>
                                 <div className="grid grid-cols-3 gap-1 mb-2">
                                     <span className="text-xs text-gray-500">Address:</span>
-                                    <span className="text-sm col-span-2">{order.address}</span>
+                                    <span className="text-sm col-span-2">{c.address}</span>
                                 </div>
                                 <div className="grid grid-cols-3 gap-1 mb-2">
                                     <span className="text-xs text-gray-500">Date:</span>
-                                    <span className="text-sm col-span-2">{order.date}</span>
+                                    <span className="text-sm col-span-2">{c.date}</span>
                                 </div>
                                 <div className="grid grid-cols-3 gap-1">
                                     <span className="text-xs text-gray-500">Total:</span>
-                                    <span className="text-sm col-span-2 font-medium">{order.totalPrice}</span>
+                                    <span className="text-sm col-span-2 font-medium">{c.totalPrice}</span>
                                 </div>
                             </div>
                         </div>
                     ))}
-                    {orders.length === 0 && (
+                    {payment.length === 0 && (
                         <div className="text-center p-4 border rounded-lg text-gray-500">
                             No orders found
                         </div>

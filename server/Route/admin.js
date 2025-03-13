@@ -287,7 +287,7 @@ router.post('/add-category', async (req, res) => {
 
 // get categorys
 
-router.get('/get-order', async (req, res) => {
+router.get('/get-category', async (req, res) => {
     try {
 
         const category = await prisma.category.findMany()
@@ -341,6 +341,24 @@ router.post('/add-address', async (req, res) => {
     }
 })
 
+// get address
+
+router.get('/get-payment', async (req, res) => {
+    try {
+        const address = await prisma.address.findMany();
+
+        if (address.length === 0) { // Corrected condition
+            return res.status(404).json({ status: false, message: 'No address found' });
+        }
+
+        return res.status(200).json({ status: true, result: address });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ status: false, error: 'Server error' });
+    }
+})
+
 
 // delete address
 
@@ -356,6 +374,25 @@ router.delete('/delete-address/:id', async (req, res) => {
     } catch (err) {
         console.log(err)
         return res.status(500).json({ status: false, error: 'server error' })
+    }
+})
+
+
+// get payment
+
+router.get('/get-payment', async (req, res) => {
+    try {
+        const payment = await prisma.payment.findMany();
+
+        if (payment.length === 0) { // Corrected condition
+            return res.status(404).json({ status: false, message: 'No payment found' });
+        }
+
+        return res.status(200).json({ status: true, result: payment });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ status: false, error: 'Server error' });
     }
 })
 
