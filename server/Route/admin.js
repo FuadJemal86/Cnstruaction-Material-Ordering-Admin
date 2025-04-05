@@ -239,10 +239,19 @@ router.put('/update-customer/:id', async (req, res) => {
 router.get('/get-order', async (req, res) => {
     try {
 
-        const order = await prisma.order.findMany()
+        const order = await prisma.order.findMany({
 
-        if(order == 0) {
-            return res.status(400).json({status:false , message:'order not found'})
+            include: {
+                customer: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        })
+
+        if (order == 0) {
+            return res.status(400).json({ status: false, message: 'order not found' })
         }
 
         return res.status(200).json({ status: true, result: order })
@@ -373,13 +382,53 @@ router.get('/get-address', async (req, res) => {
 
 router.get('/get-payment', async (req, res) => {
     try {
-        const address = await prisma.payment.findMany();
+        const [orders, payments] = await prisma.$transaction([
+            prisma.order.findMany({
+    
+                include: {
+                    customer: {
+                        select: {
+                            id: true,
+                            name: true,
+                            phone: true
+                        }
+                    }
+                }
+            }),
+            prisma.payment.findMany({
+                where: {
+                }
+            })
+        ]);
 
-        if (address.length === 0) { // Corrected condition
-            return res.status(404).json({ status: false, message: 'No address found' });
+        const transactionIds = orders.map(o => o.transactionId);
+
+        const actualPayments = await prisma.payment.findMany({
+            where: {
+                transactionId: { in: transactionIds }
+            },
+
+            include : {
+                bank:true
+            }
+        });
+
+        if (actualPayments == 0) {
+            return res.status(400).json({ status: false, message: 'payment not found' })
         }
 
-        return res.status(200).json({ status: true, result: address });
+        const transactionToCustomerMap = {};
+        orders.forEach(o => {
+            transactionToCustomerMap[o.transactionId] = o.customer;
+        });
+
+        const enrichedPayments = actualPayments.map(payment => ({
+            ...payment,
+            customer: transactionToCustomerMap[payment.transactionId] || null
+        }));
+
+        return res.status(200).json({ status: true, payments: enrichedPayments });
+
 
     } catch (err) {
         console.error(err);

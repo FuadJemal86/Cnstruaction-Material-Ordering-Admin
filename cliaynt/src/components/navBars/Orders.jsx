@@ -8,17 +8,18 @@ function Orders({ orders = [] }) {
         status: ''
     })
 
-    const [order , setOrder] = useState([])
+    const [order, setOrder] = useState([])
 
     const getStatusBadgeColor = (status) => {
         const statusColors = {
-            Completed: "bg-green-100 text-green-800",
-            Processing: "bg-blue-100 text-blue-800",
-            Pending: "bg-yellow-100 text-yellow-800",
-            Cancelled: "bg-red-100 text-red-800"
+            COMPLETED: "bg-green-100 text-green-800",
+            PROCESSING: "bg-blue-100 text-blue-800",
+            PENDING: "bg-yellow-100 text-yellow-800",
+            CANSELLED: "bg-red-100 text-red-800"
         };
+
         return statusColors[status] || "bg-gray-100 text-gray-800";
-    }
+    };
 
     useEffect(() => {
 
@@ -29,7 +30,7 @@ function Orders({ orders = [] }) {
         try {
             const result = await api.get('/admin/get-order')
             if (result.data.status) {
-                setOrder(result.data.order)
+                setOrder(result.data.result)
             } else {
                 console.log(result.data.message)
             }
@@ -59,7 +60,7 @@ function Orders({ orders = [] }) {
 
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Product</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Orders</h2>
 
             {/* Desktop View */}
             <div className="hidden md:block overflow-x-auto">
@@ -67,14 +68,15 @@ function Orders({ orders = [] }) {
                     <thead className="bg-gray-50">
                         <tr>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Total Price</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {order.map((c, index) => (
+                        {order.map((c, index) => (
                             <tr
                                 key={c.id || index}
                                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
@@ -95,7 +97,7 @@ function Orders({ orders = [] }) {
                                     }).replace(' ', '.')}
                                 </td>
 
-                                <td className="p-3 text-sm text-gray-800 font-medium">{c.totalPrice}</td>
+                                <td className="p-3 text-sm text-gray-800 font-medium">birr {c.totalPrice}</td>
                                 <td className="p-3 text-sm">
                                     <select
                                         value={c.status || "PROCESSING"} // ✅ Ensure default value if undefined
@@ -112,7 +114,7 @@ function Orders({ orders = [] }) {
 
                             </tr>
                         ))}
-                        {order.length === 0 && (
+                        {order.length == 0 && (
                             <tr>
                                 <td colSpan="6" className="p-4 text-center text-gray-500">
                                     No orders found
@@ -125,35 +127,35 @@ function Orders({ orders = [] }) {
 
             {/* Mobile View */}
             <div className="md:hidden space-y-3">
-                {orders.map((order, index) => (
-                    <div key={order.id || index} className="border rounded-lg overflow-hidden">
+                {order.map((c, index) => (
+                    <div key={c.id || index} className="border rounded-lg overflow-hidden">
                         <div className="p-3 border-b bg-gray-50 flex justify-between">
-                            <span className="font-medium text-indigo-600">{order.id}</span>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(order.status)}`}>
-                                {order.status}
+                            <span className="font-medium text-indigo-600">{c.id}</span>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(c.status)}`}>
+                                {c.status}
                             </span>
                         </div>
                         <div className="p-3">
                             <div className="grid grid-cols-3 gap-1 mb-2">
                                 <span className="text-xs text-gray-500">Customer:</span>
-                                <span className="text-sm col-span-2">{order.customer}</span>
+                                <span className="text-sm col-span-2">{c.customer.name}</span>
                             </div>
                             <div className="grid grid-cols-3 gap-1 mb-2">
                                 <span className="text-xs text-gray-500">Address:</span>
-                                <span className="text-sm col-span-2">{order.address}</span>
+                                <span className="text-sm col-span-2">{c.address}</span>
                             </div>
                             <div className="grid grid-cols-3 gap-1 mb-2">
                                 <span className="text-xs text-gray-500">Date:</span>
-                                <span className="text-sm col-span-2">{order.date}</span>
+                                <span className="text-sm col-span-2">{c.createdAt}</span>
                             </div>
                             <div className="grid grid-cols-3 gap-1">
                                 <span className="text-xs text-gray-500">Total:</span>
-                                <span className="text-sm col-span-2 font-medium">{order.totalPrice}</span>
+                                <span className="text-sm col-span-2 font-medium">{c.totalPrice}</span>
                             </div>
                         </div>
                     </div>
                 ))}
-                {orders.length === 0 && (
+                {order.length === 0 && (
                     <div className="text-center p-4 border rounded-lg text-gray-500">
                         No orders found
                     </div>

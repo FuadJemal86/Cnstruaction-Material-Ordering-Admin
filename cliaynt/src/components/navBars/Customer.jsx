@@ -3,7 +3,20 @@ import api from '../../api';
 
 function Customer() {
 
+
+
     const [customer, setCustomer] = useState([])
+
+    const getStatusBadgeColor = (status) => {
+        const statusColors = {
+            COMPLETED: "bg-green-100 text-green-800",
+            PROCESSING: "bg-blue-100 text-blue-800",
+            PENDING: "bg-yellow-100 text-yellow-800",
+            FAILED: "bg-red-100 text-red-800"
+        };
+
+        return statusColors[status] || "bg-gray-100 text-gray-800";
+    }
 
 
     const formatDate = (dateString) => {
@@ -29,7 +42,7 @@ function Customer() {
     };
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Product</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Customers</h2>
 
             {/* Desktop View */}
             <div className="hidden md:block overflow-x-auto">
@@ -53,12 +66,12 @@ function Customer() {
                                 <td className="p-3 text-sm text-gray-800">{c.name}</td>
                                 <td className="p-3 text-sm text-gray-800">{c.email}</td>
                                 <td className="p-3 text-sm text-gray-500">{c.phone}</td>
-                                <td className="p-3 text-sm text-gray-500">{formatDate(c.createdAt)}</td>
-
-                                <td className="p-3 text-sm">
-                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(c.status)}`}>
-                                        {c.status}
-                                    </span>
+                                <td className="p-3 text-sm text-gray-500">
+                                    {new Date(c.createdAt).toLocaleDateString('en-GB', {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric'
+                                    }).replace(' ', '.')}
                                 </td>
                             </tr>
                         ))}
