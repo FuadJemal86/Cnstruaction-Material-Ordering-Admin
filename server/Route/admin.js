@@ -40,7 +40,14 @@ router.post('/login', async (req, res) => {
             { expiresIn: '30d' }
         );
 
-        res.status(200).json({ loginStatus: true, token });
+        res.cookie("a-auth-token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 24 * 60 * 60 * 1000,
+            sameSite: "lax",
+        });
+
+        res.status(200).json({ loginStatus: true, message: "Login successful" });
     } catch (err) {
         console.error("Login error:", err.message);
         res.status(500).json({ loginStatus: false, error: err.message });
@@ -234,34 +241,38 @@ router.get('/get-order', async (req, res) => {
 
         const order = await prisma.order.findMany()
 
+        if(order == 0) {
+            return res.status(400).json({status:false , message:'order not found'})
+        }
+
         return res.status(200).json({ status: true, result: order })
 
     } catch (err) {
         console.log(err)
         return res.status(500).json({ status: false, error: 'server error' })
     }
-})
+})  
 
-// update order status
+// update the status of order 
 
-router.put('/update-order/:id', async (req, res) => {
+router.put('/update-order-status/:id', async (req, res) => {
+    const { id } = req.params
+    const { status } = req.body
 
     try {
-        const { id } = req.params;
-        const { customerId, supplierId, totalPrice, paymentId, status } = req.body;
-
         await prisma.order.update({
-            where: { id: Number(id) },
-            data: { customerId, supplierId, totalPrice, paymentId, status }
-        });
+            where: { id: parseInt(id) },
+            data: {
+                status: status
+            }
+        })
 
-        return res.status(200).json({ status: true, message: 'order updated successfully!' });
-
+        return res.status(200).json({ status: true, message: `order updated in to ${status}` })
     } catch (err) {
-        console.error('Error updating order:', err);
-        return res.status(500).json({ status: false, error: 'Internal Server Error' });
+        console.log(err)
+        return res.status(500).json({ status: false, error: 'server error' })
     }
-});
+})
 
 // add category
 

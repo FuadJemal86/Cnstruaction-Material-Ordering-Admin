@@ -28,8 +28,7 @@ function Login() {
         try {
             const result = await api.post('/admin/login', admin)
 
-            if (result.data.loginStatus && result.data.token) {
-                localStorage.setItem('token', result.data.token)
+            if (result.data.loginStatus) {
                 navigate('/admin-page')
             } else {
                 toast.error(result.data.message || 'Signup failed!');

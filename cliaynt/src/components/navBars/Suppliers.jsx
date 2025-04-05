@@ -79,7 +79,13 @@ function Suppliers() {
                                 <td className="p-3 text-sm text-gray-500">{supplier.address}</td>
                                 <td className="p-3 text-sm text-gray-500">{supplier.tinNumber}</td>
                                 <td className="p-3 text-sm text-gray-500">{supplier.licenseNumber}</td>
-                                <td className="p-3 text-left text-xs font-medium text-gray-500 uppercase">{formatDate(supplier.createdAt)}</td>
+                                <td className="p-3 text-sm text-gray-500">
+                                    {new Date(supplier.createdAt).toLocaleDateString('en-GB', {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric'
+                                    }).replace(' ', '.')}
+                                </td>
 
                                 <td className="p-3 text-sm">
                                     <select
