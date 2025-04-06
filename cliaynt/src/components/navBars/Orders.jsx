@@ -69,6 +69,9 @@ function Orders({ orders = [] }) {
                         <tr>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer Phone</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier Phone</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Total Price</th>
@@ -83,6 +86,9 @@ function Orders({ orders = [] }) {
                             >
                                 <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
                                 <td className="p-3 text-sm text-gray-800">{c.customer.name}</td>
+                                <td className="p-3 text-sm text-gray-800">{c.customer.phone}</td>
+                                <td className="p-3 text-sm text-gray-800">{c.supplier.companyName}</td>
+                                <td className="p-3 text-sm text-gray-800">{c.supplier.phone}</td>
                                 <td className="p-3 text-sm text-gray-800">
                                     <span className={` ${c.address && c.address.length > 0}` ? 'bg-green-100 px-2 py-1 rounded-full text-green-800' : 'bg-red-100 px-2 py-1 rounded-full text-green-800'}>
                                         {c.address && c.address.length > 0 ? c.address : 'not delivery'}
@@ -141,8 +147,22 @@ function Orders({ orders = [] }) {
                                 <span className="text-sm col-span-2">{c.customer.name}</span>
                             </div>
                             <div className="grid grid-cols-3 gap-1 mb-2">
+                                <span className="text-xs text-gray-500">Customer Phone:</span>
+                                <span className="text-sm col-span-2">{c.customer.phone}</span>
+                            </div>
+                            <div className="grid grid-cols-3 gap-1 mb-2">
+                                <span className="text-xs text-gray-500">Supplier:</span>
+                                <span className="text-sm col-span-2">{c.supplier.companyName}</span>
+                            </div>
+                            <div className="grid grid-cols-3 gap-1 mb-2">
+                                <span className="text-xs text-gray-500">Phone:</span>
+                                <span className="text-sm col-span-2">{c.customer.phone}</span>
+                            </div>
+                            <div className="grid grid-cols-3 gap-1 mb-2">
                                 <span className="text-xs text-gray-500">Address:</span>
-                                <span className="text-sm col-span-2">{c.address}</span>
+                                <span className={` ${c.address && c.address.length > 0}` ? 'bg-green-100 px-2 py-1 rounded-full text-green-800' : 'bg-red-100 px-2 py-1 rounded-full text-green-800'}>
+                                    {c.address && c.address.length > 0 ? c.address : 'not delivery'}
+                                </span>
                             </div>
                             <div className="grid grid-cols-3 gap-1 mb-2">
                                 <span className="text-xs text-gray-500">Date:</span>

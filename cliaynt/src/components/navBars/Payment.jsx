@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Edit, Trash2, Eye } from "lucide-react";
 import api from '../../api';
 
+
 function Payment() {
 
     const [payment, setPayment] = useState([])
@@ -47,9 +48,11 @@ function Payment() {
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Account</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Bank Transaction</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier Phone</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Detail</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,6 +67,7 @@ function Payment() {
                                 <td className="p-3 text-sm text-gray-800">{c.bank.bankName} {c.bank.account}</td>
                                 <td className="p-3 text-sm text-gray-800">{c.bankTransactionId}</td>
                                 <td className="p-3 text-sm text-gray-800">{c.customer.phone}</td>
+                                <td className="p-3 text-sm text-gray-800">{c.supplier.companyName}</td>
                                 <td className="p-3 text-sm text-gray-500">
                                     {new Date(c.createdAt).toLocaleDateString('en-GB', {
                                         day: 'numeric',
@@ -85,8 +89,8 @@ function Payment() {
                                 </td>
                                 <td>
                                     <div className="flex space-x-1">
-                                        <button className="p-2 text-red-600 rounded-lg">
-                                            <Trash2 size={20} />
+                                        <button className="p-2 text-blue-600 rounded-lg">
+                                            <Eye size={20} />
                                         </button>
                                     </div>
                                 </td>

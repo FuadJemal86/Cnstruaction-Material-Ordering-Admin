@@ -242,9 +242,11 @@ router.get('/get-order', async (req, res) => {
         const order = await prisma.order.findMany({
 
             include: {
+                supplier: true,
                 customer: {
                     select: {
-                        name: true
+                        name: true,
+                        phone: true
                     }
                 }
             }
@@ -260,7 +262,7 @@ router.get('/get-order', async (req, res) => {
         console.log(err)
         return res.status(500).json({ status: false, error: 'server error' })
     }
-})  
+})
 
 // update the status of order 
 
@@ -384,8 +386,9 @@ router.get('/get-payment', async (req, res) => {
     try {
         const [orders, payments] = await prisma.$transaction([
             prisma.order.findMany({
-    
+
                 include: {
+                    supplier: true,
                     customer: {
                         select: {
                             id: true,
@@ -408,8 +411,8 @@ router.get('/get-payment', async (req, res) => {
                 transactionId: { in: transactionIds }
             },
 
-            include : {
-                bank:true
+            include: {
+                bank: true
             }
         });
 

@@ -20,7 +20,7 @@ function Nav() {
                             <div className='text-right'>
                                 <div>
                                     <button className='p-2'>
-                                        <Bell size={24} />
+                                        <MessageCircle size={24} />
                                     </button>
                                 </div>
                             </div>
@@ -47,23 +47,23 @@ function Nav() {
                         </div>
                         <nav className='pl-8 pt-7'>
                             <ul className='text-gray-300 grid gap-4 text-left'>
-                                <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md'><Link className='w-full pl-1'>Overview</Link></li>
-                                <li className='hover:bg-slate-700 w-full p-1 transition cursor-pointer rounded-md hover:text-white'><Link to={'order'} className='w-full pl-1'>Orders</Link></li>
-                                <li className='hover:bg-slate-700 w-full p-1 transition cursor-pointer rounded-md hover:text-white'><Link to={'supplier'} className='w-full pl-1'>Suppliers</Link></li>
-                                <li className='hover:bg-slate-700 w-full p-1 transition cursor-pointer rounded-md hover:text-white'><Link to={'customer'} className='w-full pl-1'>Customer</Link></li>
-                                <li className='hover:bg-slate-700 w-full p-1 transition cursor-pointer rounded-md hover:text-white'><Link  to={'payment'} className='w-full pl-1'>Payments</Link></li>
-                                <li className='hover:bg-slate-700 w-full p-1 transition cursor-pointer rounded-md hover:text-white'><Link to={'category'} className='w-full pl-1'>Category</Link></li>
-                                <li className='hover:bg-slate-700 w-full p-1 transition cursor-pointer rounded-md hover:text-white'><Link to={'zone'} className='w-full pl-1'>Zone Servic</Link></li>
-                                <li className='hover:bg-slate-700 w-full p-1 transition cursor-pointer rounded-md hover:text-white'><Link className='w-full pl-1'>Messages & Complaints</Link></li>
+                                <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><Eye /><Link className='w-full pl-1'>Overview</Link></li>
+                                <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'> <Package /><Link to={'order'} className='w-full pl-1'>Orders</Link></li>
+                                <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><ShoppingCart /><Link to={'supplier'} className='w-full pl-1'>Suppliers</Link></li>
+                                <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><Box /><Link to={'customer'} className='w-full pl-1'>Customer</Link></li>
+                                <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><CreditCard /><Link to={'payment'} className='w-full pl-1'>Payments</Link></li>
+                                <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><MessageCircle /><Link to={'category'} className='w-full pl-1'>Category</Link></li>
+                                <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><AlertCircle /><Link to={'zone'} className='w-full pl-1'>Zone Servic</Link></li>
+                                <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><MessageCircle /><Link className='w-full pl-1'>Messages & Complaints</Link></li>
                             </ul>
                         </nav>
                     </div>
                 </div>
-                
+
             </div>
             <div className="flex-1 p-4 custom-scrollbar bg-gray-50">
-                    <Outlet/>
-                </div>
+                <Outlet />
+            </div>
         </div>
     )
 }
