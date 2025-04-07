@@ -5,15 +5,19 @@ import { Link } from 'react-router-dom';
 function OrderItem() {
 
     const [orderItem, setOrderItem] = useState([])
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
 
     useEffect(() => {
         const feachOrderItem = async () => {
             try {
-                const result = await api.get('/admin/get-order-item')
+                const result = await api.get(`/admin/get-order-item?page=${page}&limit=10`)
 
                 if (result.data.status) {
                     setOrderItem(result.data.orderItem)
+                    setPage(result.data.currentPage);
+                    setTotalPages(result.data.totalPages);
                 } else {
                     console.log(result.data.message)
                 }
@@ -68,6 +72,34 @@ function OrderItem() {
                             )}
                         </tbody>
                     </table>
+                    <div className="flex justify-center items-center mt-6 space-x-2">
+                        <button
+                            disabled={page === 1}
+                            onClick={() => fetchData(page - 1)}
+                            className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
+                        >
+                            Prev
+                        </button>
+
+                        {Array.from({ length: totalPages }, (_, index) => index + 1).map(num => (
+                            <button
+                                key={num}
+                                onClick={() => fetchData(num)}
+                                className={`px-3 py-1 border rounded ${num === page ? 'bg-indigo-500 text-white' : 'bg-white text-gray-700'
+                                    } hover:bg-indigo-100`}
+                            >
+                                {num}
+                            </button>
+                        ))}
+
+                        <button
+                            disabled={page === totalPages}
+                            onClick={() => fetchData(page + 1)}
+                            className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
+                        >
+                            Next
+                        </button>
+                    </div>
                 </div>
 
                 {/* Mobile View */}

@@ -7,7 +7,8 @@ function Orders({ orders = [] }) {
     const [statusState, setStatusState] = useState({
         status: ''
     })
-
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [order, setOrder] = useState([])
 
     const getStatusBadgeColor = (status) => {
@@ -28,9 +29,11 @@ function Orders({ orders = [] }) {
 
     const feacheOrder = async () => {
         try {
-            const result = await api.get('/admin/get-order')
+            const result = await api.get(`/admin/get-order?page=${page}&limit=10`)
             if (result.data.status) {
                 setOrder(result.data.result)
+                setPage(result.data.currentPage);
+                setTotalPages(result.data.totalPages);
             } else {
                 console.log(result.data.message)
             }
@@ -106,7 +109,7 @@ function Orders({ orders = [] }) {
                                 <td className="p-3 text-sm text-gray-800 font-medium">birr {c.totalPrice}</td>
                                 <td className="p-3 text-sm">
                                     <select
-                                        value={c.status || "PROCESSING"} // ✅ Ensure default value if undefined
+                                        value={c.status || "PROCESSING"}
                                         onChange={e => handleStatus(e.target.value, c.id)}
                                         className={`px-2 py-1 rounded-full text-xs font-medium outline-none} ${getStatusBadgeColor(c.status)}`}
                                     >
@@ -129,6 +132,34 @@ function Orders({ orders = [] }) {
                         )}
                     </tbody>
                 </table>
+                <div className="flex justify-center items-center mt-6 space-x-2">
+                    <button
+                        disabled={page === 1}
+                        onClick={() => fetchData(page - 1)}
+                        className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
+                    >
+                        Prev
+                    </button>
+
+                    {Array.from({ length: totalPages }, (_, index) => index + 1).map(num => (
+                        <button
+                            key={num}
+                            onClick={() => fetchData(num)}
+                            className={`px-3 py-1 border rounded ${num === page ? 'bg-indigo-500 text-white' : 'bg-white text-gray-700'
+                                } hover:bg-indigo-100`}
+                        >
+                            {num}
+                        </button>
+                    ))}
+
+                    <button
+                        disabled={page === totalPages}
+                        onClick={() => fetchData(page + 1)}
+                        className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
 
             {/* Mobile View */}

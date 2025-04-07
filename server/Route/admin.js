@@ -266,26 +266,40 @@ router.put('/update-customer/:id', async (req, res) => {
 // get order
 
 router.get('/get-order', async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
     try {
 
-        const order = await prisma.order.findMany({
+        const [order, totalSuppliers] = await Promise.all([
 
-            include: {
-                supplier: true,
-                customer: {
-                    select: {
-                        name: true,
-                        phone: true
+            prisma.order.findMany({
+                skip,
+                take: limit,
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    supplier: true,
+                    customer: {
+                        select: {
+                            name: true,
+                            phone: true
+                        }
                     }
                 }
-            }
-        })
+            }),
+            prisma.order.count()
+        ])
 
         if (order == 0) {
             return res.status(400).json({ status: false, message: 'order not found' })
         }
 
-        return res.status(200).json({ status: true, result: order })
+        return res.status(200).json({
+            status: true,
+            result: order,
+            totalPages: Math.ceil(totalSuppliers / limit),
+            currentPage: page
+        })
 
     } catch (err) {
         console.log(err)
@@ -296,6 +310,9 @@ router.get('/get-order', async (req, res) => {
 // get order item
 
 router.get('/get-order-item', async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
 
     try {
@@ -316,27 +333,43 @@ router.get('/get-order-item', async (req, res) => {
             return res.status(200).json({ status: true, orderItem: [] });
         }
 
-        const orderItem = await prisma.orderitem.findMany({
-            where: {
-                orderId: { in: orderIds },
-            },
-            include: {
+        const [orderItem, totalOrder] = await Promise.all([
 
-                order: {
-                    include: {
-                        customer: true,
+            prisma.orderitem.findMany({
+                skip,
+                take: limit,
+                orderBy: {
+                    id: 'desc' // optional: newest first
+                },
+                where: {
+                    orderId: { in: orderIds },
+                },
+                include: {
+
+                    order: {
+                        include: {
+                            customer: true,
+                        },
+                    },
+                    product: {
+                        select: {
+                            name: true,
+                            category: true,
+                        },
                     },
                 },
-                product: {
-                    select: {
-                        name: true,
-                        category: true,
-                    },
-                },
-            },
+            }),
+
+            prisma.orderitem.count()
+        ]);
+
+        return res.status(200).json({
+            status: true,
+            orderItem,
+            totalPages: Math.ceil(totalOrder / limit),
+            currentPage: page
         });
 
-        return res.status(200).json({ status: true, orderItem });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ status: false, message: 'Server error' });
