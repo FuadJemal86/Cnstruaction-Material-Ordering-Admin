@@ -268,10 +268,9 @@ router.get('/get-order', async (req, res) => {
 
 router.get('/get-order-item', async (req, res) => {
 
+
     try {
         const orders = await prisma.order.findMany({
-            select: { id: true },
-
             include: {
                 supplier: {
                     select: {
