@@ -264,6 +264,57 @@ router.get('/get-order', async (req, res) => {
     }
 })
 
+// get order item
+
+router.get('/get-order-item', async (req, res) => {
+
+    try {
+        const orders = await prisma.order.findMany({
+            select: { id: true },
+
+            include: {
+                supplier: {
+                    select: {
+                        companyName: true,
+                        phone: true,
+                    }
+                }
+            }
+        });
+
+        const orderIds = orders.map(order => order.id);
+
+        if (orderIds.length === 0) {
+            return res.status(200).json({ status: true, orderItem: [] });
+        }
+
+        const orderItem = await prisma.orderitem.findMany({
+            where: {
+                orderId: { in: orderIds },
+            },
+            include: {
+
+                order: {
+                    include: {
+                        customer: true,
+                    },
+                },
+                product: {
+                    select: {
+                        name: true,
+                        category: true,
+                    },
+                },
+            },
+        });
+
+        return res.status(200).json({ status: true, orderItem });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ status: false, message: 'Server error' });
+    }
+})
+
 // update the status of order 
 
 router.put('/update-order-status/:id', async (req, res) => {
