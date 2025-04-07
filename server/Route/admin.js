@@ -93,20 +93,49 @@ router.post('/add-account', async (req, res) => {
 // get supplier 
 
 router.get('/get-supplier', async (req, res) => {
-    try {
-        const supplier = await prisma.supplier.findMany();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-        if (supplier.length === 0) { // Corrected condition
+    try {
+        const [suppliers, totalSuppliers] = await Promise.all([
+            prisma.supplier.findMany({
+
+                skip,
+                take: limit,
+                orderBy: { createdAt: 'desc' },
+                select: {
+                    id: true,
+                    phone: true,
+                    companyName: true,
+                    email: true,
+                    createdAt: true,
+                    address: true,
+                    tinNumber: true,
+                    licenseNumber: true,
+                    isApproved: true
+                }
+            }),
+            prisma.supplier.count() // total count for pagination
+        ]);
+
+        if (suppliers.length === 0) {
             return res.status(404).json({ status: false, message: 'No suppliers found' });
         }
 
-        return res.status(200).json({ status: true, result: supplier });
+        return res.status(200).json({
+            status: true,
+            result: suppliers,
+            totalPages: Math.ceil(totalSuppliers / limit),
+            currentPage: page
+        });
 
     } catch (err) {
         console.error(err);
         return res.status(500).json({ status: false, error: 'Server error' });
     }
 });
+
 
 
 // delete supplier
@@ -525,24 +554,6 @@ router.delete('/delete-address/:id', async (req, res) => {
     }
 })
 
-
-// get payment
-
-router.get('/get-payment', async (req, res) => {
-    try {
-        const payment = await prisma.payment.findMany();
-
-        if (payment.length === 0) { // Corrected condition
-            return res.status(404).json({ status: false, message: 'No payment found' });
-        }
-
-        return res.status(200).json({ status: true, result: payment });
-
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ status: false, error: 'Server error' });
-    }
-})
 
 
 
