@@ -6,6 +6,8 @@ import api from '../../api';
 function Payment() {
 
     const [payment, setPayment] = useState([])
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const getStatusBadgeColor = (status) => {
         const statusColors = {
             COMPLETED: "bg-green-100 text-green-800",
@@ -17,15 +19,15 @@ function Payment() {
         return statusColors[status] || "bg-gray-100 text-gray-800";
     }
 
-    useEffect(() => {
-        fetchData();
-    }, []);
 
-    const fetchData = async () => {
+
+    const fetchData = async (page = 1) => {
         try {
-            const result = await api.get('/admin/get-payment');
+            const result = await api.get(`/admin/get-payment?page=${page}&limit=10`);
             if (result.data.status) {
                 setPayment(result.data.payments);
+                setPage(result.data.currentPage);
+                setTotalPages(result.data.totalPages);
             } else {
                 console.log(result.data.message);
             }
@@ -33,6 +35,10 @@ function Payment() {
             console.log(err);
         }
     };
+
+    useEffect(() => {
+        fetchData(1);
+    }, []);
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
             <h2 className="text-xl font-bold text-gray-800 mb-4">Payment</h2>
@@ -68,6 +74,7 @@ function Payment() {
                                 <td className="p-3 text-sm text-gray-800">{c.bankTransactionId}</td>
                                 <td className="p-3 text-sm text-gray-800">{c.customer.phone}</td>
                                 <td className="p-3 text-sm text-gray-800">{c.supplier.companyName}</td>
+                                <td className="p-3 text-sm text-gray-800">{c.supplier.phone}</td>
                                 <td className="p-3 text-sm text-gray-500">
                                     {new Date(c.createdAt).toLocaleDateString('en-GB', {
                                         day: 'numeric',
@@ -105,6 +112,36 @@ function Payment() {
                         )}
                     </tbody>
                 </table>
+
+                <div className="flex justify-center items-center mt-6 space-x-2">
+                    <button
+                        disabled={page === 1}
+                        onClick={() => fetchData(page - 1)}
+                        className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
+                    >
+                        Prev
+                    </button>
+
+                    {Array.from({ length: totalPages }, (_, index) => index + 1).map(num => (
+                        <button
+                            key={num}
+                            onClick={() => fetchData(num)}
+                            className={`px-3 py-1 border rounded ${num === page ? 'bg-indigo-500 text-white' : 'bg-white text-gray-700'
+                                } hover:bg-indigo-100`}
+                        >
+                            {num}
+                        </button>
+                    ))}
+
+                    <button
+                        disabled={page === totalPages}
+                        onClick={() => fetchData(page + 1)}
+                        className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
+                    >
+                        Next
+                    </button>
+                </div>
+
             </div>
 
             {/* Mobile View */}
@@ -136,7 +173,7 @@ function Payment() {
                             </div>
                             <div className="grid grid-cols-3 gap-1">
                                 <span className="text-xs text-gray-500">Date:</span>
-                                <span className="p-3 text-sm text-gray-500">
+                                <span className="text-sm col-span-2 font-medium">
                                     {new Date(c.createdAt).toLocaleDateString('en-GB', {
                                         day: 'numeric',
                                         month: 'long',
