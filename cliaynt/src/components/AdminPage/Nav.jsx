@@ -7,39 +7,9 @@ import { AlignLeft, MoreVertical, Eye, Package, ShoppingCart, Box, CreditCard, M
 function Nav() {
     return (
         <div className='flex'>
-            <div className="bg-slate-200/50 backdrop-blur-md shadow-sm fixed right-0 left-64 h-11 flex items-center">
-                <header className='w-full'>
-                    <div className='flex'>
-                        <div className='w-full'>
-                            <button className='p-2'>
-                                <AlignLeft size={24} />
-                            </button>
-                        </div>
 
-                        <div className='flex text-right'>
-                            <div className='text-right'>
-                                <div>
-                                    <button className='p-2'>
-                                        <MessageCircle size={24} />
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className='text-right'>
-                                <div>
-                                    <button className='p-2'>
-                                        <MoreVertical size={24} />
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </header>
-            </div>
-
-            <div>
-                <div className='bg-gray-900 w-64 h-screen z-[1000] '>
+            <div className='flex'>
+                <div className='bg-gray-900 w-64 h-screen fixed left-0 top-0 z-[1000] '>
                     <div className='p-2'>
                         <div className='p-4 mt-4 mb-4 border rounded-2xl border-gray-700 flex items-center gap-2'>
                             <span className='bg-white rounded-full'><img className='w-11 h-11' src={logo} alt="" srcset="" /></span>
@@ -59,10 +29,38 @@ function Nav() {
                         </nav>
                     </div>
                 </div>
-
             </div>
-            <div className="flex-1 p-4 custom-scrollbar bg-gray-50">
-                <Outlet />
+            <div className='flex-1 ml-64 flex flex-col min-h-screen'>
+
+                <div className="bg-slate-200/50 backdrop-blur-md shadow-sm h-11 flex items-center sticky top-0 z-50">
+                    <header className='w-full'>
+                        <div className='flex justify-between px-4'>
+                            <div>
+                                <button className='p-2'>
+                                    <AlignLeft size={24} />
+                                </button>
+                            </div>
+
+                            <div className='flex gap-2'>
+                                <div>
+                                    <button className='p-2'>
+                                        <MessageCircle size={24} />
+                                    </button>
+                                </div>
+
+                                <div>
+                                    <button className='p-2'>
+                                        <MoreVertical size={24} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                </div>
+
+                <div className="flex-1 p-4 custom-scrollbar bg-gray-50">
+                    <Outlet />
+                </div>
             </div>
         </div>
     )

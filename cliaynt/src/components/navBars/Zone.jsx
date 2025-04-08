@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import api from '../../api';
 import { Link } from 'react-router-dom';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 function OrderItem() {
 
@@ -29,13 +31,64 @@ function OrderItem() {
         feachOrderItem()
     }, [])
 
+
+
+    // print the customer table
+    const handlePrint = () => {
+        const printContent = document.getElementById("customer-table");
+        const WindowPrt = window.open('', '', 'width=900,height=650');
+        WindowPrt.document.write(`
+            <html>
+                <head>
+                    <title>Customer</title>
+                    <style>
+                        body { font-family: Arial; padding: 20px; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { padding: 8px; border: 1px solid #ccc; }
+                        th { background: #f0f0f0; }
+                    </style>
+                </head>
+                <body>${printContent.innerHTML}</body>
+            </html>
+        `);
+        WindowPrt.document.close();
+        WindowPrt.focus();
+        WindowPrt.print();
+        WindowPrt.close();
+    };
+
+    //  export Excel file
+    const exportToExcel = () => {
+        const ws = XLSX.utils.json_to_sheet(orderItem);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "order item");
+
+        const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+        const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+        saveAs(data, "Customers.xlsx");
+    };
+
     return (
         <div>
             <div className="p-4 mt-16 bg-white rounded-lg shadow ">
                 <h2 className="text-xl font-bold text-gray-800 mb-4">Order Item</h2>
 
                 {/* Desktop View */}
-                <div className="hidden md:block overflow-x-auto">
+                <div className="hidden md:block overflow-x-auto" id='customer-table'>
+                    <div className="flex justify-end mb-4 gap-2">
+                        <button
+                            onClick={handlePrint}
+                            className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                        >
+                            🖨️ Print
+                        </button>
+                        <button
+                            onClick={exportToExcel}
+                            className="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                        >
+                            📥 Excel
+                        </button>
+                    </div>
                     <table className="w-full border-collapse">
                         <thead className="bg-gray-50">
                             <tr>
@@ -104,6 +157,20 @@ function OrderItem() {
 
                 {/* Mobile View */}
                 <div className="md:hidden space-y-3">
+                    <div className="flex justify-end mb-4 gap-2">
+                        <button
+                            onClick={handlePrint}
+                            className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                        >
+                            🖨️ Print
+                        </button>
+                        <button
+                            onClick={exportToExcel}
+                            className="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                        >
+                            📥 Excel
+                        </button>
+                    </div>
                     {orderItem.map((order, index) => (
                         <div key={order.id || index} className="border rounded-lg overflow-hidden">
                             <div className="p-3 border-b bg-gray-50 flex justify-between">
@@ -132,12 +199,14 @@ function OrderItem() {
                                 </div>
                             </div>
                         </div>
+
                     ))}
                     {orderItem.length === 0 && (
                         <div className="text-center p-4 border rounded-lg text-gray-500">
                             No orders found
                         </div>
                     )}
+
                 </div>
             </div>
 

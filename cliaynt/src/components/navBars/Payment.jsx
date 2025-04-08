@@ -39,12 +39,62 @@ function Payment() {
     useEffect(() => {
         fetchData(1);
     }, []);
+
+    // print the customer table
+    const handlePrint = () => {
+        const printContent = document.getElementById("customer-table");
+        const WindowPrt = window.open('', '', 'width=900,height=650');
+        WindowPrt.document.write(`
+                <html>
+                    <head>
+                        <title>Customer</title>
+                        <style>
+                            body { font-family: Arial; padding: 20px; }
+                            table { width: 100%; border-collapse: collapse; }
+                            th, td { padding: 8px; border: 1px solid #ccc; }
+                            th { background: #f0f0f0; }
+                        </style>
+                    </head>
+                    <body>${printContent.innerHTML}</body>
+                </html>
+            `);
+        WindowPrt.document.close();
+        WindowPrt.focus();
+        WindowPrt.print();
+        WindowPrt.close();
+    };
+
+    //  export Excel file
+    const exportToExcel = () => {
+        const ws = XLSX.utils.json_to_sheet(payment);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "payment");
+
+        const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+        const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+        saveAs(data, "Customers.xlsx");
+    };
+
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
             <h2 className="text-xl font-bold text-gray-800 mb-4">Payment</h2>
 
             {/* Desktop View */}
             <div className="hidden md:block overflow-x-auto">
+                <div className="flex justify-end mb-4 gap-2">
+                    <button
+                        onClick={handlePrint}
+                        className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        🖨️ Print
+                    </button>
+                    <button
+                        onClick={exportToExcel}
+                        className="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                    >
+                        📥 Excel
+                    </button>
+                </div>
                 <table className="w-full border-collapse">
                     <thead className="bg-gray-50">
                         <tr>
@@ -146,6 +196,20 @@ function Payment() {
 
             {/* Mobile View */}
             <div className="md:hidden space-y-3">
+            <div className="flex justify-end mb-4 gap-2">
+                    <button
+                        onClick={handlePrint}
+                        className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        🖨️ Print
+                    </button>
+                    <button
+                        onClick={exportToExcel}
+                        className="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                    >
+                        📥 Excel
+                    </button>
+                </div>
                 {payment.map((c, index) => (
                     <div key={c.id || index} className="border rounded-lg overflow-hidden">
                         <div className="p-3 border-b bg-gray-50 flex justify-between">
@@ -189,6 +253,36 @@ function Payment() {
                         No orders found
                     </div>
                 )}
+
+<div className="flex justify-center items-center mt-6 space-x-2">
+                    <button
+                        disabled={page === 1}
+                        onClick={() => fetchData(page - 1)}
+                        className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
+                    >
+                        Prev
+                    </button>
+
+                    {Array.from({ length: totalPages }, (_, index) => index + 1).map(num => (
+                        <button
+                            key={num}
+                            onClick={() => fetchData(num)}
+                            className={`px-3 py-1 border rounded ${num === page ? 'bg-indigo-500 text-white' : 'bg-white text-gray-700'
+                                } hover:bg-indigo-100`}
+                        >
+                            {num}
+                        </button>
+                    ))}
+
+                    <button
+                        disabled={page === totalPages}
+                        onClick={() => fetchData(page + 1)}
+                        className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
+                    >
+                        Next
+                    </button>
+                </div>
+                
             </div>
         </div>
     )
