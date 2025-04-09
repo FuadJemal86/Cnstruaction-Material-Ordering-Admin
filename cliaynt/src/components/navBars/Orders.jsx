@@ -3,6 +3,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import api from '../../api';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { Edit, Trash2, Eye } from "lucide-react";
 
 function Orders({ orders = [] }) {
 
@@ -12,6 +13,8 @@ function Orders({ orders = [] }) {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [order, setOrder] = useState([])
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [orderItem, setOrderItem] = useState([])
 
     const getStatusBadgeColor = (status) => {
         const statusColors = {
@@ -112,6 +115,28 @@ function Orders({ orders = [] }) {
         saveAs(data, "Customers.xlsx");
     };
 
+    const handleOpen = async (id) => {
+
+        if (!isModalOpen) {
+            setIsModalOpen(true)
+        } else {
+            setIsModalOpen(false)
+        }
+
+        try {
+            const result = await api.get(`/admin/get-order-item/${id}`)
+
+            if (result.data.status) {
+                setOrderItem(result.data.orderItem)
+            } else {
+                console.log(err)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+
+    }
+
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
             <h2 className="text-xl font-bold text-gray-800 mb-4">Orders</h2>
@@ -144,6 +169,7 @@ function Orders({ orders = [] }) {
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Total Price</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Order Item</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -184,6 +210,11 @@ function Orders({ orders = [] }) {
                                         <option value="DELIVERED">DELIVERED</option>
                                         <option value="CANCELLED">CANCELLED</option>
                                     </select>
+                                </td>
+                                <td className="p-3 text-sm text-gray-800">
+                                    <span onClick={e => handleOpen(c.id)} className='text-blue-600 cursor-pointer'>
+                                        <Eye />
+                                    </span>
                                 </td>
 
                             </tr>
@@ -226,6 +257,42 @@ function Orders({ orders = [] }) {
                     </button>
                 </div>
             </div>
+
+            {isModalOpen && (
+                <div className="hidden md:flex fixed inset-0 bg-gray-600 bg-opacity-50 justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-lg w-1/2">
+                        <h2 className="text-xl font-bold mb-4">Order Items for Order</h2>
+                        <table className="w-full">
+                            <thead>
+                                <tr>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500">Customer</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500">Product Name</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500">Category</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500">Quantity</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    orderItem.map(c => (
+                                        <tr key={c.id}>
+                                            <td className="p-3 text-sm">{c.order.customer.name}</td>
+                                            <td className="p-3 text-sm">{c.product.name}</td>
+                                            <td className="p-3 text-sm">{c.product.category.category}</td>
+                                            <td className="p-3 text-sm">{c.quantity}</td>
+                                            <td className="p-3 text-sm">{c.unitPrice}</td>
+                                        </tr>
+
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                        <button onClick={() => setIsModalOpen(false)} className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Mobile View */}
             <div className="md:hidden space-y-3">

@@ -230,7 +230,7 @@ router.get('/get-customer', async (req, res) => {
             status: true,
             result: supplier,
             totalPages: Math.ceil(totalCustomer / limit),
-            currentPage: page 
+            currentPage: page
 
         })
 
@@ -320,6 +320,41 @@ router.get('/get-order', async (req, res) => {
     } catch (err) {
         console.log(err)
         return res.status(500).json({ status: false, error: 'server error' })
+    }
+})
+
+// get order item
+
+router.get('/get-order-item/:id', async (req, res) => {
+
+    const  id  = parseInt(req.params.id)
+
+    try {
+        if (!id) {
+            throw new Error("OrderItem ID is required");
+        }
+
+        const orderItem = await prisma.orderitem.findUnique({
+            where: { id : id },
+            include: {
+                order: {
+                    include: {
+                        customer: true,
+                    },
+                },
+                product: {
+                    select: {
+                        name: true,
+                        category: true,
+                    },
+                },
+            },
+        });
+
+        return res.status(200).json({ status: true, orderItem });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ status: false, message: 'Server error' });
     }
 })
 

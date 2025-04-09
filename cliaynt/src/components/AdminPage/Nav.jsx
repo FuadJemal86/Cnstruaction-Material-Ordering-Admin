@@ -19,7 +19,6 @@ function Nav() {
                             <ul className='text-gray-300 grid gap-4 text-left'>
                                 <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><Eye /><Link className='w-full pl-1'>Overview</Link></li>
                                 <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'> <Package /><Link to={'order'} className='w-full pl-1'>Orders</Link></li>
-                                <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><AlertCircle /><Link to={'zone'} className='w-full pl-1'>Order Item</Link></li>
                                 <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><ShoppingCart /><Link to={'supplier'} className='w-full pl-1'>Suppliers</Link></li>
                                 <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><Box /><Link to={'customer'} className='w-full pl-1'>Customer</Link></li>
                                 <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><CreditCard /><Link to={'payment'} className='w-full pl-1'>Payments</Link></li>
