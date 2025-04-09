@@ -336,9 +336,9 @@ function Orders({ orders = [] }) {
                                 <span className="text-sm col-span-2">{c.customer.phone}</span>
                             </div>
                             <div className="grid grid-cols-3 gap-1 mb-2">
-                                <span className="text-xs text-gray-500">Address:</span>
-                                <span className={` ${c.address && c.address.length > 0}` ? 'bg-green-100 px-2 py-1 rounded-full text-green-800' : 'bg-red-100 px-2 py-1 rounded-full text-green-800'}>
-                                    {c.address && c.address.length > 0 ? c.address : 'not delivery'}
+                                <span className="text-xs text-gray-500">Location:</span>
+                                <span className='text-sm'>
+                                    {order.address && order.address.length > 0 ? order.address : 'not delivery'}
                                 </span>
                             </div>
                             <div className="grid grid-cols-3 gap-1 mb-2">
@@ -348,6 +348,10 @@ function Orders({ orders = [] }) {
                             <div className="grid grid-cols-3 gap-1">
                                 <span className="text-xs text-gray-500">Total:</span>
                                 <span className="text-sm col-span-2 font-medium">{c.totalPrice}</span>
+                            </div>
+                            <div className="grid grid-cols-3 gap-1">
+                                <span className="text-xs text-gray-500">Order Item:</span>
+                                <span onClick={e => handleOpen(c.id)} className='text-blue-600 cursor-pointer'><Eye /></span>
                             </div>
                         </div>
                     </div>
@@ -385,6 +389,47 @@ function Orders({ orders = [] }) {
                         Next
                     </button>
                 </div>
+                {isModalOpen && (
+                    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 px-4">
+                        <div className="bg-white p-4 md:p-6 rounded-lg w-full max-w-2xl overflow-y-auto max-h-[90vh]">
+                            <h2 className="text-lg md:text-xl font-bold mb-4 text-center">Order Items</h2>
+
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="bg-gray-100">
+                                            <th className="p-2 text-left font-medium text-gray-600">Customer</th>
+                                            <th className="p-2 text-left font-medium text-gray-600">Product</th>
+                                            <th className="p-2 text-left font-medium text-gray-600">Category</th>
+                                            <th className="p-2 text-left font-medium text-gray-600">Qty</th>
+                                            <th className="p-2 text-left font-medium text-gray-600">Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {orderItem.map((c, index) => (
+                                            <tr key={index} className="border-b">
+                                                <td className="p-2">{c.order.customer.name}</td>
+                                                <td className="p-2">{c.product.name}</td>
+                                                <td className="p-2">{c.product.category.category}</td>
+                                                <td className="p-2">{c.quantity}</td>
+                                                <td className="p-2">birr {c.unitPrice}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="text-center mt-4">
+                                <button
+                                    onClick={() => setIsModalOpen(false)}
+                                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     )

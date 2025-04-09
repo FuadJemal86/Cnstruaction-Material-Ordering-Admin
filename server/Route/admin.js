@@ -334,8 +334,8 @@ router.get('/get-order-item/:id', async (req, res) => {
             throw new Error("OrderItem ID is required");
         }
 
-        const orderItem = await prisma.orderitem.findUnique({
-            where: { id : id },
+        const orderItem = await prisma.orderitem.findMany({
+            where: { orderId : id },
             include: {
                 order: {
                     include: {
