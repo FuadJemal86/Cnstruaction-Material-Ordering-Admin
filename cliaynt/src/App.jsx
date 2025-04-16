@@ -10,6 +10,7 @@ import Category from './components/navBars/Category';
 import AddCategory from './components/navBars/AddCategory';
 import Zone from './components/navBars/Zone';
 import AddZones from './components/navBars/AddZones';
+import BankAccount from './components/navBars/BankAccount';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
                     <Route path='add-category' element={<AddCategory />} />
                     <Route path='zone' element={<Zone />} />
                     <Route path='add-zone' element={<AddZones />} />
+                    <Route path='bank-account' element={<BankAccount />} />
                 </Route>
             </Routes>
         </Router>

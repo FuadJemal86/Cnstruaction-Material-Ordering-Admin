@@ -165,7 +165,7 @@ function Orders({ orders = [] }) {
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer Phone</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier Phone</th>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Dilivery</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Total Price</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -185,7 +185,7 @@ function Orders({ orders = [] }) {
                                 <td className="p-3 text-sm text-gray-800">{c.supplier.phone}</td>
                                 <td className="p-3 text-sm text-gray-800">
                                     <span className={` ${c.address && c.address.length > 0}` ? 'bg-green-100 px-2 py-1 rounded-full text-green-800' : 'bg-red-100 px-2 py-1 rounded-full text-green-800'}>
-                                        {c.address && c.address.length > 0 ? c.address : 'not delivery'}
+                                        {c.address && c.address.length > 0 ? c.address : 'No'}
                                     </span>
                                 </td>
 
