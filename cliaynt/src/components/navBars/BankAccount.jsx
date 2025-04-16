@@ -154,7 +154,6 @@ function BankAccount() {
                                 <tr>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank</th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account Number</th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500  uppercase tracking-wider">Added On</th>
                                     <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500  uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
@@ -172,9 +171,6 @@ function BankAccount() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className="font-mono">{account.accountNumber}</span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 ">
-                                            {new Date(account.created_at).toLocaleDateString()}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right">
                                             <button
