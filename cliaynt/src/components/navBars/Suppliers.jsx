@@ -3,6 +3,7 @@ import api from '../../api';
 import { Edit, Trash2, Eye } from "lucide-react";
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import Swal from 'sweetalert2';
 
 
 function Suppliers() {
@@ -90,6 +91,38 @@ function Suppliers() {
     };
 
 
+    const handleDelete = async (id) => {
+        try {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            })
+
+                .then(async (result) => {
+                    if (result.isConfirmed) {
+                        const response = await api.put(`/admin/delete-supplier/${id}`)
+                        if (response.data.status) {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Your file has been deleted.",
+                                icon: "success"
+                            });
+                            
+                        }
+                    }
+                })
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow">
             <h2 className="text-xl font-bold text-gray-800 mb-4">Suppliers</h2>
@@ -158,7 +191,9 @@ function Suppliers() {
                                             <Edit size={20} />
                                         </button>
                                         <button className="p-2 text-red-600 rounded-lg">
-                                            <Trash2 size={20} />
+                                            <span onClick={e => handleDelete(supplier.id)}>
+                                                <Trash2 size={20} />
+                                            </span>
                                         </button>
                                         <button className="p-2 text-blue-600 rounded-l">
                                             <Eye size={20} />

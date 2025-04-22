@@ -6,6 +6,7 @@ import api from '../../api';
 function Payment() {
 
     const [payment, setPayment] = useState([])
+    const [isModalOpen  , setIsModalOpen] = useState(false)
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const getStatusBadgeColor = (status) => {
@@ -146,9 +147,9 @@ function Payment() {
                                 </td>
                                 <td>
                                     <div className="flex space-x-1">
-                                        <button className="p-2 text-blue-600 rounded-lg">
+                                        <span onClick={e => setIsModalOpen(true)} className="p-2 text-blue-600 rounded-lg cursor-pointer">
                                             <Eye size={20} />
-                                        </button>
+                                        </span>
                                     </div>
                                 </td>
                             </tr>
@@ -162,6 +163,18 @@ function Payment() {
                         )}
                     </tbody>
                 </table>
+
+                {isModalOpen && (
+                <div className="hidden md:flex h-auto fixed inset-0 bg-gray-600 bg-opacity-50 justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-lg w-1/2">
+                        <h2 className="text-xl font-bold mb-4">Payment Detail</h2>
+                        
+                        <button onClick={() => setIsModalOpen(false)} className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
 
                 <div className="flex justify-center items-center mt-6 space-x-2">
                     <button

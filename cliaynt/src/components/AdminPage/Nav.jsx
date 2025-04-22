@@ -24,7 +24,7 @@ function Nav() {
                                 <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><CreditCard /><Link to={'payment'} className='w-full pl-1'>Payments</Link></li>
                                 <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><MessageCircle /><Link to={'category'} className='w-full pl-1'>Category</Link></li>
                                 <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><AlertCircle /><Link to={'bank-account'} className='w-full pl-1'>Bank Account</Link></li>
-                                <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><MessageCircle /><Link className='w-full pl-1'>Messages & Complaints</Link></li>
+                                <li className='hover:bg-slate-700 hover:text-white w-full p-1 transition cursor-pointer rounded-md flex gap-2'><MessageCircle /><Link className='w-full pl-1'>Complaints</Link></li>
                             </ul>
                         </nav>
                     </div>

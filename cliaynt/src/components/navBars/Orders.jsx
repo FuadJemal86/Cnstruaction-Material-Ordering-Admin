@@ -4,6 +4,8 @@ import api from '../../api';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Edit, Trash2, Eye } from "lucide-react";
+import Swal from 'sweetalert2';
+
 
 function Orders({ orders = [] }) {
 
@@ -137,6 +139,38 @@ function Orders({ orders = [] }) {
 
     }
 
+
+    const handleDelete = async (id) => {
+        try {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            })
+
+                .then(async (result) => {
+                    if (result.isConfirmed) {
+                        const response = await api.delete(`/admin/delete-order/${id}`)
+                        if (response.data.status) {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Your file has been deleted.",
+                                icon: "success"
+                            });
+                            feacheOrder()
+                        }
+                    }
+                })
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
             <h2 className="text-xl font-bold text-gray-800 mb-4">Orders</h2>
@@ -170,6 +204,7 @@ function Orders({ orders = [] }) {
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Total Price</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Order Item</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -196,7 +231,6 @@ function Orders({ orders = [] }) {
                                         year: 'numeric'
                                     }).replace(' ', '.')}
                                 </td>
-
                                 <td className="p-3 text-sm text-gray-800 font-medium">birr {c.totalPrice}</td>
                                 <td className="p-3 text-sm">
                                     <select
@@ -216,7 +250,11 @@ function Orders({ orders = [] }) {
                                         <Eye />
                                     </span>
                                 </td>
-
+                                <td className="p-3 text-sm  text-red-600">
+                                    <span onClick={e => handleDelete(c.id)} className='cursor-pointer'>
+                                        <Trash2 />
+                                    </span>
+                                </td>
                             </tr>
                         ))}
                         {order.length == 0 && (
@@ -259,7 +297,7 @@ function Orders({ orders = [] }) {
             </div>
 
             {isModalOpen && (
-                <div className="hidden md:flex fixed inset-0 bg-gray-600 bg-opacity-50 justify-center items-center z-50">
+                <div className="hidden md:flex h-auto fixed inset-0 bg-gray-600 bg-opacity-50 justify-center items-center z-50">
                     <div className="bg-white p-6 rounded-lg w-1/2">
                         <h2 className="text-xl font-bold mb-4">Order Items for Order</h2>
                         <table className="w-full">

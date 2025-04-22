@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import api from '../../api';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { Trash2 } from 'lucide-react';
+import Swal from 'sweetalert2';
+
 
 
 function Customer() {
@@ -78,6 +81,37 @@ function Customer() {
         saveAs(data, "Customers.xlsx");
     };
 
+    const handleDelete = async (id) => {
+        try {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            })
+
+                .then(async (result) => {
+                    if (result.isConfirmed) {
+                        const response = await api.put(`/admin/delete-customer/${id}`)
+                        if (response.data.status) {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Your file has been deleted.",
+                                icon: "success"
+                            });
+
+                        }
+                    }
+                })
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
             <h2 className="text-xl font-bold text-gray-800 mb-4">Customers</h2>
@@ -107,6 +141,8 @@ function Customer() {
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -125,6 +161,11 @@ function Customer() {
                                         month: 'long',
                                         year: 'numeric'
                                     }).replace(' ', '.')}
+                                </td>
+                                <td>
+                                    <span className='text-red-600 cursor-pointer' onClick={e => handleDelete(c.id)}>
+                                        <Trash2 size={20} />
+                                    </span>
                                 </td>
                             </tr>
                         ))}
