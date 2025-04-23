@@ -297,8 +297,8 @@ function Orders({ orders = [] }) {
             </div>
 
             {isModalOpen && (
-                <div className="hidden md:flex h-auto fixed inset-0 bg-gray-600 bg-opacity-50 justify-center items-center z-50">
-                    <div className="bg-white p-6 rounded-lg w-1/2">
+                <div className="hidden md:flex h-auto fixed inset-0 bg-gray-600 bg-opacity-50 justify-center items-center z-50 p-4">
+                    <div className="bg-white p-6 rounded-lg w-1/2 flex flex-col h-1/3">
                         <h2 className="text-xl font-bold mb-4">Order Items for Order</h2>
                         <table className="w-full">
                             <thead>

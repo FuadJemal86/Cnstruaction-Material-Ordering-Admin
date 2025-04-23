@@ -118,7 +118,7 @@ function Payment() {
                         <tr>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Account</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Bank Transaction</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
@@ -135,7 +135,7 @@ function Payment() {
                             >
                                 <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
                                 <td className="p-3 text-sm text-gray-800">{c.customer.name}</td>
-                                <td className="p-3 text-sm text-gray-800">{c.amount} birr</td>
+                                <td className="p-3 text-sm text-gray-800">{c.totalPrice} birr</td>
                                 <td className="p-3 text-sm text-gray-800">{c.bank.bankName} {c.bank.account}</td>
                                 <td className="p-3 text-sm text-gray-800">{c.bankTransactionId}</td>
                                 <td className="p-3 text-sm text-gray-800">{c.customer.phone}</td>
@@ -178,46 +178,86 @@ function Payment() {
                 </table>
 
                 {isModalOpen && (
-                    <div className="hidden md:flex h-auto fixed inset-0 bg-gray-600 bg-opacity-50 justify-center items-center z-50">
-                        <div className="bg-white p-6 rounded-lg w-1/2">
-                            <h2 className="text-xl font-bold mb-4">Payment Detail</h2>
+                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50 p-4">
+                        <div className="bg-white rounded-lg shadow-lg w-96 md:w-3/4 lg:w-3/5 h-3/4 flex flex-col">
+                            {/* Header - Fixed */}
+                            <div className="p-4 border-b flex-shrink-0">
+                                <div className="flex justify-between items-center">
+                                    <h2 className="text-xl font-bold">Payment Detail #{detailPayment.paymentInfo?.id}</h2>
+                                    <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-gray-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
 
-                            <table className="w-full border-collapse">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
-                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer Name</th>
-                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer Phone</th>
-                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
-                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier Phone</th>
-                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Bank Account</th>
-                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Bank Transaction</th>
-                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {detailPayment.orderDetails?.map((order, index) => (
-                                        <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                                            <td className="p-3 text-sm text-indigo-600 font-medium">{detailPayment.paymentInfo?.id}</td>
-                                            <td className="p-3 text-sm text-gray-800">{order.customer.name}</td>
-                                            <td className="p-3 text-sm text-gray-800">{order.customer.phone}</td>
-                                            <td className="p-3 text-sm text-gray-800">{order.supplier.companyName}</td>
-                                            <td className="p-3 text-sm text-gray-800">{order.supplier.phone}</td>
-                                            <td className="p-3 text-sm text-gray-800">
-                                                {order.supplier.bank[0]?.bankName} {order.supplier.bank[0]?.account}
-                                            </td>
-                                            <td className="p-3 text-sm text-gray-800">{detailPayment.paymentInfo?.bankTransactionId}
-                                            </td>
-                                            <td className="p-3 text-sm text-gray-800">{order.totalPrice}</td>
-                                        </tr>
-                                    ))}
+                            {/* Content - Scrollable */}
+                            <div className="flex-grow overflow-auto">
+                                {/* Table */}
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead className="bg-gray-50 sticky top-0">
+                                            <tr>
+                                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
+                                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Bank Info</th>
+                                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Trans ID</th>
+                                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {detailPayment.orderDetails?.map((order, index) => (
+                                                <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                                                    <td className="p-3 text-sm">{detailPayment.paymentInfo?.id}</td>
+                                                    <td className="p-3 text-sm">{order.customer.name}</td>
+                                                    <td className="p-3 text-sm">{order.customer.phone}</td>
+                                                    <td className="p-3 text-sm">{order.supplier.companyName}</td>
+                                                    <td className="p-3 text-sm">
+                                                        {order.supplier.bank[0]?.bankName} {order.supplier.bank[0]?.account}
+                                                    </td>
+                                                    <td className="p-3 text-sm">{detailPayment.paymentInfo?.bankTransactionId}</td>
+                                                    <td className="p-3 text-sm font-medium">birr {order.totalPrice}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
 
-                                </tbody>
-                            </table>
+                                {/* Screenshot */}
+                                <div className="p-4 border-t">
+                                    <div className="mb-4">
+                                        <h3 className="text-lg font-medium mb-2">Payment Screenshot</h3>
+                                        <div className="bg-gray-100 p-2 rounded">
+                                            <img src={`http://localhost:3032/images/${detailPayment.paymentInfo.image}`}
+                                                alt="Payment Screenshot" className="w-full h-auto rounded" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <button onClick={() => setIsModalOpen(false)} className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                                Close
-                            </button>
+                            {/* Total - Fixed at bottom */}
+                            <div className="p-4 bg-gray-50 border-t flex-shrink-0">
+                                <div className="flex justify-end">
+                                    <div className="text-right">
+                                        <div className="flex justify-between mb-1">
+                                            <span className="font-medium mr-8">Total Amount:</span>
+                                            <span className="font-bold">
+                                                birr {detailPayment.orderDetails?.reduce((sum, order) => sum + parseFloat(order.totalPrice), 0).toFixed(2)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Footer - Fixed */}
+                            <div className="p-4 border-t flex justify-end flex-shrink-0">
+                                <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                                    Close
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
