@@ -6,7 +6,8 @@ import api from '../../api';
 function Payment() {
 
     const [payment, setPayment] = useState([])
-    const [isModalOpen  , setIsModalOpen] = useState(false)
+    const [detailPayment, setPaymentDetail] = useState([])
+    const [isModalOpen, setIsModalOpen] = useState(false)
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const getStatusBadgeColor = (status) => {
@@ -76,6 +77,22 @@ function Payment() {
         saveAs(data, "Customers.xlsx");
     };
 
+    const handleDetilPayment = async (transactionId) => {
+
+        try {
+            const result = await api.get(`/admin/get-detil-paymen/${transactionId}`)
+
+            if (result.data.status) {
+                setIsModalOpen(true)
+                setPaymentDetail(result.data.paymentDetail)
+            } else {
+                console.log(result.data.message)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
             <h2 className="text-xl font-bold text-gray-800 mb-4">Payment</h2>
@@ -105,8 +122,6 @@ function Payment() {
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Account</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Bank Transaction</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier Phone</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                             <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Detail</th>
@@ -124,8 +139,6 @@ function Payment() {
                                 <td className="p-3 text-sm text-gray-800">{c.bank.bankName} {c.bank.account}</td>
                                 <td className="p-3 text-sm text-gray-800">{c.bankTransactionId}</td>
                                 <td className="p-3 text-sm text-gray-800">{c.customer.phone}</td>
-                                <td className="p-3 text-sm text-gray-800">{c.supplier.companyName}</td>
-                                <td className="p-3 text-sm text-gray-800">{c.supplier.phone}</td>
                                 <td className="p-3 text-sm text-gray-500">
                                     {new Date(c.createdAt).toLocaleDateString('en-GB', {
                                         day: 'numeric',
@@ -147,7 +160,7 @@ function Payment() {
                                 </td>
                                 <td>
                                     <div className="flex space-x-1">
-                                        <span onClick={e => setIsModalOpen(true)} className="p-2 text-blue-600 rounded-lg cursor-pointer">
+                                        <span onClick={e => handleDetilPayment(c.transactionId)} className="p-2 text-blue-600 rounded-lg cursor-pointer">
                                             <Eye size={20} />
                                         </span>
                                     </div>
@@ -165,16 +178,49 @@ function Payment() {
                 </table>
 
                 {isModalOpen && (
-                <div className="hidden md:flex h-auto fixed inset-0 bg-gray-600 bg-opacity-50 justify-center items-center z-50">
-                    <div className="bg-white p-6 rounded-lg w-1/2">
-                        <h2 className="text-xl font-bold mb-4">Payment Detail</h2>
-                        
-                        <button onClick={() => setIsModalOpen(false)} className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                            Close
-                        </button>
+                    <div className="hidden md:flex h-auto fixed inset-0 bg-gray-600 bg-opacity-50 justify-center items-center z-50">
+                        <div className="bg-white p-6 rounded-lg w-1/2">
+                            <h2 className="text-xl font-bold mb-4">Payment Detail</h2>
+
+                            <table className="w-full border-collapse">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
+                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer Name</th>
+                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer Phone</th>
+                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
+                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier Phone</th>
+                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Bank Account</th>
+                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Bank Transaction</th>
+                                        <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {detailPayment.orderDetails?.map((order, index) => (
+                                        <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                                            <td className="p-3 text-sm text-indigo-600 font-medium">{detailPayment.paymentInfo?.id}</td>
+                                            <td className="p-3 text-sm text-gray-800">{order.customer.name}</td>
+                                            <td className="p-3 text-sm text-gray-800">{order.customer.phone}</td>
+                                            <td className="p-3 text-sm text-gray-800">{order.supplier.companyName}</td>
+                                            <td className="p-3 text-sm text-gray-800">{order.supplier.phone}</td>
+                                            <td className="p-3 text-sm text-gray-800">
+                                                {order.supplier.bank[0]?.bankName} {order.supplier.bank[0]?.account}
+                                            </td>
+                                            <td className="p-3 text-sm text-gray-800">{detailPayment.paymentInfo?.bankTransactionId}
+                                            </td>
+                                            <td className="p-3 text-sm text-gray-800">{order.totalPrice}</td>
+                                        </tr>
+                                    ))}
+
+                                </tbody>
+                            </table>
+
+                            <button onClick={() => setIsModalOpen(false)} className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                                Close
+                            </button>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
                 <div className="flex justify-center items-center mt-6 space-x-2">
                     <button
@@ -209,7 +255,7 @@ function Payment() {
 
             {/* Mobile View */}
             <div className="md:hidden space-y-3">
-            <div className="flex justify-end mb-4 gap-2">
+                <div className="flex justify-end mb-4 gap-2">
                     <button
                         onClick={handlePrint}
                         className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -267,7 +313,7 @@ function Payment() {
                     </div>
                 )}
 
-<div className="flex justify-center items-center mt-6 space-x-2">
+                <div className="flex justify-center items-center mt-6 space-x-2">
                     <button
                         disabled={page === 1}
                         onClick={() => fetchData(page - 1)}
@@ -295,7 +341,7 @@ function Payment() {
                         Next
                     </button>
                 </div>
-                
+
             </div>
         </div>
     )
