@@ -49,6 +49,7 @@ function Orders({ orders = [] }) {
         }
     }
 
+
     const handleStatus = async (newStatus, id) => {
         try {
             const result = await api.put(`/admin/update-order-status/${id}`, {
@@ -192,85 +193,87 @@ function Orders({ orders = [] }) {
                             📥 Excel
                         </button>
                     </div>
-                    <table className="w-full border-collapse">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer Phone</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier Phone</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Dilivery</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Total Price</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Order Item</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {order.map((c, index) => (
-                                <tr
-                                    key={c.id || index}
-                                    className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                                >
-                                    <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.customer.name}</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.customer.phone}</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.supplier.companyName}</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.supplier.phone}</td>
-                                    <td className="p-3 text-sm text-gray-800">
-                                        <span className={` ${c.address && c.address.length > 0}` ? 'bg-green-100 px-2 py-1 rounded-full text-green-800' : 'bg-red-100 px-2 py-1 rounded-full text-green-800'}>
-                                            {c.address && c.address.length > 0 ? c.address : 'No'}
-                                        </span>
-                                    </td>
-
-                                    <td className="p-3 text-sm text-gray-500">
-                                        {new Date(c.createdAt).toLocaleDateString('en-GB', {
-                                            day: 'numeric',
-                                            month: 'long',
-                                            year: 'numeric'
-                                        }).replace(' ', '.')}
-                                    </td>
-                                    <td className="p-3 text-sm text-gray-800 font-medium">birr {c.totalPrice}</td>
-                                    <td className="p-3 text-sm">
-                                        <select
-                                            value={c.status || "PROCESSING"}
-                                            onChange={e => handleStatus(e.target.value, c.id)}
-                                            className={`px-2 py-1 rounded-full text-xs font-medium outline-none} ${getStatusBadgeColor(c.status)}`}
-                                        >
-                                            <option value="PENDING">PENDING</option>
-                                            <option value="PROCESSING">PROCESSING</option>
-                                            <option value="SHIPPED">SHIPPED</option>
-                                            <option value="DELIVERED">DELIVERED</option>
-                                            <option value="CANCELLED">CANCELLED</option>
-                                        </select>
-                                    </td>
-                                    <td className="p-3 text-sm text-gray-800">
-                                        <span onClick={e => handleOpen(c.id)} className='text-blue-600 cursor-pointer'>
-                                            <Eye />
-                                        </span>
-                                    </td>
-                                    <td className="p-3 text-sm  text-red-600">
-                                        <span onClick={e => handleDelete(c.id)} className='cursor-pointer'>
-                                            <Trash2 />
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
-                            {order.length == 0 && (
+                    <div className='w-full overflow-x-auto'>
+                        <table className="min-w-[1200px] border-collapse">
+                            <thead className="bg-gray-100">
                                 <tr>
-                                    <td colSpan="6" className="p-4 text-center text-gray-500">
-                                        No orders found
-                                    </td>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer Phone</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier Phone</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Dilivery</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Total Price</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Order Item</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {order.map((c, index) => (
+                                    <tr
+                                        key={c.id || index}
+                                        className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}
+                                    >
+                                        <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
+                                        <td className="p-3 text-sm text-gray-800">{c.customer.name}</td>
+                                        <td className="p-3 text-sm text-gray-800">{c.customer.phone}</td>
+                                        <td className="p-3 text-sm text-gray-800">{c.supplier.companyName}</td>
+                                        <td className="p-3 text-sm text-gray-800">{c.supplier.phone}</td>
+                                        <td className="p-3 text-sm text-gray-800">
+                                            <span className={` ${c.address && c.address.length > 0}` ? 'bg-green-100 px-2 py-1 rounded-full text-green-800' : 'bg-red-100 px-2 py-1 rounded-full text-green-800'}>
+                                                {c.address && c.address.length > 0 ? c.address : 'No'}
+                                            </span>
+                                        </td>
+
+                                        <td className="p-3 text-sm text-gray-500">
+                                            {new Date(c.createdAt).toLocaleDateString('en-GB', {
+                                                day: 'numeric',
+                                                month: 'long',
+                                                year: 'numeric'
+                                            }).replace(' ', '.')}
+                                        </td>
+                                        <td className="p-3 text-sm text-gray-800 font-medium">birr {c.totalPrice}</td>
+                                        <td className="p-3 text-sm">
+                                            <select
+                                                value={c.status || "PROCESSING"}
+                                                onChange={e => handleStatus(e.target.value, c.id)}
+                                                className={`px-2 py-1 rounded-full text-xs font-medium outline-none} ${getStatusBadgeColor(c.status)}`}
+                                            >
+                                                <option value="PENDING">PENDING</option>
+                                                <option value="PROCESSING">PROCESSING</option>
+                                                <option value="SHIPPED">SHIPPED</option>
+                                                <option value="DELIVERED">DELIVERED</option>
+                                                <option value="CANCELLED">CANCELLED</option>
+                                            </select>
+                                        </td>
+                                        <td className="p-3 text-sm text-gray-800">
+                                            <span onClick={e => handleOpen(c.id)} className='text-blue-600 cursor-pointer'>
+                                                <Eye />
+                                            </span>
+                                        </td>
+                                        <td className="p-3 text-sm  text-red-600">
+                                            <span onClick={e => handleDelete(c.id)} className='cursor-pointer'>
+                                                <Trash2 />
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {order.length == 0 && (
+                                    <tr>
+                                        <td colSpan="6" className="p-4 text-center text-gray-500">
+                                            No orders found
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                     <div className="flex justify-center items-center mt-6 space-x-2">
                         <button
                             disabled={page === 1}
-                            onClick={() => fetchData(page - 1)}
+                            onClick={() => pageController(page - 1)}
                             className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
                         >
                             Prev
@@ -289,7 +292,7 @@ function Orders({ orders = [] }) {
 
                         <button
                             disabled={page === totalPages}
-                            onClick={() => fetchData(page + 1)}
+                            onClick={() => pageController(page + 1)}
                             className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
                         >
                             Next
