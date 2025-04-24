@@ -32,7 +32,7 @@ function Orders({ orders = [] }) {
     useEffect(() => {
 
         feacheOrder()
-    }, [])
+    }, [page])
 
     const feacheOrder = async () => {
         try {
@@ -194,7 +194,7 @@ function Orders({ orders = [] }) {
                         </button>
                     </div>
                     <div className='w-full overflow-x-auto'>
-                        <table className="min-w-[1200px] border-collapse">
+                        <table className="min-w-[1185px] border-collapse">
                             <thead className="bg-gray-100">
                                 <tr>
                                     <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
@@ -214,7 +214,7 @@ function Orders({ orders = [] }) {
                                 {order.map((c, index) => (
                                     <tr
                                         key={c.id || index}
-                                        className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}
+                                        className={index % 2 === 0 ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-100"}
                                     >
                                         <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
                                         <td className="p-3 text-sm text-gray-800">{c.customer.name}</td>
@@ -273,7 +273,7 @@ function Orders({ orders = [] }) {
                     <div className="flex justify-center items-center mt-6 space-x-2">
                         <button
                             disabled={page === 1}
-                            onClick={() => pageController(page - 1)}
+                            onClick={() => setPage(page - 1)}
                             className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
                         >
                             Prev
@@ -282,7 +282,7 @@ function Orders({ orders = [] }) {
                         {Array.from({ length: totalPages }, (_, index) => index + 1).map(num => (
                             <button
                                 key={num}
-                                onClick={() => fetchData(num)}
+                                onClick={() => setPage(num)}
                                 className={`px-3 py-1 border rounded ${num === page ? 'bg-indigo-500 text-white' : 'bg-white text-gray-700'
                                     } hover:bg-indigo-100`}
                             >
@@ -292,7 +292,7 @@ function Orders({ orders = [] }) {
 
                         <button
                             disabled={page === totalPages}
-                            onClick={() => pageController(page + 1)}
+                            onClick={() => setPage(page + 1)}
                             className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
                         >
                             Next

@@ -23,7 +23,7 @@ function Suppliers() {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [page]);
 
     const fetchData = async () => {
         try {
@@ -145,7 +145,7 @@ function Suppliers() {
                 </div>
                 <div className='w-full overflow-x-auto'>
                     <table className="w-full min-w-[1200px] border-collapse">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-gray-100">
                             <tr>
                                 <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
                                 <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
@@ -160,7 +160,7 @@ function Suppliers() {
                         </thead>
                         <tbody>
                             {suppliers.map((supplier, index) => (
-                                <tr key={supplier.id || index} className={index % 2 === 0 ? "bg-white hover:bg-gray-100" : "bg-gray-50 hover:bg-gray-100"}>
+                                <tr key={supplier.id || index} className={index % 2 === 0 ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-100"}>
                                     <td className="p-3 text-sm text-indigo-600 font-medium ">{supplier.id}</td>
                                     <td className="p-3 text-sm text-gray-800">{supplier.companyName}</td>
                                     <td className="p-3 text-sm text-gray-800">{supplier.email}</td>
@@ -214,7 +214,7 @@ function Suppliers() {
                 <div className="flex justify-center items-center mt-6 space-x-2">
                     <button
                         disabled={page === 1}
-                        onClick={() => fetchData(page - 1)}
+                        onClick={() => setPage(page - 1)}
                         className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
                     >
                         Prev
@@ -223,7 +223,7 @@ function Suppliers() {
                     {Array.from({ length: totalPages }, (_, index) => index + 1).map(num => (
                         <button
                             key={num}
-                            onClick={() => fetchData(num)}
+                            onClick={() => setPage(num)}
                             className={`px-3 py-1 border rounded ${num === page ? 'bg-indigo-500 text-white' : 'bg-white text-gray-700'
                                 } hover:bg-indigo-100`}
                         >
@@ -233,7 +233,7 @@ function Suppliers() {
 
                     <button
                         disabled={page === totalPages}
-                        onClick={() => fetchData(page + 1)}
+                        onClick={() => setPage(page + 1)}
                         className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
                     >
                         Next

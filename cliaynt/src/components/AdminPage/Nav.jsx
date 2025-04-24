@@ -43,13 +43,6 @@ function Nav() {
 
     return (
         <div className="flex flex-col h-screen lg:flex-row min-h-screen bg-gray-50">
-            {/* Mobile overlay */}
-            {mobileOpen && (
-                <div
-                    className="fixed inset-0 z-20 lg:hidden"
-                    onClick={toggleMobileSidebar}
-                />
-            )}
 
             {/* Sidebar */}
             <aside className={`
@@ -101,6 +94,13 @@ function Nav() {
                     </ul>
                 </nav>
             </aside>
+
+            {mobileOpen && (
+                <div
+                    className="fixed inset-0 z-20 lg:hidden"
+                    onClick={toggleMobileSidebar}
+                />
+            )}
 
             {/* Main content */}
             <div className="flex-1 flex flex-col">

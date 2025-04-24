@@ -16,15 +16,19 @@ function Category() {
 
 
     const [category, setCategory] = useState([])
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
 
         const feachData = async () => {
             try {
-                const result = await api.get('/admin/get-category')
+                const result = await api.get(`/admin/get-category/?page=${page} && limit=10`)
 
                 if (result.data.status) {
                     setCategory(result.data.result)
+                    setTotalPages(result.data.totalPages);
+                    setPage(result.data.currentPage);
                 } else {
                     console.log(result.data.message)
                 }
@@ -34,74 +38,79 @@ function Category() {
         }
 
         feachData()
-    }, [])
+    }, [page])
 
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Suppliers</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Category</h2>
 
             {/* Desktop View */}
-            <div className="hidden md:block overflow-x-auto">
+            <div className=" overflow-x-auto">
                 <div className='flex justify-end m-1'>
                     <Link to={'/admin-page/add-category'} className='bg-sky-900 py-2 px-2 rounded-lg text-yellow-50'>
-                    Add Category
+                        Add Category
                     </Link>
                 </div>
-                <table className="w-full border-collapse">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                            <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {category.map((supplier, index) => (
-                            <tr key={supplier.id || index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                                <td className="p-3 text-sm text-indigo-600 font-medium">{supplier.id}</td>
-                                <td className="p-3 text-sm text-gray-800">{supplier.category}</td>
-
-                                <td>
-                                    <div className="flex space-x-1">
-                                        <button className="p-2 text-red-600 rounded-lg">
-                                            <Trash2 size={20} />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                        {category.length === 0 && (
+                <div className='w-full overflow-x-auto'>
+                    <table className="w-full border-collapse min-w-[1185]">
+                        <thead className="bg-gray-100">
                             <tr>
-                                <td colSpan="8" className="p-4 text-center text-gray-500">No category found</td>
+                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
+                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {category.map((supplier, index) => (
+                                <tr key={supplier.id || index} className={index % 2 === 0 ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-100"}>
+                                    <td className="p-3 text-sm text-indigo-600 font-medium">{supplier.id}</td>
+                                    <td className="p-3 text-sm text-gray-800">{supplier.category}</td>
 
-            {/* Mobile View */}
-            <div className="md:hidden space-y-3">
-                {category.map((supplier, index) => (
-                    <div key={supplier.id || index} className="border rounded-lg overflow-hidden">
-                        <div className="p-3 border-b bg-gray-50 flex justify-between">
-                            <span className="font-medium text-indigo-600">{supplier.id}</span>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(supplier.isApproved ? "Approved" : "Prosses")}`}>
-                                {supplier.isApproved ? "Approved" : "Prosses"}
-                            </span>
-                        </div>
-                        <div className="p-3">
-                            <div className="grid grid-cols-3 gap-1 mb-2">
-                                <span className="text-xs text-gray-500">Company:</span>
-                                <span className="text-sm col-span-2">{supplier.category}</span>
-                            </div>
-                        </div>
-                    </div>
+                                    <td>
+                                        <div className="flex space-x-1">
+                                            <button className="p-2 text-red-600 rounded-lg">
+                                                <Trash2 size={20} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                            {category.length === 0 && (
+                                <tr>
+                                    <td colSpan="8" className="p-4 text-center text-gray-500">No category found</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div className="flex justify-center items-center mt-6 space-x-2">
+                <button
+                    disabled={page === 1}
+                    onClick={() => setPage(page - 1)}
+                    className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
+                >
+                    Prev
+                </button>
+
+                {Array.from({ length: totalPages }, (_, index) => index + 1).map(num => (
+                    <button
+                        key={num}
+                        onClick={() => setPage(num)}
+                        className={`px-3 py-1 border rounded ${num === page ? 'bg-indigo-500 text-white' : 'bg-white text-gray-700'
+                            } hover:bg-indigo-100`}
+                    >
+                        {num}
+                    </button>
                 ))}
-                {category.length === 0 && (
-                    <div className="text-center p-4 border rounded-lg text-gray-500">
-                        No category found
-                    </div>
-                )}
+
+                <button
+                    disabled={page === totalPages}
+                    onClick={() => setPage(page + 1)}
+                    className="px-3 py-1 border rounded bg-white text-gray-700 hover:bg-indigo-100 disabled:opacity-50"
+                >
+                    Next
+                </button>
             </div>
         </div>
     )
