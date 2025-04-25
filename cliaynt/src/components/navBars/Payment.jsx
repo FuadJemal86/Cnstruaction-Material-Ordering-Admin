@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Edit, Trash2, Eye, Printer, FileSpreadsheet } from "lucide-react";
 import api from '../../api';
+import toast from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast'
+
 
 
 function Payment() {
@@ -10,6 +13,9 @@ function Payment() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [statusState, setStatusState] = useState({
+        status: ''
+    })
     const getStatusBadgeColor = (status) => {
         const statusColors = {
             COMPLETED: "bg-green-100 text-green-800",
@@ -93,8 +99,28 @@ function Payment() {
         }
     }
 
+    const handleStatus = async (newStatus, id) => {
+        try {
+            const result = await api.put(`/admin/update-payment-status/${id}`, {
+                ...statusState,
+                status: newStatus
+            });
+            if (result.data.status) {
+                setStatusState({ status: newStatus });
+                toast.success(result.data.message);
+                fetchData();
+            } else {
+                console.log(result.data.message);
+            }
+        } catch (err) {
+            console.log(err);
+            toast.error(err.response.data.message);
+        }
+    };
+
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
+            <Toaster position="top-center" reverseOrder={false} />
             <h2 className="text-xl font-bold text-gray-800 mb-4">Payment</h2>
 
             {/* Desktop View */}
