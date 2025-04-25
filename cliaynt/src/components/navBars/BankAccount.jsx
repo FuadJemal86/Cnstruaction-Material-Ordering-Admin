@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Trash2 } from 'lucide-react';
 import api from '../../api';
 import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
+
 
 function BankAccount() {
     const [banks] = useState(['CBE', 'ABBCINYA', 'HBRET', 'OROMIYA']);
@@ -12,23 +14,24 @@ function BankAccount() {
 
     // Fetch existing bank accounts
     useEffect(() => {
-        const fetchBankAccounts = async () => {
-            try {
-                setIsLoading(true);
-                const response = await api.get('/admin/bank-accounts');
-                if (response.data.status) {
-                    setBankAccounts(response.data.accounts);
-                }
-            } catch (error) {
-                console.error('Error fetching bank accounts:', error);
-                toast.error('Failed to load bank accounts');
-            } finally {
-                setIsLoading(false);
-            }
-        };
 
         fetchBankAccounts();
     }, []);
+
+    const fetchBankAccounts = async () => {
+        try {
+            setIsLoading(true);
+            const response = await api.get('/admin/bank-accounts');
+            if (response.data.status) {
+                setBankAccounts(response.data.accounts);
+            }
+        } catch (error) {
+            console.error('Error fetching bank accounts:', error);
+            toast.error('Failed to load bank accounts');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     // Handle form submission
     const handleSubmit = async (e) => {
@@ -48,9 +51,7 @@ function BankAccount() {
 
             if (response.data.status) {
                 toast.success('Bank account added successfully');
-                // Add new account to the list
                 setBankAccounts([...bankAccounts, response.data.account]);
-                // Reset form
                 setAccountNumber('');
             } else {
                 toast.error(response.data.message || 'Failed to add bank account');
@@ -63,26 +64,39 @@ function BankAccount() {
         }
     };
 
-    // Handle account deletion
-    const handleDeleteAccount = async (accountId) => {
-        try {
-            setIsLoading(true);
-            const response = await api.delete(`/customer/bank-accounts/${accountId}`);
+    // delete bank account
 
-            if (response.data.status) {
-                toast.success('Bank account removed successfully');
-                // Remove account from the list
-                setBankAccounts(bankAccounts.filter(account => account.id !== accountId));
-            } else {
-                toast.error(response.data.message || 'Failed to remove bank account');
-            }
-        } catch (error) {
-            console.error('Error removing bank account:', error);
-            toast.error('Failed to remove bank account');
-        } finally {
-            setIsLoading(false);
+    const handleDelete = async (id) => {
+        try {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            })
+
+                .then(async (result) => {
+                    if (result.isConfirmed) {
+                        const response = await api.delete(`/admin/delete-bank-account/${id}`)
+                        if (response.data.status) {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Your file has been deleted.",
+                                icon: "success"
+                            });
+                            fetchBankAccounts()
+                        }
+                    }
+                })
+
+        } catch (err) {
+            console.log(err)
         }
-    };
+    }
+
     return (
         <div className="bg-white  rounded-lg shadow p-6">
             <h2 className="text-xl font-semibold mb-6">Bank Accounts</h2>
@@ -162,8 +176,8 @@ function BankAccount() {
                                     <tr key={account.id} className="hover:bg-gray-50 ">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
-                                                <div className="h-8 w-8 bg-yellow-100  rounded-full flex items-center justify-center mr-3">
-                                                    <span className="text-yellow-800  font-medium text-sm">
+                                                <div className=" bg-yellow-100  flex items-center justify-center mr-3">
+                                                    <span className="text-yellow-800 px-2 py-1  font-medium text-sm">
                                                         {account.name}
                                                     </span>
                                                 </div>
@@ -174,7 +188,7 @@ function BankAccount() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right">
                                             <button
-                                                onClick={() => handleDeleteAccount(account.id)}
+                                                onClick={() => handleDelete(account.id)}
                                                 className="text-red-500 hover:text-red-700 transition-colors"
                                                 aria-label="Delete account"
                                             >

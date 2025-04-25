@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Trash2 } from "lucide-react";
 import api from '../../api';
+import Swal from 'sweetalert2';
+
 
 
 function Category() {
@@ -40,6 +42,37 @@ function Category() {
         feachData()
     }, [page])
 
+    const handleDelete = async (id) => {
+        try {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            })
+
+                .then(async (result) => {
+                    if (result.isConfirmed) {
+                        const response = await api.delete(`/admin/delete-category/${id}`)
+                        if (response.data.status) {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Your file has been deleted.",
+                                icon: "success"
+                            });
+                            feacheOrder()
+                        }
+                    }
+                })
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow">
             <h2 className="text-xl font-bold text-gray-800 mb-4">Category</h2>
@@ -68,9 +101,9 @@ function Category() {
 
                                     <td>
                                         <div className="flex space-x-1">
-                                            <button className="p-2 text-red-600 rounded-lg">
+                                            <span onClick={() => handleDelete(supplier.id)} className="p-2 text-red-600 rounded-lg cursor-pointer">
                                                 <Trash2 size={20} />
-                                            </button>
+                                            </span>
                                         </div>
                                     </td>
                                 </tr>

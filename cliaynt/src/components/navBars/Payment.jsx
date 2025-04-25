@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Edit, Trash2, Eye } from "lucide-react";
+import { Edit, Trash2, Eye, Printer, FileSpreadsheet } from "lucide-react";
 import api from '../../api';
 
 
@@ -104,13 +104,13 @@ function Payment() {
                         onClick={handlePrint}
                         className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
                     >
-                        🖨️ Print
+                        <Printer />
                     </button>
                     <button
                         onClick={exportToExcel}
                         className="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700"
                     >
-                        📥 Excel
+                        <FileSpreadsheet />
                     </button>
                 </div>
                 <div className='w-full overflow-x-auto'>
