@@ -3,7 +3,8 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import {
     Menu,
     ChevronLeft,
-    LayoutDashboard,  // <-- correct name
+    ChevronRight,
+    LayoutDashboard,
     Package,
     ShoppingCart,
     Users,
@@ -33,13 +34,41 @@ function Nav() {
     const menuItems = [
         { icon: <LayoutDashboard size={20} />, title: 'Overview', path: '/' },
         { icon: <Package size={20} />, title: 'Orders', path: '/admin-page/order' },
-        { icon: <ShoppingCart size={20} />, title: 'Suppliers', path: '/admin-page/supplier' },
-        { icon: <Users size={20} />, title: 'Customers', path: '/admin-page/customer' },
+        {
+            icon: <ShoppingCart size={20} />,
+            Chevron: <ChevronRight size={20} />,
+            title: 'Suppliers',
+            path: '/admin-page/supplier',
+            subMenu: [
+                { title: 'Online Suppliers', path: '/admin-page/supplier/online' },
+                { title: 'Removed Suppliers', path: '/admin-page/supplier/removed' }
+            ]
+        },
+        {
+            icon: <Users size={20} />,
+            Chevron: <ChevronRight size={20} />,
+            title: 'Customers',
+            path: '/admin-page/customer',
+            subMenu: [
+                { title: 'Removed Customer', path: '/admin-page/supplier/removed' }
+            ]
+        },
         { icon: <CreditCard size={20} />, title: 'Payments', path: '/admin-page/payment' },
         { icon: <Tag size={20} />, title: 'Categories', path: '/admin-page/category' },
         { icon: <Building2 size={20} />, title: 'Bank Account', path: '/admin-page/bank-account' },
         { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/admin-page/complaints' },
     ];
+
+    const [openSubMenus, setOpenSubMenus] = useState({});
+
+    const toggleSubMenu = (title) => {
+        setOpenSubMenus(prev => ({
+            ...prev,
+            [title]: !prev[title]
+        }));
+    };
+
+
 
     return (
         <div className="flex flex-col h-screen lg:flex-row min-h-screen bg-gray-50">
@@ -74,20 +103,52 @@ function Nav() {
                     <ul className="space-y-1 px-3">
                         {menuItems.map((item) => {
                             const isActive = location.pathname === item.path;
+                            const isSubMenuOpen = openSubMenus[item.title];
+
                             return (
-                                <li key={item.path}>
+                                <li key={item.path} className="w-full">
+
                                     <Link
                                         to={item.path}
                                         className={`
-                                            flex items-center py-3 px-3 rounded-lg transition-colors
-                                            ${isActive
-                                                ? 'bg-blue-600 text-white'
-                                                : 'text-gray-300 hover:bg-gray-800 hover:text-white'}
-                                        `}
+                                        flex items-center justify-between py-3 px-3 rounded-lg transition-colors
+                                        ${isActive ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}
+                                    `}
                                     >
-                                        <span className="inline-flex">{item.icon}</span>
-                                        {!collapsed && <span className="ml-3 font-medium">{item.title}</span>}
+                                        <div className="flex items-center">
+                                            <span className="inline-flex">{item.icon}</span>
+                                            {!collapsed && <span className="ml-3 font-medium">{item.title}</span>}
+                                        </div>
+
+                                        {/* Arrow Icon */}
+                                        {!collapsed && item.Chevron && (
+                                            <span className={`ml-auto transform transition-transform ${isSubMenuOpen ? 'rotate-90' : ''}`} onClick={item.subMenu ? () => toggleSubMenu(item.title) : undefined} >
+                                                {item.Chevron}
+                                            </span>
+                                        )}
                                     </Link>
+
+                                    {/* If item has subMenu */}
+                                    {item.subMenu && !collapsed && (
+                                        <ul className={`ml-8 mt-1 space-y-1 ${!isSubMenuOpen ? 'hidden' : ''}`}>
+                                            {item.subMenu.map((subItem) => {
+                                                const isSubActive = location.pathname === subItem.path;
+                                                return (
+                                                    <li key={subItem.path}>
+                                                        <Link
+                                                            to={subItem.path}
+                                                            className={`
+                                                                    block py-2 px-3 rounded-lg text-sm transition-colors
+                                                                ${isSubActive ? 'bg-blue-500 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}
+                                                                `}
+                                                        >
+                                                            {subItem.title}
+                                                        </Link>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    )}
                                 </li>
                             );
                         })}
