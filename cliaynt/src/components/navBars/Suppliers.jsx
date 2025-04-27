@@ -4,6 +4,7 @@ import { Edit, Trash2, Eye, Printer, FileSpreadsheet } from "lucide-react";
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import Swal from 'sweetalert2';
+import toast from 'react-hot-toast';
 
 
 function Suppliers() {
@@ -11,6 +12,7 @@ function Suppliers() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [suppliers, setSuppliers] = useState([]);
+    const [supplierData, setSupplierData] = useState([])
 
     const getStatusBadgeColor = (status) => {
         const statusColors = {
@@ -52,6 +54,39 @@ function Suppliers() {
             }
         } catch (error) {
             console.error("Error updating status:", error);
+        }
+    };
+
+    // Add these state variables at the top of your component
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedSupplier, setSelectedSupplier] = useState(null);
+
+    const handleViewDetails = (supplierId) => {
+        const supplier = suppliers.find(s => s.id === supplierId);
+        if (supplier) {
+            setSelectedSupplier(supplier);
+            setIsModalOpen(true);
+            fecthDetailData(supplierId)
+        }
+
+    };
+
+    const handleApprove = (supplierId) => {
+        handleStatusChange(supplierId, "Approved");
+        setIsModalOpen(false);
+    };
+
+    const handleResubmit = async (supplierId) => {
+        try {
+            const resubmit = await api.post(`/admin/resubmit/${supplierId}`)
+
+            if (resubmit.data.status) {
+                toast.success(resubmit.data.message)
+            } else {
+                console.log(resubmit.data.message)
+            }
+        } catch (err) {
+            console.log(err)
         }
     };
 
@@ -121,6 +156,30 @@ function Suppliers() {
             console.log(err)
         }
     }
+
+    const fecthDetailData = async (supplierId) => {
+        try {
+            const result = await api.get(`/supplier/supplier-data/${supplierId}`)
+            if (result.data.status) {
+                setSupplierData(result.data.supplierData)
+            } else {
+                console.log(result.data.message)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const [zoomedImage, setZoomedImage] = useState(null);
+
+    const handleImageClick = (imgSrc) => {
+        setZoomedImage(imgSrc);
+    };
+
+    const handleCloseZoom = () => {
+        setZoomedImage(null);
+    };
+
 
 
     return (
@@ -196,7 +255,7 @@ function Suppliers() {
                                                     <Trash2 size={20} />
                                                 </span>
                                             </button>
-                                            <button className="p-2 text-blue-600 rounded-l">
+                                            <button className="p-2 text-blue-600 rounded-l" onClick={() => handleViewDetails(supplier.id)}>
                                                 <Eye size={20} />
                                             </button>
                                         </div>
@@ -240,6 +299,115 @@ function Suppliers() {
                     </button>
                 </div>
             </div>
+            {isModalOpen && selectedSupplier && (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl h-3/4 flex flex-col">
+                        {/* Modal Header */}
+                        <div className="p-4 border-b flex justify-between items-center">
+                            <h3 className="text-lg font-semibold text-gray-900">
+                                Supplier Details - {selectedSupplier.companyName}
+                            </h3>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="text-gray-500 hover:text-gray-700"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {/* Modal Content - Scrollable */}
+                        <div className="flex-grow overflow-y-auto p-4">
+                            <div className="space-y-6">
+                                {/* Company Profile Image */}
+                                {/* Company Profile Image */}
+                                <div>
+                                    <h4 className="text-sm font-medium text-gray-700 mb-2">Company Profile Image</h4>
+                                    <div className="bg-gray-100 p-2 rounded">
+                                        <img
+                                            src={`http://localhost:3032/images/${supplierData.userImage}`}
+                                            alt="Company Profile"
+                                            className="w-full h-64 object-contain rounded border cursor-pointer"
+                                            onClick={() => handleImageClick(`http://localhost:3032/images/${supplierData.userImage}`)}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* License File */}
+                                <div>
+                                    <h4 className="text-sm font-medium text-gray-700 mb-2">License Document</h4>
+                                    <div className="bg-gray-100 p-2 rounded">
+                                        <img
+                                            src={`http://localhost:3032/images/${supplierData.userImage}`}
+                                            alt="License Document"
+                                            className="w-full h-64 object-contain rounded border cursor-pointer"
+                                            onClick={() => handleImageClick(`http://localhost:3032/images/${supplierData.userImage}`)}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Zoomed Image Overlay */}
+                                {zoomedImage && (
+                                    <div
+                                        className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+                                        onClick={handleCloseZoom}
+                                    >
+                                        <img src={zoomedImage} alt="Zoomed" className="max-w-4xl max-h-full rounded shadow-lg" />
+                                    </div>
+                                )}
+
+                                {/* Additional Info */}
+                                <div className="bg-gray-50 p-4 rounded border">
+                                    <h4 className="text-sm font-medium text-gray-700 mb-2">Additional Information</h4>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <p className="text-xs text-gray-500">TIN Number</p>
+                                            <p className="text-sm">{selectedSupplier.tinNumber}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">License Number</p>
+                                            <p className="text-sm">{selectedSupplier.licenseNumber}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">Email</p>
+                                            <p className="text-sm">{selectedSupplier.email}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">Status</p>
+                                            <p className={`text-sm font-medium ${selectedSupplier.isApproved ? 'text-green-600' : 'text-yellow-600'}`}>
+                                                {selectedSupplier.isApproved ? 'Approved' : 'Process'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="p-4 border-t flex justify-end space-x-3">
+                            <button
+                                onClick={() => handleResubmit(selectedSupplier.id)}
+                                className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                            >
+                                Request Resubmit
+                            </button>
+                            <button
+                                onClick={() => handleApprove(selectedSupplier.id)}
+                                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                            >
+                                Approve
+                            </button>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
