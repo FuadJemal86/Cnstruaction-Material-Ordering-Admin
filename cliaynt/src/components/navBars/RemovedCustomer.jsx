@@ -1,32 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import api from '../../api';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Edit, Trash2, Eye, Printer, FileSpreadsheet } from "lucide-react";
 import Swal from 'sweetalert2';
 
-
-
-
-function Customer() {
-
-
+function RemovedCustomer() {
 
     const [customer, setCustomer] = useState([])
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-
-    const getStatusBadgeColor = (status) => {
-        const statusColors = {
-            COMPLETED: "bg-green-100 text-green-800",
-            PROCESSING: "bg-blue-100 text-blue-800",
-            PENDING: "bg-yellow-100 text-yellow-800",
-            FAILED: "bg-red-100 text-red-800"
-        };
-
-        return statusColors[status] || "bg-gray-100 text-gray-800";
-    }
-
 
     useEffect(() => {
         fetchData();
@@ -52,19 +35,19 @@ function Customer() {
         const printContent = document.getElementById("customer-table");
         const WindowPrt = window.open('', '', 'width=900,height=650');
         WindowPrt.document.write(`
-        <html>
-            <head>
-                <title>Customer</title>
-                <style>
-                    body { font-family: Arial; padding: 20px; }
-                    table { width: 100%; border-collapse: collapse; }
-                    th, td { padding: 8px; border: 1px solid #ccc; }
-                    th { background: #f0f0f0; }
-                </style>
-            </head>
-            <body>${printContent.innerHTML}</body>
-        </html>
-    `);
+            <html>
+                <head>
+                    <title>Customer</title>
+                    <style>
+                        body { font-family: Arial; padding: 20px; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { padding: 8px; border: 1px solid #ccc; }
+                        th { background: #f0f0f0; }
+                    </style>
+                </head>
+                <body>${printContent.innerHTML}</body>
+            </html>
+        `);
         WindowPrt.document.close();
         WindowPrt.focus();
         WindowPrt.print();
@@ -82,36 +65,6 @@ function Customer() {
         saveAs(data, "Customers.xlsx");
     };
 
-    const handleDelete = async (id) => {
-        try {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
-            })
-
-                .then(async (result) => {
-                    if (result.isConfirmed) {
-                        const response = await api.put(`/admin/delete-customer/${id}`)
-                        if (response.data.status) {
-                            Swal.fire({
-                                title: "Deleted!",
-                                text: "Your file has been deleted.",
-                                icon: "success"
-                            });
-
-                        }
-                    }
-                })
-
-        } catch (err) {
-            console.log(err)
-        }
-    }
 
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
@@ -150,13 +103,12 @@ function Customer() {
                         <tbody>
                             {customer.map((c, index) => (
                                 <tr
-                                    key={c.id || index}
                                     className={index % 2 === 0 ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-100"}
                                 >
-                                    <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.name}</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.email}</td>
-                                    <td className="p-3 text-sm text-gray-500">{c.phone}</td>
+                                    <td className="p-3 text-sm text-indigo-600 font-medium">{'c.id'}</td>
+                                    <td className="p-3 text-sm text-gray-800">{'c.name'}</td>
+                                    <td className="p-3 text-sm text-gray-800">{'c.email'}</td>
+                                    <td className="p-3 text-sm text-gray-500">{'c.phone'}</td>
                                     <td className="p-3 text-sm text-gray-500">
                                         {new Date(c.createdAt).toLocaleDateString('en-GB', {
                                             day: 'numeric',
@@ -165,7 +117,7 @@ function Customer() {
                                         }).replace(' ', '.')}
                                     </td>
                                     <td>
-                                        <span className='text-red-600 cursor-pointer' onClick={e => handleDelete(c.id)}>
+                                        <span className='text-red-600 cursor-pointer' >
                                             <Trash2 size={20} />
                                         </span>
                                     </td>
@@ -214,4 +166,4 @@ function Customer() {
     )
 }
 
-export default Customer
+export default RemovedCustomer

@@ -8,10 +8,8 @@ import Customer from './components/navBars/Customer';
 import Payment from './components/navBars/Payment';
 import Category from './components/navBars/Category';
 import AddCategory from './components/navBars/AddCategory';
-import Zone from './components/navBars/Zone';
-import AddZones from './components/navBars/AddZones';
 import BankAccount from './components/navBars/BankAccount';
-
+import OnlineSupplier from './components/navBars/OnlineSupplier';
 
 function App() {
     return (
@@ -26,9 +24,8 @@ function App() {
                     <Route path='payment' element={<Payment />} />
                     <Route path='category' element={<Category />} />
                     <Route path='add-category' element={<AddCategory />} />
-                    <Route path='zone' element={<Zone />} />
-                    <Route path='add-zone' element={<AddZones />} />
                     <Route path='bank-account' element={<BankAccount />} />
+                    <Route path='online-suppliers' element={<OnlineSupplier />} />
                 </Route>
             </Routes>
         </Router>

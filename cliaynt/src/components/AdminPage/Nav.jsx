@@ -40,7 +40,7 @@ function Nav() {
             title: 'Suppliers',
             path: '/admin-page/supplier',
             subMenu: [
-                { title: 'Online Suppliers', path: '/admin-page/supplier/online' },
+                { title: 'Online Suppliers', path: '/admin-page/online-suppliers' },
                 { title: 'Removed Suppliers', path: '/admin-page/supplier/removed' }
             ]
         },
@@ -50,7 +50,7 @@ function Nav() {
             title: 'Customers',
             path: '/admin-page/customer',
             subMenu: [
-                { title: 'Removed Customer', path: '/admin-page/supplier/removed' }
+                { title: 'Removed Customer', path: '/admin-page/removed-customer' }
             ]
         },
         { icon: <CreditCard size={20} />, title: 'Payments', path: '/admin-page/payment' },
