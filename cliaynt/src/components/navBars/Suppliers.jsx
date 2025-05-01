@@ -142,12 +142,12 @@ function Suppliers() {
                     if (result.isConfirmed) {
                         const response = await api.put(`/admin/delete-supplier/${id}`)
                         if (response.data.status) {
+                            fetchData()
                             Swal.fire({
                                 title: "Deleted!",
                                 text: "Your file has been deleted.",
                                 icon: "success"
                             });
-
                         }
                     }
                 })

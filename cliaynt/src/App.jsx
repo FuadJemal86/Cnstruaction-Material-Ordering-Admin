@@ -10,6 +10,7 @@ import Category from './components/navBars/Category';
 import AddCategory from './components/navBars/AddCategory';
 import BankAccount from './components/navBars/BankAccount';
 import OnlineSupplier from './components/navBars/OnlineSupplier';
+import RemovedSupplier from './components/navBars/RemovedSupplier';
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function App() {
                     <Route path='add-category' element={<AddCategory />} />
                     <Route path='bank-account' element={<BankAccount />} />
                     <Route path='online-suppliers' element={<OnlineSupplier />} />
+                    <Route path='removed-supplier' element={<RemovedSupplier />} />
                 </Route>
             </Routes>
         </Router>

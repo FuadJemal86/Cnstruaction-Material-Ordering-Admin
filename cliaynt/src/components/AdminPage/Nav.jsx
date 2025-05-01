@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Recycle, Trash2, Wifi, Globe, CheckCircle } from 'lucide-react'
 import {
     Menu,
     ChevronLeft,
@@ -40,8 +41,8 @@ function Nav() {
             title: 'Suppliers',
             path: '/admin-page/supplier',
             subMenu: [
-                { title: 'Online Suppliers', path: '/admin-page/online-suppliers' },
-                { title: 'Removed Suppliers', path: '/admin-page/supplier/removed' }
+                { icone: <Globe />, title: 'Online Suppliers', path: '/admin-page/online-suppliers' },
+                { icone: <Trash2 />, title: 'Removed Suppliers', path: '/admin-page/removed-supplier' }
             ]
         },
         {
@@ -50,7 +51,7 @@ function Nav() {
             title: 'Customers',
             path: '/admin-page/customer',
             subMenu: [
-                { title: 'Removed Customer', path: '/admin-page/removed-customer' }
+                { icone: <Trash2 />, title: 'Removed Customer', path: '/admin-page/removed-customer' }
             ]
         },
         { icon: <CreditCard size={20} />, title: 'Payments', path: '/admin-page/payment' },
@@ -142,7 +143,10 @@ function Nav() {
                                                                 ${isSubActive ? 'bg-blue-500 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}
                                                                 `}
                                                         >
-                                                            {subItem.title}
+                                                            <div className='flex items-center'>
+                                                                <span className="inline-flex mr-2 h-5 w-5 items-center">{subItem.icone}</span>
+                                                                <span>{subItem.title}</span>
+                                                            </div>
                                                         </Link>
                                                     </li>
                                                 );
