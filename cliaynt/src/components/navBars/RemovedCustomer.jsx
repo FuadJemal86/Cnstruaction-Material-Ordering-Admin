@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import api from '../../api';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { Edit, Trash2, Eye, Printer, FileSpreadsheet } from "lucide-react";
+import { Recycle, Printer, FileSpreadsheet } from "lucide-react";
 import Swal from 'sweetalert2';
 
 function RemovedCustomer() {
 
-    const [customer, setCustomer] = useState([])
+    const [removedCustomer, setRemovedCustomer] = useState([])
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
@@ -17,9 +17,9 @@ function RemovedCustomer() {
 
     const fetchData = async () => {
         try {
-            const result = await api.get(`/admin/get-customer?page=${page}&limit=10`);
+            const result = await api.get(`/admin/removed-customer?page=${page}&limit=10`);
             if (result.data.status) {
-                setCustomer(result.data.result);
+                setRemovedCustomer(result.data.result);
                 setPage(result.data.currentPage);
                 setTotalPages(result.data.totalPages);
             } else {
@@ -65,6 +65,35 @@ function RemovedCustomer() {
         saveAs(data, "Customers.xlsx");
     };
 
+    const handleRecover = async (id) => {
+        try {
+            const result = await Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!",
+            });
+
+            if (result.isConfirmed) {
+                const response = await api.put(`/admin/recycle-customer/${id}`);
+                if (response.data.status) {
+                    await Swal.fire({
+                        title: "Recycled!",
+                        text: "Customer file has been recycled.",
+                        icon: "success",
+                    });
+                    fetchData();
+                }
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+
 
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
@@ -101,14 +130,14 @@ function RemovedCustomer() {
                             </tr>
                         </thead>
                         <tbody>
-                            {customer.map((c, index) => (
+                            {removedCustomer.map((c, index) => (
                                 <tr
                                     className={index % 2 === 0 ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-100"}
                                 >
-                                    <td className="p-3 text-sm text-indigo-600 font-medium">{'c.id'}</td>
-                                    <td className="p-3 text-sm text-gray-800">{'c.name'}</td>
-                                    <td className="p-3 text-sm text-gray-800">{'c.email'}</td>
-                                    <td className="p-3 text-sm text-gray-500">{'c.phone'}</td>
+                                    <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
+                                    <td className="p-3 text-sm text-gray-800">{c.name}</td>
+                                    <td className="p-3 text-sm text-gray-800">{c.email}</td>
+                                    <td className="p-3 text-sm text-gray-500">{c.phone}</td>
                                     <td className="p-3 text-sm text-gray-500">
                                         {new Date(c.createdAt).toLocaleDateString('en-GB', {
                                             day: 'numeric',
@@ -117,13 +146,13 @@ function RemovedCustomer() {
                                         }).replace(' ', '.')}
                                     </td>
                                     <td>
-                                        <span className='text-red-600 cursor-pointer' >
-                                            <Trash2 size={20} />
+                                        <span className='text-blue-600 cursor-pointer flex items-center' onClick={e => handleRecover(c.id)}>
+                                            <Recycle size={20} />
                                         </span>
                                     </td>
                                 </tr>
                             ))}
-                            {customer.length === 0 && (
+                            {removedCustomer.length === 0 && (
                                 <tr>
                                     <td colSpan="6" className="p-4 text-center text-gray-500">
                                         No product found

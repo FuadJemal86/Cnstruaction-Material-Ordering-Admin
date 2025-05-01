@@ -11,6 +11,7 @@ import AddCategory from './components/navBars/AddCategory';
 import BankAccount from './components/navBars/BankAccount';
 import OnlineSupplier from './components/navBars/OnlineSupplier';
 import RemovedSupplier from './components/navBars/RemovedSupplier';
+import RemovedCustomer from './components/navBars/RemovedCustomer';
 
 function App() {
     return (
@@ -28,6 +29,8 @@ function App() {
                     <Route path='bank-account' element={<BankAccount />} />
                     <Route path='online-suppliers' element={<OnlineSupplier />} />
                     <Route path='removed-supplier' element={<RemovedSupplier />} />
+                    <Route path='removed-customer' element={<RemovedCustomer />} />
+
                 </Route>
             </Routes>
         </Router>
