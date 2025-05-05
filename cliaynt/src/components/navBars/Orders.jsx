@@ -194,7 +194,7 @@ function Orders({ orders = [] }) {
                         </button>
                     </div>
                     <div className='w-full overflow-x-auto'>
-                        <table className="min-w-[1185px] border-collapse">
+                        <table className="min-w-[800px] border-collapse">
                             <thead className="bg-gray-100">
                                 <tr>
                                     <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>

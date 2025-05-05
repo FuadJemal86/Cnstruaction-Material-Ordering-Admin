@@ -203,7 +203,7 @@ function Suppliers() {
                     </button>
                 </div>
                 <div className='w-full overflow-x-auto'>
-                    <table className="w-full min-w-[1200px] border-collapse">
+                    <table className="w-full min-w-[800px] border-collapse">
                         <thead className="bg-gray-100">
                             <tr>
                                 <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>

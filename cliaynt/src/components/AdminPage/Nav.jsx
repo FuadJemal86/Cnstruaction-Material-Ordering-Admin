@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Recycle, Trash2, Wifi, Globe, CheckCircle } from 'lucide-react'
 import {
+    Globe,
+    Trash2,
     Menu,
     ChevronLeft,
     ChevronRight,
@@ -15,7 +16,8 @@ import {
     MessageSquare,
     Bell,
     Search,
-    Settings
+    Settings,
+    Shield,
 } from "lucide-react";
 
 
@@ -57,7 +59,8 @@ function Nav() {
         { icon: <CreditCard size={20} />, title: 'Payments', path: '/admin-page/payment' },
         { icon: <Tag size={20} />, title: 'Categories', path: '/admin-page/category' },
         { icon: <Building2 size={20} />, title: 'Bank Account', path: '/admin-page/bank-account' },
-        { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/admin-page/complaints' },
+        { icon: <Shield size={20} />, title: 'Supper Admin', path: '/admin-page/supper-admin' },
+        { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/admin-page/complaints' }
     ];
 
     const [openSubMenus, setOpenSubMenus] = useState({});

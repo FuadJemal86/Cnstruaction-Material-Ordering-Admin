@@ -12,6 +12,7 @@ import BankAccount from './components/navBars/BankAccount';
 import OnlineSupplier from './components/navBars/OnlineSupplier';
 import RemovedSupplier from './components/navBars/RemovedSupplier';
 import RemovedCustomer from './components/navBars/RemovedCustomer';
+import SupperAdminLogin from './components/supperAdmin/SupperAdminLogin';
 
 function App() {
     return (
@@ -30,6 +31,7 @@ function App() {
                     <Route path='online-suppliers' element={<OnlineSupplier />} />
                     <Route path='removed-supplier' element={<RemovedSupplier />} />
                     <Route path='removed-customer' element={<RemovedCustomer />} />
+                    <Route path='supper-admin' element={<SupperAdminLogin />} />
 
                 </Route>
             </Routes>

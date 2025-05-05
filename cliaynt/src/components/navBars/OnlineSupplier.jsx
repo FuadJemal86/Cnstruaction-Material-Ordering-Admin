@@ -88,7 +88,7 @@ function OnlineSupplier() {
 
                         </div>
                         <div className='w-full overflow-x-auto border-collapse'>
-                            <table className="bg-gray-100 min-w-[1185px]">
+                            <table className="bg-gray-100 min-w-[800px]">
                                 <thead>
                                     <tr>
                                         <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
