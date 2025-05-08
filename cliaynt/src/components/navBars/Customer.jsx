@@ -135,7 +135,7 @@ function Customer() {
                 </div>
 
                 <div className='w-full overflow-x-auto'>
-                    <table className="w-full border-collapse min-w-[800px]">
+                    <table className="w-full border-collapse min-w-[1000px]">
                         <thead className="bg-gray-100">
                             <tr>
                                 <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>

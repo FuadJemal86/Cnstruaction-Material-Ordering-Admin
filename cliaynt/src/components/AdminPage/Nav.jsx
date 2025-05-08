@@ -59,7 +59,7 @@ function Nav() {
         { icon: <CreditCard size={20} />, title: 'Payments', path: '/admin-page/payment' },
         { icon: <Tag size={20} />, title: 'Categories', path: '/admin-page/category' },
         { icon: <Building2 size={20} />, title: 'Bank Account', path: '/admin-page/bank-account' },
-        { icon: <Shield size={20} />, title: 'Supper Admin', path: '/admin-page/supper-admin' },
+        { icon: <Shield size={20} />, title: 'Supper Admin', path: '/supper-admin' },
         { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/admin-page/complaints' }
     ];
 
@@ -71,8 +71,6 @@ function Nav() {
             [title]: !prev[title]
         }));
     };
-
-
 
     return (
         <div className="flex flex-col h-screen lg:flex-row min-h-screen bg-gray-50">

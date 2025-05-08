@@ -13,12 +13,16 @@ import OnlineSupplier from './components/navBars/OnlineSupplier';
 import RemovedSupplier from './components/navBars/RemovedSupplier';
 import RemovedCustomer from './components/navBars/RemovedCustomer';
 import SupperAdminLogin from './components/supperAdmin/SupperAdminLogin';
+import SupperAdminDashbord from './components/supperAdmin/SupperAdminDashbord';
 
 function App() {
     return (
         <Router>
             <Routes>
                 <Route path='/' element={<Login />} />
+                <Route path='/supper-admin' element={<SupperAdminLogin />} />
+                <Route path='/supper-admin-dashboard' element={<SupperAdminDashbord />} />
+
 
                 <Route path='/admin-page' element={<Nav />}>
                     <Route path='order' element={<Orders />} />
@@ -31,7 +35,6 @@ function App() {
                     <Route path='online-suppliers' element={<OnlineSupplier />} />
                     <Route path='removed-supplier' element={<RemovedSupplier />} />
                     <Route path='removed-customer' element={<RemovedCustomer />} />
-                    <Route path='supper-admin' element={<SupperAdminLogin />} />
 
                 </Route>
             </Routes>

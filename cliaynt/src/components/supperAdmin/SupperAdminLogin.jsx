@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import { ShieldAlert, Lock, Mail, EyeOff, Eye } from 'lucide-react';
 import api from '../../api';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 function SupperAdminLogin() {
     const [showPassword, setShowPassword] = useState(false);
-    const [supperAdmin, setSupperAdmin] = useState()
+    const navigate = useNavigate()
+    const [supperAdmin, setSupperAdmin] = useState({
+        email: '',
+        password: ''
+    })
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -14,13 +19,10 @@ function SupperAdminLogin() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const result = await api.post('/supperAdmin/login', {
-                ...supperAdmin,
-                email: '',
-                password: ''
-            })
+            const result = await api.post('/supper-admin/login', supperAdmin)
             if (result.data.loginStatus) {
                 toast.success(result.data.message)
+                navigate('/supper-admin-dashboard')
             } else {
                 toast.error(result.data.message)
             }
@@ -28,6 +30,14 @@ function SupperAdminLogin() {
             console.log(err)
         }
     };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        setSupperAdmin(prev => ({
+            ...prev,
+            [name]: value
+        }))
+    }
 
     return (
         <div className="flex justify-center items-center min-h-screen">
@@ -47,8 +57,9 @@ function SupperAdminLogin() {
                             <div className="relative">
                                 <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                                 <input
-                                    value={supperAdmin}
-                                    onChange={c => setSupperAdmin(c.target.value)}
+                                    name='email'
+                                    value={supperAdmin.email}
+                                    onChange={handleChange}
                                     className="w-full h-10 pl-10 pr-4 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-gray-50"
                                     placeholder="admin@organization.com"
                                     type="email"
@@ -61,8 +72,9 @@ function SupperAdminLogin() {
                             <div className="relative">
                                 <Lock className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                                 <input
-                                    value={supperAdmin}
-                                    onChange={c => setSupperAdmin(c.target.value)}
+                                    name='password'
+                                    value={supperAdmin.password}
+                                    onChange={handleChange}
                                     placeholder="Enter secure password"
                                     className="w-full h-10 pl-10 pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-gray-50"
                                     type={showPassword ? "text" : "password"}

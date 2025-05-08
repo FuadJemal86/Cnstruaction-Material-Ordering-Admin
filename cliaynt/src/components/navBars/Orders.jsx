@@ -193,8 +193,8 @@ function Orders({ orders = [] }) {
                             <FileSpreadsheet />
                         </button>
                     </div>
-                    <div className='w-full overflow-x-auto'>
-                        <table className="min-w-[800px] border-collapse">
+                    <div className="w-full overflow-x-auto">
+                        <table className="border-collapse min-w-[1200px]">
                             <thead className="bg-gray-100">
                                 <tr>
                                     <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
@@ -202,7 +202,7 @@ function Orders({ orders = [] }) {
                                     <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer Phone</th>
                                     <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
                                     <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier Phone</th>
-                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Dilivery</th>
+                                    <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Delivery</th>
                                     <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                                     <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Total Price</th>
                                     <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -212,35 +212,23 @@ function Orders({ orders = [] }) {
                             </thead>
                             <tbody>
                                 {order.map((c, index) => (
-                                    <tr
-                                        key={c.id || index}
-                                        className={index % 2 === 0 ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-100"}
-                                    >
+                                    <tr key={c.id || index} className={index % 2 === 0 ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-100"}>
                                         <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
                                         <td className="p-3 text-sm text-gray-800">{c.customer.name}</td>
                                         <td className="p-3 text-sm text-gray-800">{c.customer.phone}</td>
                                         <td className="p-3 text-sm text-gray-800">{c.supplier.companyName}</td>
                                         <td className="p-3 text-sm text-gray-800">{c.supplier.phone}</td>
                                         <td className="p-3 text-sm text-gray-800">
-                                            <span className={` ${c.address && c.address.length > 0}` ? 'bg-green-100 px-2 py-1 rounded-full text-green-800' : 'bg-red-100 px-2 py-1 rounded-full text-green-800'}>
+                                            <span className={`${c.address && c.address.length > 0 ? 'bg-green-100 px-2 py-1 rounded-full text-green-800' : 'bg-red-100 px-2 py-1 rounded-full text-red-800'}`}>
                                                 {c.address && c.address.length > 0 ? c.address : 'No'}
                                             </span>
                                         </td>
-
                                         <td className="p-3 text-sm text-gray-500">
-                                            {new Date(c.createdAt).toLocaleDateString('en-GB', {
-                                                day: 'numeric',
-                                                month: 'long',
-                                                year: 'numeric'
-                                            }).replace(' ', '.')}
+                                            {new Date(c.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).replace(' ', '.')}
                                         </td>
                                         <td className="p-3 text-sm text-gray-800 font-medium">birr {c.totalPrice}</td>
                                         <td className="p-3 text-sm">
-                                            <select
-                                                value={c.status || "PROCESSING"}
-                                                onChange={e => handleStatus(e.target.value, c.id)}
-                                                className={`px-2 py-1 rounded-full text-xs font-medium outline-none} ${getStatusBadgeColor(c.status)}`}
-                                            >
+                                            <select value={c.status || "PROCESSING"} onChange={e => handleStatus(e.target.value, c.id)} className={`px-2 py-1 rounded-full text-xs font-medium outline-none ${getStatusBadgeColor(c.status)}`}>
                                                 <option value="PENDING">PENDING</option>
                                                 <option value="PROCESSING">PROCESSING</option>
                                                 <option value="SHIPPED">SHIPPED</option>
@@ -248,23 +236,17 @@ function Orders({ orders = [] }) {
                                                 <option value="CANCELLED">CANCELLED</option>
                                             </select>
                                         </td>
-                                        <td className="p-3 text-sm text-gray-800">
-                                            <span onClick={e => handleOpen(c.id)} className='text-blue-600 cursor-pointer'>
-                                                <Eye />
-                                            </span>
+                                        <td className="p-3 text-sm text-blue-600 cursor-pointer" onClick={() => handleOpen(c.id)}>
+                                            <Eye />
                                         </td>
-                                        <td className="p-3 text-sm  text-red-600">
-                                            <span onClick={e => handleDelete(c.id)} className='cursor-pointer'>
-                                                <Trash2 />
-                                            </span>
+                                        <td className="p-3 text-sm text-red-600 cursor-pointer" onClick={() => handleDelete(c.id)}>
+                                            <Trash2 />
                                         </td>
                                     </tr>
                                 ))}
-                                {order.length == 0 && (
+                                {order.length === 0 && (
                                     <tr>
-                                        <td colSpan="6" className="p-4 text-center text-gray-500">
-                                            No orders found
-                                        </td>
+                                        <td colSpan="11" className="p-4 text-center text-gray-500">No orders found</td>
                                     </tr>
                                 )}
                             </tbody>
