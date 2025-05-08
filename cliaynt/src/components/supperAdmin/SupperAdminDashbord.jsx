@@ -21,7 +21,7 @@ function SupperAdminDashbord() {
 
         const fetchData = async () => {
             try {
-                const result = await api.get('/supper-admin/get-admis')
+                const result = await api.get('/supper-admin/get-admins')
 
                 if (result.data.status) {
                     setAdmins(result.data.admis)
