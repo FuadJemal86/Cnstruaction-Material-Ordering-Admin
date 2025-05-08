@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, Search, X, Users, Shield, User } from 'lucide-react';
 import api from '../../api';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 
 function SupperAdminDashbord() {
     // Sample initial admin data
@@ -19,23 +19,23 @@ function SupperAdminDashbord() {
 
     useEffect(() => {
 
-        const fetchData = async () => {
-            try {
-                const result = await api.get('/supper-admin/get-admins')
-
-                if (result.data.status) {
-                    setAdmins(result.data.admins)
-                } else {
-                    console.log(result.data.message)
-                }
-            } catch (err) {
-                console.log(err)
-            }
-        }
-
         fetchData()
 
     }, [])
+
+    const fetchData = async () => {
+        try {
+            const result = await api.get('/supper-admin/get-admins')
+
+            if (result.data.status) {
+                setAdmins(result.data.admins)
+            } else {
+                console.log(result.data.message)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     // Open modal for adding new admin
     const openAddModal = () => {
@@ -79,14 +79,16 @@ function SupperAdminDashbord() {
             ));
         } else {
             try {
-                const result = await api.post('/supper-admin', formData)
+                const result = await api.post('/supper-admin/add-admin-account', formData)
                 if (result.data.status) {
                     toast.success(result.data.message)
+                    fetchData()
                 } else {
                     toast.error(result.data.message)
                 }
             } catch (err) {
                 console.log(err)
+                toast.error(err.response.data.message)
             }
 
         }
@@ -100,6 +102,7 @@ function SupperAdminDashbord() {
 
     return (
         <div className="min-h-screen bg-gray-100">
+            <Toaster position="top-center" reverseOrder={false} />
             {/* Header */}
             <header className="bg-blue-600 text-white p-4 shadow-md">
                 <div className="container mx-auto flex justify-between items-center">
