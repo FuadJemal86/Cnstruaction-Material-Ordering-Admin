@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, Search, X, Users, Shield, User } from 'lucide-react';
 import api from '../../api';
 import toast, { Toaster } from 'react-hot-toast';
+import Swal from 'sweetalert2';
 
 function SupperAdminDashbord() {
     // Sample initial admin data
@@ -96,8 +97,33 @@ function SupperAdminDashbord() {
     };
 
     // Delete admin
-    const deleteAdmin = (id) => {
-        setAdmins(admins.filter(admin => admin.id !== id));
+    const deleteAdmin = async (id) => {
+        try {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            })
+
+                .then(async (result) => {
+                    if (result.isConfirmed) {
+                        const response = await api.put(`/supper-admin/delete-admin/${id}`)
+                        if (response.data.status) {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Your file has been deleted.",
+                                icon: "success"
+                            });
+                        }
+                    }
+                })
+        } catch (err) {
+            console.log(err)
+        }
     };
 
     return (
