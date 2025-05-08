@@ -13,8 +13,7 @@ function SupperAdminDashbord() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        role: 'Content Admin',
-        status: 'Active'
+        password: ''
     });
 
     useEffect(() => {
@@ -24,7 +23,7 @@ function SupperAdminDashbord() {
                 const result = await api.get('/supper-admin/get-admins')
 
                 if (result.data.status) {
-                    setAdmins(result.data.admis)
+                    setAdmins(result.data.admins)
                 } else {
                     console.log(result.data.message)
                 }
@@ -43,8 +42,7 @@ function SupperAdminDashbord() {
         setFormData({
             name: '',
             email: '',
-            role: 'Content Admin',
-            status: 'Active'
+            password: ''
         });
         setShowModal(true);
     };
@@ -56,8 +54,6 @@ function SupperAdminDashbord() {
         setFormData({
             name: admin.name,
             email: admin.email,
-            role: admin.role,
-            status: admin.status
         });
         setShowModal(true);
     };
@@ -223,32 +219,22 @@ function SupperAdminDashbord() {
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                                <select
-                                    name="role"
-                                    value={formData.role}
-                                    onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                >
-                                    <option value="Content Admin">Content Admin</option>
-                                    <option value="User Admin">User Admin</option>
-                                    <option value="System Admin">System Admin</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                <select
-                                    name="status"
-                                    value={formData.status}
-                                    onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                >
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
-                            </div>
+                            {
+                                !editMode ? (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                        <input
+                                            name="password"
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder='Enter your password'
+                                        />
+                                    </div>
+                                ) : (
+                                    null
+                                )
+                            }
                         </div>
 
                         <div className="mt-6 flex justify-end space-x-3">
