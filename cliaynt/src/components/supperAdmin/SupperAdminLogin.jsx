@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ShieldAlert, Lock, Mail, EyeOff, Eye } from 'lucide-react';
 import api from '../../api';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 function SupperAdminLogin() {
@@ -18,13 +18,17 @@ function SupperAdminLogin() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const { email, password } = supperAdmin
+
+        if (!email || !password) {
+            return toast.error('Please fill all fields!')
+        }
         try {
             const result = await api.post('/supper-admin/login', supperAdmin)
             if (result.data.loginStatus) {
-                toast.success(result.data.message)
                 navigate('/supper-admin-dashboard')
             } else {
-                toast.error(result.data.message)
+                toast.error(result.data.message || 'Wrong email or password ')
             }
         } catch (err) {
             console.log(err)
@@ -42,6 +46,7 @@ function SupperAdminLogin() {
     return (
         <div className="flex justify-center items-center min-h-screen">
             <div className="w-full max-w-md bg-white rounded-xl shadow-xl p-8 border border-gray-200">
+                <Toaster position="top-center" reverseOrder={false} />
                 <div className="flex flex-col items-center mb-6">
                     <div className="bg-blue-600 p-3 rounded-full mb-4">
                         <ShieldAlert size={32} className="text-white" />

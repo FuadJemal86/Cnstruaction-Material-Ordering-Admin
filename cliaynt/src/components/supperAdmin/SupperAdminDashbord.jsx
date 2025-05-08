@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
-import { Plus, Pencil, Trash2, Search, X, Users, Shield } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Plus, Pencil, Trash2, Search, X, Users, Shield, User } from 'lucide-react';
+import api from '../../api';
 
 function SupperAdminDashbord() {
     // Sample initial admin data
-    const [admins, setAdmins] = useState([
-        { id: 1, name: 'John Smith', email: 'john@example.com', role: 'Content Admin', status: 'Active' },
-        { id: 2, name: 'Sarah Johnson', email: 'sarah@example.com', role: 'User Admin', status: 'Active' },
-        { id: 3, name: 'Michael Brown', email: 'michael@example.com', role: 'System Admin', status: 'Inactive' },
-    ]);
+    const [admins, setAdmins] = useState([]);
 
     // States for modal
     const [showModal, setShowModal] = useState(false);
@@ -19,6 +16,26 @@ function SupperAdminDashbord() {
         role: 'Content Admin',
         status: 'Active'
     });
+
+    useEffect(() => {
+
+        const fetchData = async () => {
+            try {
+                const result = await api.get('/supper-admin/get-admis')
+
+                if (result.data.status) {
+                    setAdmins(result.data.admis)
+                } else {
+                    console.log(result.data.message)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        fetchData()
+
+    }, [])
 
     // Open modal for adding new admin
     const openAddModal = () => {
@@ -124,25 +141,28 @@ function SupperAdminDashbord() {
                         <table className="min-w-full bg-white">
                             <thead className="bg-gray-50">
                                 <tr>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile</th>
                                     <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                     <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th className="py-3 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
                                 {admins.map((admin) => (
                                     <tr key={admin.id} className="hover:bg-gray-50">
+                                        <td className="py-4 px-4 text-sm font-medium text-gray-900">
+                                            {
+                                                admin.image != null ? (
+                                                    <span className='rounded-full w-4 h-4'>
+                                                        <img src={`http://localhost:3032/images/${admin?.image}`} alt="" srcset="" />
+                                                    </span>
+                                                ) : (
+                                                    <User size={20} />
+                                                )
+                                            }
+                                        </td>
                                         <td className="py-4 px-4 text-sm font-medium text-gray-900">{admin.name}</td>
                                         <td className="py-4 px-4 text-sm text-gray-500">{admin.email}</td>
-                                        <td className="py-4 px-4 text-sm text-gray-500">{admin.role}</td>
-                                        <td className="py-4 px-4 text-sm">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${admin.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                                }`}>
-                                                {admin.status}
-                                            </span>
-                                        </td>
                                         <td className="py-4 px-4 text-sm text-gray-500 text-right space-x-2">
                                             <button
                                                 onClick={() => openEditModal(admin)}
