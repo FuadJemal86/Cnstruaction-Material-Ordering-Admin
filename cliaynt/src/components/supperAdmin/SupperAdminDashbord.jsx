@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, Search, X, Users, Shield, User } from 'lucide-react';
 import api from '../../api';
+import toast from 'react-hot-toast';
 
 function SupperAdminDashbord() {
     // Sample initial admin data
@@ -70,19 +71,24 @@ function SupperAdminDashbord() {
     };
 
     // Handle form submission
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (editMode) {
             // Update existing admin
             setAdmins(admins.map(admin =>
                 admin.id === currentAdmin.id ? { ...admin, ...formData } : admin
             ));
         } else {
-            // Add new admin
-            const newAdmin = {
-                id: admins.length + 1,
-                ...formData
-            };
-            setAdmins([...admins, newAdmin]);
+            try {
+                const result = await api.post('/supper-admin', formData)
+                if (result.data.status) {
+                    toast.success(result.data.message)
+                } else {
+                    toast.error(result.data.message)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+
         }
         closeModal();
     };
