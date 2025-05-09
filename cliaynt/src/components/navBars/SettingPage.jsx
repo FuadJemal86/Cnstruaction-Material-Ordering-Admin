@@ -1,19 +1,13 @@
 
 import React, { useEffect, useState } from 'react'
 import { Menu, Bell, User, Settings, LogOut, ChevronRight, Moon, X, Sun, Camera } from 'lucide-react';
+import api from '../../api';
 
 function SettingPage() {
     const [isEditing, setIsEditing] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
-    const [profile, setProfile] = useState({
-        name: 'Alex Johnson',
-        email: 'alex.johnson@company.com',
-        role: 'System Administrator',
-        joinDate: 'May 2023',
-        lastLogin: 'Today, 09:45 AM',
-        profileImage: '/api/placeholder/120/120'
-    });
+    const [profile, setProfile] = useState({});
 
     const [editedProfile, setEditedProfile] = useState({ ...profile });
 
@@ -52,13 +46,12 @@ function SettingPage() {
         setDarkMode(!darkMode);
     };
 
-    const handleImageChange = () => {
-        // In a real app, this would open a file input dialog
-        // For this demo, we'll just change to a different placeholder
-        const newImageId = Math.floor(Math.random() * 1000);
-        setEditedProfile({
-            ...editedProfile,
-            profileImage: `/api/placeholder/${newImageId}/120`
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+
+        setUserData({
+            ...userData,
+            image: file
         });
     };
 
@@ -68,6 +61,22 @@ function SettingPage() {
             setIsMobileMenuOpen(false);
         }
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await api.get('/admin/get-account')
+                if (result.data.status) {
+                    setProfile(result.data.adminProfil)
+                } else {
+                    console.log(result.data.message)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        fetchData()
+    })
 
     return (
         <div className={`min-h-screen flex flex-col ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
@@ -98,11 +107,17 @@ function SettingPage() {
                                 <Bell size={20} />
                             </button>
                             <div className="flex items-center">
-                                <img
-                                    src={profile.profileImage}
-                                    alt="Profile"
-                                    className="h-8 w-8 rounded-full"
-                                />
+                                {
+                                    profile.image?.length > 0 ? (
+                                        <img
+                                            src={`http://localhost:3032/images/${profile.image}`}
+                                            alt="Profile"
+                                            className="h-8 w-8 rounded-full"
+                                        />
+                                    ) : (
+                                        <User size={25} />
+                                    )
+                                }
                             </div>
                         </div>
                     </div>
@@ -156,7 +171,7 @@ function SettingPage() {
                     <div className="max-w-3xl mx-auto">
                         {/* Breadcrumb */}
                         <nav className="mb-5 flex items-center text-sm text-gray-500 dark:text-gray-400">
-                            <a href="#" className={`hover:${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Dashboard</a>
+                            <a href="/admin-page" className={`hover:${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Dashboard</a>
                             <ChevronRight size={16} className="mx-2" />
                             <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>Profile</span>
                         </nav>
@@ -169,18 +184,30 @@ function SettingPage() {
                                 <div className="flex flex-col lg:flex-row">
                                     <div className="lg:w-1/3 mb-6 lg:mb-0 flex flex-col items-center lg:mr-8">
                                         <div className="relative group mb-4">
-                                            <img
-                                                src={isEditing ? editedProfile.profileImage : profile.profileImage}
-                                                alt="Admin"
-                                                className="w-32 h-32 rounded-full object-cover shadow-md border-4 border-white dark:border-gray-700"
-                                            />
+                                            {
+                                                profile.image?.length > 0 ? (
+                                                    <img
+                                                        src={`http://localhost:3032/images/${profile?.image}`}
+                                                        alt="Admin"
+                                                        className="w-32 h-32 rounded-full object-cover shadow-md border-4 border-white dark:border-gray-700"
+                                                    />
+                                                ) : (
+                                                    <span className='rounded-full border-gray-400'>
+                                                        <User size={100} />
+                                                    </span>
+                                                )
+                                            }
                                             {isEditing && (
-                                                <button
-                                                    onClick={handleImageChange}
-                                                    className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full shadow-lg"
-                                                >
-                                                    <Camera size={16} />
-                                                </button>
+                                                <label htmlFor="profile-upload" className="absolute bottom-0 right-0 bg-blue-700 p-2 rounded-full cursor-pointer shadow-md hover:bg-blue-600 transition-colors">
+                                                    <Camera size={16} className="text-white" />
+                                                    <input
+                                                        type="file"
+                                                        id="profile-upload"
+                                                        className="hidden"
+                                                        accept="image/*"
+                                                        onChange={handleFileChange}
+                                                    />
+                                                </label>
                                             )}
                                             {!isEditing && (
                                                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-full flex items-center justify-center transition duration-300">
@@ -197,22 +224,11 @@ function SettingPage() {
                                             {!isEditing ? (
                                                 <>
                                                     <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{profile.name}</h2>
-                                                    <p className={`text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{profile.role}</p>
+
                                                 </>
                                             ) : null}
                                         </div>
-                                        {!isEditing && (
-                                            <div className={`w-full ${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg p-4 text-sm`}>
-                                                <div className="flex justify-between mb-2">
-                                                    <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Member since</span>
-                                                    <span className={darkMode ? 'text-gray-200' : 'text-gray-700'}>{profile.joinDate}</span>
-                                                </div>
-                                                <div className="flex justify-between">
-                                                    <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Last login</span>
-                                                    <span className={darkMode ? 'text-gray-200' : 'text-gray-700'}>{profile.lastLogin}</span>
-                                                </div>
-                                            </div>
-                                        )}
+
                                     </div>
 
                                     <div className="lg:w-2/3">
@@ -229,10 +245,7 @@ function SettingPage() {
                                                             <div className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-1`}>Email Address</div>
                                                             <div className={`text-base ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{profile.email}</div>
                                                         </div>
-                                                        <div>
-                                                            <div className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-1`}>Role</div>
-                                                            <div className={`text-base ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{profile.role}</div>
-                                                        </div>
+
                                                     </div>
                                                 </div>
 
@@ -269,7 +282,7 @@ function SettingPage() {
                                                                 Email Address
                                                             </label>
                                                             <input
-                                                                type="email"
+                                                                type="text"
                                                                 id="email"
                                                                 name="email"
                                                                 value={editedProfile.email}
@@ -279,14 +292,14 @@ function SettingPage() {
                                                         </div>
 
                                                         <div>
-                                                            <label htmlFor="role" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
-                                                                Role
+                                                            <label htmlFor="email" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                                                                Password
                                                             </label>
                                                             <input
                                                                 type="text"
-                                                                id="role"
-                                                                name="role"
-                                                                value={editedProfile.role}
+                                                                id="password"
+                                                                name="password"
+                                                                value={editedProfile.password}
                                                                 onChange={handleInputChange}
                                                                 className={`w-full px-3 py-2 border ${darkMode ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                                                             />
