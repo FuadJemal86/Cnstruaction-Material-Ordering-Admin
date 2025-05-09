@@ -199,7 +199,7 @@ function Nav() {
                                 <MessageSquare size={20} />
                             </button>
                             <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
-                                <Settings size={20} />
+                                <Link to={'/setting-page'}><Settings size={20} /></Link>
                             </button>
                             <div className="ml-2">
                                 <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
