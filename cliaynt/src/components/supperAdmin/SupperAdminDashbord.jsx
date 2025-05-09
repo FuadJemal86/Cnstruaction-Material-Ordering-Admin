@@ -3,6 +3,7 @@ import { Plus, Pencil, Trash2, Search, X, Users, Shield, User } from 'lucide-rea
 import api from '../../api';
 import toast, { Toaster } from 'react-hot-toast';
 import Swal from 'sweetalert2';
+import Cookies from 'js-cookie';
 
 function SupperAdminDashbord() {
     // Sample initial admin data
@@ -74,10 +75,20 @@ function SupperAdminDashbord() {
     // Handle form submission
     const handleSubmit = async () => {
         if (editMode) {
-            // Update existing admin
-            setAdmins(admins.map(admin =>
-                admin.id === currentAdmin.id ? { ...admin, ...formData } : admin
-            ));
+            try {
+                const result = await api.put(`/supper-admin/edit-admin/${currentAdmin.id}`, formData)
+
+                if (result.data.status) {
+                    toast.success(result.data.message)
+                    fetchData()
+                } else {
+                    toast.error(result.data.message)
+                }
+            } catch (err) {
+                console.log(err)
+                toast.error(err.response.data.message)
+            }
+
         } else {
             try {
                 const result = await api.post('/supper-admin/add-admin-account', formData)
@@ -111,18 +122,29 @@ function SupperAdminDashbord() {
 
                 .then(async (result) => {
                     if (result.isConfirmed) {
-                        const response = await api.put(`/supper-admin/delete-admin/${id}`)
+                        const response = await api.delete(`/supper-admin/remove-admins/${id}`)
                         if (response.data.status) {
                             Swal.fire({
                                 title: "Deleted!",
                                 text: "Your file has been deleted.",
                                 icon: "success"
                             });
+                            fetchData()
                         }
                     }
                 })
         } catch (err) {
             console.log(err)
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            Cookies.remove('supper-token');
+
+            window.location.href = '/supper-admin';
+        } catch (err) {
+            console.error('Logout failed:', err);
         }
     };
 
@@ -136,7 +158,9 @@ function SupperAdminDashbord() {
                         <Shield className="h-8 w-8" />
                         <h1 className="text-2xl font-bold">Supper Admin Dashboard</h1>
                     </div>
-                    <div className="text-sm">Welcome, Supper Admin</div>
+                    <div className="text-sm">
+                        <button onClick={handleLogout} className='font-normal text-xl'>Logout</button>
+                    </div>
                 </div>
             </header>
 
