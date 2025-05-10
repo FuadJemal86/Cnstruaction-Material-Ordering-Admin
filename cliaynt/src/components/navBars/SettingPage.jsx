@@ -7,7 +7,9 @@ function SettingPage() {
     const [isEditing, setIsEditing] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
-    const [profile, setProfile] = useState({});
+    const [profile, setProfile] = useState({
+        password: ''
+    });
 
     const [editedProfile, setEditedProfile] = useState({ ...profile });
 
@@ -76,7 +78,30 @@ function SettingPage() {
             }
         }
         fetchData()
-    })
+    }, [])
+
+    const handleEdit = async (c) => {
+
+        c.preventDefault()
+
+        const formData = new FormData()
+        formData.append('name', profile.name)
+        formData.append('email', profile.email)
+        formData.append('password', profile.password)
+        formData.append('image', profile.image || '')
+
+        try {
+            const result = await api.put('/admin/edit-profile', formData)
+
+            if (result.data.status) {
+                console.log(result.data.message)
+            } else {
+                console.log(result.data.message)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     return (
         <div className={`min-h-screen flex flex-col ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
@@ -259,69 +284,69 @@ function SettingPage() {
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="space-y-6">
-                                                <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg p-5`}>
-                                                    <h3 className={`text-lg font-medium ${darkMode ? 'text-white' : 'text-gray-800'} mb-4`}>Edit Profile</h3>
-                                                    <div className="space-y-4">
-                                                        <div>
-                                                            <label htmlFor="name" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
-                                                                Full Name
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                id="name"
-                                                                name="name"
-                                                                value={editedProfile.name}
-                                                                onChange={handleInputChange}
-                                                                className={`w-full px-3 py-2 border ${darkMode ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                                                            />
-                                                        </div>
+                                            <form onSubmit={handleEdit}>
+                                                <div className="space-y-6">
+                                                    <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg p-5`}>
+                                                        <h3 className={`text-lg font-medium ${darkMode ? 'text-white' : 'text-gray-800'} mb-4`}>Edit Profile</h3>
+                                                        <div className="space-y-4">
+                                                            <div>
+                                                                <label htmlFor="name" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                                                                    Full Name
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    id="name"
+                                                                    name="name"
+                                                                    value={editedProfile.name}
+                                                                    onChange={handleInputChange}
+                                                                    className={`w-full px-3 py-2 border ${darkMode ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                                                                />
+                                                            </div>
 
-                                                        <div>
-                                                            <label htmlFor="email" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
-                                                                Email Address
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                id="email"
-                                                                name="email"
-                                                                value={editedProfile.email}
-                                                                onChange={handleInputChange}
-                                                                className={`w-full px-3 py-2 border ${darkMode ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                                                            />
-                                                        </div>
+                                                            <div>
+                                                                <label htmlFor="password" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                                                                    Email Address
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    id="email"
+                                                                    name="email"
+                                                                    value={editedProfile.email}
+                                                                    onChange={handleInputChange}
+                                                                    className={`w-full px-3 py-2 border ${darkMode ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                                                                />
+                                                            </div>
 
-                                                        <div>
-                                                            <label htmlFor="email" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
-                                                                Password
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                id="password"
-                                                                name="password"
-                                                                value={editedProfile.password}
-                                                                onChange={handleInputChange}
-                                                                className={`w-full px-3 py-2 border ${darkMode ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                                                            />
+                                                            <div>
+                                                                <label htmlFor="email" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                                                                    Password
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    id="password"
+                                                                    name="password"
+                                                                    onChange={handleInputChange}
+                                                                    className={`w-full px-3 py-2 border ${darkMode ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                                                                />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
-                                                <div className="flex items-center justify-end space-x-3">
-                                                    <button
-                                                        onClick={handleCancel}
-                                                        className={`${darkMode ? 'bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'} border px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out`}
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                    <button
-                                                        onClick={handleSubmit}
-                                                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out"
-                                                    >
-                                                        Save Changes
-                                                    </button>
+                                                    <div className="flex items-center justify-end space-x-3">
+                                                        <button
+                                                            onClick={handleCancel}
+                                                            className={`${darkMode ? 'bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'} border px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out`}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                        <button
+                                                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out"
+                                                        >
+                                                            Save Changes
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </form>
                                         )}
                                     </div>
                                 </div>
