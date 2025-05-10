@@ -52,7 +52,7 @@ function SettingPage() {
         const file = e.target.files[0];
 
         setUserData({
-            ...userData,
+            ...profile,
             image: file
         });
     };
@@ -85,10 +85,10 @@ function SettingPage() {
         c.preventDefault()
 
         const formData = new FormData()
-        formData.append('name', profile.name)
-        formData.append('email', profile.email)
-        formData.append('password', profile.password)
-        formData.append('image', profile.image || '')
+        formData.append('name', editedProfile.name)
+        formData.append('email', editedProfile.email)
+        formData.append('password', editedProfile.password)
+        formData.append('image', editedProfile.image || '')
 
         try {
             const result = await api.put('/admin/edit-profile', formData)
@@ -325,6 +325,7 @@ function SettingPage() {
                                                                     type="text"
                                                                     id="password"
                                                                     name="password"
+                                                                    value={editedProfile.password}
                                                                     onChange={handleInputChange}
                                                                     className={`w-full px-3 py-2 border ${darkMode ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                                                                 />
