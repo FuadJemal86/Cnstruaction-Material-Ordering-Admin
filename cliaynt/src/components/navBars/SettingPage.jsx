@@ -2,14 +2,15 @@
 import React, { useEffect, useState } from 'react'
 import { Menu, Bell, User, Settings, LogOut, ChevronRight, Moon, X, Sun, Camera } from 'lucide-react';
 import api from '../../api';
+import Cookies from 'js-cookie';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 function SettingPage() {
     const [isEditing, setIsEditing] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
-    const [profile, setProfile] = useState({
-        password: ''
-    });
+    const [profile, setProfile] = useState({});
 
     const [editedProfile, setEditedProfile] = useState({ ...profile });
 
@@ -51,7 +52,7 @@ function SettingPage() {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
 
-        setUserData({
+        setEditedProfile({
             ...profile,
             image: file
         });
@@ -65,20 +66,21 @@ function SettingPage() {
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const result = await api.get('/admin/get-account')
-                if (result.data.status) {
-                    setProfile(result.data.adminProfil)
-                } else {
-                    console.log(result.data.message)
-                }
-            } catch (err) {
-                console.log(err)
-            }
-        }
         fetchData()
     }, [])
+
+    const fetchData = async () => {
+        try {
+            const result = await api.get('/admin/get-account')
+            if (result.data.status) {
+                setProfile(result.data.adminProfil)
+            } else {
+                console.log(result.data.message)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     const handleEdit = async (c) => {
 
@@ -94,18 +96,32 @@ function SettingPage() {
             const result = await api.put('/admin/edit-profile', formData)
 
             if (result.data.status) {
-                console.log(result.data.message)
+                toast.success(result.data.message)
+                fetchData()
+                setIsEditing(false);
             } else {
-                console.log(result.data.message)
+                toast.error(result.data.message)
             }
         } catch (err) {
             console.log(err)
+            toast.error(err.response.data.message)
         }
     }
+
+    const handleLogout = async () => {
+        try {
+            Cookies.remove('s-auth-token');
+
+            window.location.href = '/';
+        } catch (err) {
+            console.error('Logout failed:', err);
+        }
+    };
 
     return (
         <div className={`min-h-screen flex flex-col ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
             {/* Top Navigation */}
+            <Toaster position="top-center" reverseOrder={false} />
             <header className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-sm border-b`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16 items-center">
@@ -183,7 +199,8 @@ function SettingPage() {
                                 <Settings size={20} className={`mr-3 ${darkMode ? 'text-gray-400 group-hover:text-gray-300' : 'text-gray-400 group-hover:text-gray-500'}`} />
                                 Settings
                             </a>
-                            <a href="#" className={`group flex items-center px-3 py-2 text-base font-medium rounded-md ${darkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
+
+                            <a onClick={handleLogout} href="#" className={`group flex items-center px-3 py-2 text-base font-medium rounded-md ${darkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
                                 <LogOut size={20} className={`mr-3 ${darkMode ? 'text-gray-400 group-hover:text-gray-300' : 'text-gray-400 group-hover:text-gray-500'}`} />
                                 Logout
                             </a>
@@ -325,7 +342,6 @@ function SettingPage() {
                                                                     type="text"
                                                                     id="password"
                                                                     name="password"
-                                                                    value={editedProfile.password}
                                                                     onChange={handleInputChange}
                                                                     className={`w-full px-3 py-2 border ${darkMode ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                                                                 />

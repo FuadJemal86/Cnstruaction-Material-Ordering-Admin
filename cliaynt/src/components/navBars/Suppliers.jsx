@@ -77,6 +77,8 @@ function Suppliers() {
     };
 
     const handleResubmit = async (supplierId) => {
+        setIsModalOpen(false);
+
         try {
             const resubmit = await api.post(`/admin/resubmit/${supplierId}`)
 
@@ -339,7 +341,7 @@ function Suppliers() {
                                     <h4 className="text-sm font-medium text-gray-700 mb-2">License Document</h4>
                                     <div className="bg-gray-100 p-2 rounded">
                                         <img
-                                            src={`http://localhost:3032/images/${supplierData.userImage}`}
+                                            src={`http://localhost:3032/images/${supplierData.licenseFile}`}
                                             alt="License Document"
                                             className="w-full h-64 object-contain rounded border cursor-pointer"
                                             onClick={() => handleImageClick(`http://localhost:3032/images/${supplierData.userImage}`)}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import {
     Globe,
@@ -19,11 +19,13 @@ import {
     Settings,
     Shield,
 } from "lucide-react";
+import api from '../../api';
 
 
 function Nav() {
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [adminProfile, setAdminProfile] = useState({})
     const location = useLocation();
 
     const toggleSidebar = () => {
@@ -59,8 +61,9 @@ function Nav() {
         { icon: <CreditCard size={20} />, title: 'Payments', path: '/admin-page/payment' },
         { icon: <Tag size={20} />, title: 'Categories', path: '/admin-page/category' },
         { icon: <Building2 size={20} />, title: 'Bank Account', path: '/admin-page/bank-account' },
-        { icon: <Shield size={20} />, title: 'Supper Admin', path: '/supper-admin' },
-        { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/admin-page/complaints' }
+        { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/admin-page/complaints' },
+        { icon: <Shield size={20} />, title: 'Supper Admin', path: '/supper-admin' }
+
     ];
 
     const [openSubMenus, setOpenSubMenus] = useState({});
@@ -71,6 +74,22 @@ function Nav() {
             [title]: !prev[title]
         }));
     };
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const result = await api.get('/admin/admin-profile')
+                if (result.data.status) {
+                    setAdminProfile(result.data.adminImage)
+                } else {
+                    console.log(result.data.message)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        fetchProfile()
+    }, [])
 
     return (
         <div className="flex flex-col h-screen lg:flex-row min-h-screen bg-gray-50">
@@ -202,9 +221,18 @@ function Nav() {
                                 <Link to={'/setting-page'}><Settings size={20} /></Link>
                             </button>
                             <div className="ml-2">
-                                <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
-                                    <span className="font-medium text-sm">JD</span>
-                                </div>
+                                {
+                                    adminProfile?.image ? (
+                                        <div className="h-8 w-8 rounded-full  flex items-center justify-center text-white">
+                                            <span className="font-medium text-sm "><img className='rounded-full h-8 w-8' src={`http://localhost:3032/images/${adminProfile.image}`} alt="" srcset="" /></span>
+                                        </div>
+                                    ) : (
+                                        <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                                            <span className="font-medium text-sm">A</span>
+                                        </div>
+                                    )
+                                }
+
                             </div>
                         </div>
                     </div>

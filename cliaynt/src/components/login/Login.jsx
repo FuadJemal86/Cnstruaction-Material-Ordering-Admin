@@ -1,24 +1,19 @@
 import React, { useState } from 'react'
-import { Toaster, toast } from 'react-hot-toast';
-import { Link, useNavigate } from 'react-router-dom';
+import { Toaster, toast } from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 import logo from '../imags/logo constraction.jpeg'
 import banner from '../imags/login banner.jpg'
-import api from '../../api';
+import api from '../../api'
 
 function Login() {
-
-
     const navigate = useNavigate()
     const [admin, setAdmin] = useState({
         email: "",
         password: ""
     })
 
-
-    const handelSubmit = async (e) => {
-
-        e.preventDefault();
-
+    const handleSubmit = async (e) => {
+        e.preventDefault()
         const { email, password } = admin
 
         if (!email || !password) {
@@ -27,83 +22,156 @@ function Login() {
 
         try {
             const result = await api.post('/admin/login', admin)
-
             if (result.data.loginStatus) {
                 navigate('/admin-page')
             } else {
-                toast.error(result.data.message || 'Signup failed!');
+                toast.error(result.data.message || 'Login failed!')
             }
         } catch (err) {
             console.log(err)
-            toast.error(err.response.data.message)
+            toast.error(err.response?.data?.message || 'An error occurred')
         }
-
     }
 
     return (
-        <div className="flex flex-col lg:flex-row justify-center items-center min-h-screen gap-8 lg:gap-32 p-4 bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="flex min-h-screen bg-gray-50">
             <Toaster position="top-center" reverseOrder={false} />
-            <div className="grid gap-5 text-center ml-52">
-                <div className="grid items-center">
-                    <div className="relative mx-auto">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur-sm opacity-70"></div>
-                        <img className="relative w-24 h-24 mx-auto bg-white rounded-full border-2 border-white shadow-lg" src={logo} alt="Logo" />
+
+            {/* Left section - Login Form */}
+            <div className="w-full md:w-1/2 flex flex-col justify-center p-6 md:p-12 lg:p-16">
+                <div className="w-full max-w-md mx-auto">
+                    {/* Logo and Brand */}
+                    <div className="flex items-center justify-center mb-10">
+                        <div className="relative">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full blur-sm opacity-70"></div>
+                            <img
+                                src={logo}
+                                alt="E-Shop Admin"
+                                className="relative w-16 h-16 rounded-full border-2 border-white shadow-lg"
+                            />
+                        </div>
+                        <div className="ml-4">
+                            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                                E-Shop Admin
+                            </span>
+                            <p className="text-gray-500 text-sm">Manage your online store</p>
+                        </div>
                     </div>
-                    <span className="text-xl font-bold font-poppins mt-2 bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">ConstructEasy</span>
-                </div>
 
-                <form onSubmit={handelSubmit}>
-                    <div className='max-w-[336px] grid gap-5'>
-                        <div className='grid text-left'>
-                            <label className='text-xs mb-1 font-light font-poppins text-gray-500'>Email</label>
-                            <input
-                                onChange={e => setAdmin({ ...admin, email: e.target.value })}
-                                className='w-[336px] h-8 border p-1 rounded-lg text-sm border-gray-300 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-gray-500 transition shadow-sm hover:shadow-md'
-                                placeholder='your email'
-                                type='email'
-                            />
+                    {/* Login Form Container */}
+                    <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                        {/* Welcome Text */}
+                        <div className="text-center mb-8">
+                            <h1 className="text-2xl font-bold text-gray-800">Admin Login</h1>
+                            <p className="text-gray-500 mt-2">Sign in to access your dashboard</p>
                         </div>
 
-                        <div className='grid justify-center text-left'>
-                            <lable className='text-xs mb-1 font-light font-poppins text-gray-500'>Password</lable>
-                            <input
-                                onChange={e => setAdmin({ ...admin, password: e.target.value })}
-                                placeholder='your password'
-                                className='w-[336px] h-8 border p-1 rounded-lg text-sm border-gray-300 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-gray-500 transition shadow-sm hover:shadow-md'
-                                type='password'
-                            />
-                        </div>
+                        {/* Login Form */}
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Admin Email</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                        </svg>
+                                    </div>
+                                    <input
+                                        type="email"
+                                        placeholder="admin@example.com"
+                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        onChange={e => setAdmin({ ...admin, email: e.target.value })}
+                                    />
+                                </div>
+                            </div>
 
-                        <div>
+                            <div>
+                                <div className="flex items-center justify-between mb-1">
+                                    <label className="block text-sm font-medium text-gray-700">Password</label>
+                                    <a href="#" className="text-xs text-blue-600 hover:text-blue-500">Forgot password?</a>
+                                </div>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <input
+                                        type="password"
+                                        placeholder="••••••••"
+                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        onChange={e => setAdmin({ ...admin, password: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center">
+                                <input
+                                    id="remember-me"
+                                    type="checkbox"
+                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                />
+                                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600">Remember me</label>
+                            </div>
+
                             <button
                                 type="submit"
-                                className="w-[336px] h-8 text-white rounded-xl font-poppins font-medium relative overflow-hidden group"
+                                className="w-full py-3 px-4 rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-md transition duration-200 font-medium"
                             >
-                                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-300 group-hover:scale-110"></div>
-                                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-600 to-purple-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
-                                <span className="relative z-10">Sign Up</span>
+                                Sign In
                             </button>
+                        </form>
+
+                        <div className="text-center mt-6">
+                            <p className="text-xs text-gray-500">
+                                By signing in, you agree to our <a href="#" className="text-blue-600 hover:underline">Terms of Service</a> and <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>
+                            </p>
                         </div>
                     </div>
-                </form>
-            </div>
 
-            <div className="hidden lg:flex justify-end">
-                <div
-                    style={{ backgroundImage: `url(${banner})` }}
-                    className="bg-cover bg-center w-[500px] h-[650px] rounded-3xl relative shadow-xl transform transition-transform hover:scale-[1.01] hover:shadow-2xl"
-                >
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-3xl"></div>
-                    <div className="absolute bottom-4 text-5xl text-white px-6 py-3 rounded-lg font-bold shadow-lg font-poppins">
-                        Quality Materials, <br /> <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Solid Result</span>
+                    <div className="mt-8 text-center">
+                        <p className="text-sm text-gray-600">
+                            Need help? <a href="#" className="font-medium text-blue-600 hover:text-blue-500">Contact Support</a>
+                        </p>
                     </div>
                 </div>
             </div>
 
+            {/* Right section - Banner Image */}
+            <div className="hidden md:block md:w-1/2 bg-cover bg-center relative" style={{ backgroundImage: `url(${banner})` }}>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/80 to-indigo-900/80"></div>
+                <div className="absolute inset-0 flex flex-col justify-center items-center p-12">
+                    <div className="max-w-lg text-center">
+                        <h2 className="text-4xl font-bold text-white mb-6">E-commerce Management Dashboard</h2>
+                        <p className="text-xl text-gray-200 mb-8">Access all your tools to manage products, track orders, and grow your online business.</p>
 
+                        <div className="grid grid-cols-2 gap-4 mb-8">
+                            <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-white">
+                                <div className="font-bold text-3xl mb-1">1.2K</div>
+                                <div className="text-sm text-gray-200">Products</div>
+                            </div>
+                            <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-white">
+                                <div className="font-bold text-3xl mb-1">8.4K</div>
+                                <div className="text-sm text-gray-200">Customers</div>
+                            </div>
+                            <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-white">
+                                <div className="font-bold text-3xl mb-1">$32K</div>
+                                <div className="text-sm text-gray-200">Revenue</div>
+                            </div>
+                            <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-white">
+                                <div className="font-bold text-3xl mb-1">42%</div>
+                                <div className="text-sm text-gray-200">Growth</div>
+                            </div>
+                        </div>
 
+                        <div className="inline-flex items-center px-4 py-2 bg-white text-blue-600 rounded-lg font-medium text-sm shadow-lg">
+                            Admin Panel v2.4 • Last updated May 2025
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
     )
 }
 

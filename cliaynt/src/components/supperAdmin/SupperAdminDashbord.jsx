@@ -209,7 +209,7 @@ function SupperAdminDashbord() {
                                             {
                                                 admin.image != null ? (
                                                     <span className='rounded-full w-4 h-4'>
-                                                        <img src={`http://localhost:3032/images/${admin?.image}`} alt="" srcset="" />
+                                                        <img className='w-6 h-6 rounded-full' src={`http://localhost:3032/images/${admin?.image}`} alt="" srcset="" />
                                                     </span>
                                                 ) : (
                                                     <User size={20} />
