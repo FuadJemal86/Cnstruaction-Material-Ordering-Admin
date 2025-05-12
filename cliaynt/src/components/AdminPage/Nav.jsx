@@ -222,7 +222,7 @@ function Nav() {
                             </button>
                             <div className="ml-2">
                                 {
-                                    adminProfile?.image ? (
+                                    adminProfile?.image?.length > 0 ? (
                                         <div className="h-8 w-8 rounded-full  flex items-center justify-center text-white">
                                             <span className="font-medium text-sm "><img className='rounded-full h-8 w-8' src={`http://localhost:3032/images/${adminProfile.image}`} alt="" srcset="" /></span>
                                         </div>
