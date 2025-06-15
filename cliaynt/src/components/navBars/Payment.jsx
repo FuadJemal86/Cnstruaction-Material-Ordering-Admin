@@ -19,6 +19,7 @@ function Payment() {
     const getStatusBadgeColor = (status) => {
         const statusColors = {
             COMPLETED: "bg-green-100 text-green-800",
+            PAYED: "bg-green-100 text-green-800",
             PROCESSING: "bg-blue-100 text-blue-800",
             PENDING: "bg-yellow-100 text-yellow-800",
             FAILED: "bg-red-100 text-red-800"
@@ -118,6 +119,25 @@ function Payment() {
         }
     };
 
+    const handlePayedStatus = async (newStatus, id) => {
+        try {
+            const result = await api.put(`/admin/update-payed-status/${id}`, {
+                ...statusState,
+                payedStatus: newStatus
+            });
+            if (result.data.status) {
+                setStatusState({ status: newStatus });
+                toast.success(result.data.message);
+                fetchData();
+            } else {
+                console.log(result.data.message);
+            }
+        } catch (err) {
+            console.log(err);
+            toast.error(err.response.data.message);
+        }
+    };
+
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">
             <Toaster position="top-center" reverseOrder={false} />
@@ -150,7 +170,8 @@ function Payment() {
                                 <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Bank Transaction</th>
                                 <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
                                 <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
+                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Payed Status</th>
                                 <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Detail</th>
                             </tr>
                         </thead>
@@ -163,7 +184,7 @@ function Payment() {
                                     <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
                                     <td className="p-3 text-sm text-gray-800">{c.customer.name}</td>
                                     <td className="p-3 text-sm text-gray-800">{c.totalPrice} birr</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.bank.bankName} {c.bank.account}</td>
+                                    <td className="p-3 text-sm text-gray-800">{c.bank.name} {c.bank.accountNumber}</td>
                                     <td className="p-3 text-sm text-gray-800">{c.bankTransactionId}</td>
                                     <td className="p-3 text-sm text-gray-800">{c.customer.phone}</td>
                                     <td className="p-3 text-sm text-gray-500">
@@ -183,6 +204,15 @@ function Payment() {
                                             <option value="COMPLETED">COMPLETED</option>
                                             <option value="FAILED">FAILED</option>
                                             <option value="REFUNDED">REFUNDED</option>
+                                        </select>
+                                    </td>
+                                    <td className="p-3 text-sm">
+                                        <select value={c.payedStatus}
+                                            onChange={e => handlePayedStatus(e.target.value, c.id)}
+
+                                            className={`px-2 py-1 rounded-full text-xs font-medium outline-none ${getStatusBadgeColor(c.payedStatus)}`}>
+                                            <option value="PENDING">PENDING</option>
+                                            <option value="PAYED">PAYED</option>
                                         </select>
                                     </td>
                                     <td>

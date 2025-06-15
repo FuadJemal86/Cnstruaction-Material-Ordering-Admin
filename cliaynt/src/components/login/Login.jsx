@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Toaster, toast } from 'react-hot-toast'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import logo from '../imags/logo constraction.jpeg'
 import banner from '../imags/login banner.jpg'
 import api from '../../api'
@@ -131,9 +131,9 @@ function Login() {
                     </div>
 
                     <div className="mt-8 text-center">
-                        <p className="text-sm text-gray-600">
-                            Need help? <a href="#" className="font-medium text-blue-600 hover:text-blue-500">Contact Support</a>
-                        </p>
+                        <Link to={'/supper-admin'} className="text-sm  font-medium text-blue-600 hover:text-blue-500">
+                            to supper admin? <a href="#"></a>
+                        </Link>
                     </div>
                 </div>
             </div>
