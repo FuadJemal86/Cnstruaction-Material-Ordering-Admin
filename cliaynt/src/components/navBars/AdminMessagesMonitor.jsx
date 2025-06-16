@@ -1,0 +1,430 @@
+import React, { useState, useEffect, useRef } from 'react';
+import {
+    Search, Filter, User, Building2, MessageCircle, ArrowRight,
+    RefreshCw, Sun, Moon, Download, Loader2, AlertCircle, XCircle
+} from 'lucide-react';
+import api from '../../api';
+
+const AdminMessagesMonitor = () => {
+    // State
+    const [conversations, setConversations] = useState([]);
+    const [selectedConversation, setSelectedConversation] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [darkMode, setDarkMode] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const messagesEndRef = useRef(null);
+
+    // API Functions
+    const fetchConversations = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const response = await fetch(`${api}/admin/conversations`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setConversations(data.conversations || []);
+
+        } catch (error) {
+            console.error('Error fetching conversations:', error);
+            setError('Failed to load conversations');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchMessages = async (conversationId) => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const response = await fetch(`${API_BASE}/admin/conversations/${conversationId}/messages`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setMessages(data.messages || []);
+
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+            setError('Failed to load messages');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const exportConversations = async () => {
+        try {
+            const response = await fetch(`${API_BASE}/admin/conversations/export`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `conversations_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+
+        } catch (error) {
+            console.error('Error exporting conversations:', error);
+            setError('Failed to export conversations');
+        }
+    };
+
+    // Load conversations on component mount
+    useEffect(() => {
+        fetchConversations();
+    }, []);
+
+    // Auto-scroll to bottom when messages change
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+
+    // Handlers
+    const handleSelectConversation = (conversation) => {
+        setSelectedConversation(conversation);
+        fetchMessages(conversation.id);
+    };
+
+    const handleRefresh = () => {
+        fetchConversations();
+        if (selectedConversation) {
+            fetchMessages(selectedConversation.id);
+        }
+    };
+
+    // Filter conversations
+    const filteredConversations = conversations.filter(conv => {
+        const matchesSearch = conv.customerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            conv.supplierName?.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesStatus = statusFilter === 'all' || conv.status === statusFilter;
+        return matchesSearch && matchesStatus;
+    });
+
+    // Helper functions
+    const formatTime = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    const formatRelativeTime = (dateString) => {
+        if (!dateString) return 'No messages';
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+
+        if (diffInMinutes < 1) return 'just now';
+        if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+        if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+        return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    };
+
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'active': return 'text-green-500 bg-green-100 dark:bg-green-900/30';
+            case 'pending': return 'text-yellow-500 bg-yellow-100 dark:bg-yellow-900/30';
+            case 'completed': return 'text-blue-500 bg-blue-100 dark:bg-blue-900/30';
+            case 'inactive': return 'text-gray-500 bg-gray-100 dark:bg-gray-900/30';
+            default: return 'text-gray-500 bg-gray-100 dark:bg-gray-900/30';
+        }
+    };
+
+    // Theme classes
+    const themeClasses = {
+        bg: darkMode ? 'bg-gray-900' : 'bg-gray-100',
+        cardBg: darkMode ? 'bg-gray-800' : 'bg-white',
+        border: darkMode ? 'border-gray-700' : 'border-gray-200',
+        text: darkMode ? 'text-gray-100' : 'text-gray-900',
+        textSecondary: darkMode ? 'text-gray-400' : 'text-gray-600',
+        textMuted: darkMode ? 'text-gray-500' : 'text-gray-500',
+        hover: darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50',
+        selected: darkMode ? 'bg-blue-900/50' : 'bg-blue-50',
+        input: darkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'
+    };
+
+    // Message Bubble Component
+    const MessageBubble = ({ message }) => {
+        const isCustomer = message.senderType === 'customer';
+
+        return (
+            <div className={`flex mb-4 ${isCustomer ? 'justify-start' : 'justify-end'}`}>
+                <div className={`flex items-start gap-3 max-w-xs lg:max-w-md ${isCustomer ? 'flex-row' : 'flex-row-reverse'}`}>
+                    <div className={`w-8 h-8 rounded-full ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} flex items-center justify-center flex-shrink-0`}>
+                        {isCustomer ? (
+                            <User className={`w-4 h-4 ${themeClasses.textMuted}`} />
+                        ) : (
+                            <Building2 className={`w-4 h-4 ${themeClasses.textMuted}`} />
+                        )}
+                    </div>
+
+                    <div className={`px-4 py-2 rounded-lg ${isCustomer
+                        ? `${darkMode ? 'bg-gray-700 text-gray-100' : 'bg-gray-200 text-gray-800'}`
+                        : 'bg-blue-500 text-white'
+                        }`}>
+                        <p className={`text-xs font-medium mb-1 ${isCustomer
+                            ? darkMode ? 'text-gray-300' : 'text-gray-600'
+                            : 'text-white/70'
+                            }`}>
+                            {message.senderName}
+                        </p>
+                        <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                        <p className={`text-xs mt-1 ${isCustomer
+                            ? darkMode ? 'text-gray-400' : 'text-gray-600'
+                            : 'text-white/70'
+                            }`}>
+                            {formatTime(message.timestamp)}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <div className={`min-h-screen ${themeClasses.bg}`}>
+            {/* Header */}
+            <div className={`${themeClasses.cardBg} ${themeClasses.border} border-b p-6`}>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className={`text-2xl font-bold ${themeClasses.text}`}>Admin Messages Monitor</h1>
+                        <p className={themeClasses.textSecondary}>Monitor conversations between customers and suppliers</p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        {error && (
+                            <div className="flex items-center gap-2 px-4 py-2 bg-red-100/50 border border-red-200 rounded-lg">
+                                <AlertCircle className="w-4 h-4 text-red-500" />
+                                <span className="text-red-700 text-sm">{error}</span>
+                                <button
+                                    onClick={() => setError(null)}
+                                    className="ml-2 text-red-500 hover:text-red-700"
+                                >
+                                    <XCircle className="w-4 h-4" />
+                                </button>
+                            </div>
+                        )}
+
+                        <button
+                            onClick={() => setDarkMode(!darkMode)}
+                            className={`p-2 rounded-lg ${themeClasses.hover} transition-colors`}
+                        >
+                            {darkMode ? (
+                                <Sun className="w-5 h-5 text-yellow-500" />
+                            ) : (
+                                <Moon className="w-5 h-5 text-gray-600" />
+                            )}
+                        </button>
+
+                        <button
+                            onClick={handleRefresh}
+                            className={`p-2 rounded-lg ${themeClasses.hover} transition-colors`}
+                            disabled={loading}
+                        >
+                            <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                        </button>
+
+                        <button
+                            onClick={exportConversations}
+                            className={`p-2 rounded-lg ${themeClasses.hover} transition-colors`}
+                            title="Export Conversations"
+                        >
+                            <Download className="w-5 h-5" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex h-[calc(100vh-120px)]">
+                {/* Conversations List */}
+                <div className={`w-96 ${themeClasses.cardBg} ${themeClasses.border} border-r flex flex-col`}>
+                    {/* Search and Filters */}
+                    <div className="p-4 space-y-4">
+                        <div className="relative">
+                            <Search className={`w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 ${themeClasses.textMuted}`} />
+                            <input
+                                type="text"
+                                placeholder="Search conversations..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className={`w-full pl-10 pr-4 py-2 ${themeClasses.input} rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                            />
+                        </div>
+
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className={`w-full p-2 ${themeClasses.input} rounded-lg border`}
+                        >
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                    {/* Conversations List */}
+                    <div className="flex-1 overflow-y-auto">
+                        {loading && conversations.length === 0 ? (
+                            <div className="flex justify-center items-center h-32">
+                                <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                            </div>
+                        ) : filteredConversations.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center p-8 text-center">
+                                <MessageCircle className={`w-12 h-12 mb-3 ${themeClasses.textMuted}`} />
+                                <p className={themeClasses.textMuted}>No conversations found</p>
+                            </div>
+                        ) : (
+                            filteredConversations.map(conv => (
+                                <div
+                                    key={conv.id}
+                                    className={`p-4 ${themeClasses.border} border-b ${themeClasses.hover} cursor-pointer transition-colors ${selectedConversation?.id === conv.id ? themeClasses.selected : ''}`}
+                                    onClick={() => handleSelectConversation(conv)}
+                                >
+                                    <div className="space-y-3">
+                                        {/* Participants */}
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <User className="w-4 h-4 text-blue-500" />
+                                                <span className={`text-sm font-medium ${themeClasses.text}`}>
+                                                    {conv.customerName}
+                                                </span>
+                                            </div>
+                                            <ArrowRight className={`w-3 h-3 ${themeClasses.textMuted}`} />
+                                            <div className="flex items-center gap-2">
+                                                <Building2 className="w-4 h-4 text-green-500" />
+                                                <span className={`text-sm font-medium ${themeClasses.text}`}>
+                                                    {conv.supplierName}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Status and Message Count */}
+                                        <div className="flex items-center justify-between">
+                                            <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(conv.status)}`}>
+                                                {conv.status?.charAt(0).toUpperCase() + conv.status?.slice(1)}
+                                            </span>
+                                            <span className={`text-xs ${themeClasses.textMuted}`}>
+                                                {conv.messageCount || 0} messages
+                                            </span>
+                                        </div>
+
+                                        {/* Last Message */}
+                                        <div>
+                                            <p className={`text-sm ${themeClasses.textSecondary} truncate`}>
+                                                {conv.lastMessage || 'No messages yet'}
+                                            </p>
+                                            <p className={`text-xs ${themeClasses.textMuted} mt-1`}>
+                                                {formatRelativeTime(conv.lastMessageTime)}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                {/* Chat Window */}
+                <div className={`flex-1 flex flex-col ${themeClasses.bg}`}>
+                    {selectedConversation ? (
+                        <>
+                            {/* Chat Header */}
+                            <div className={`p-4 ${themeClasses.cardBg} ${themeClasses.border} border-b`}>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-2">
+                                            <User className="w-5 h-5 text-blue-500" />
+                                            <span className={`font-medium ${themeClasses.text}`}>
+                                                {selectedConversation.customerName}
+                                            </span>
+                                        </div>
+                                        <ArrowRight className={`w-4 h-4 ${themeClasses.textMuted}`} />
+                                        <div className="flex items-center gap-2">
+                                            <Building2 className="w-5 h-5 text-green-500" />
+                                            <span className={`font-medium ${themeClasses.text}`}>
+                                                {selectedConversation.supplierName}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <span className={`px-3 py-1 rounded text-sm font-medium ${getStatusColor(selectedConversation.status)}`}>
+                                        {selectedConversation.status?.charAt(0).toUpperCase() + selectedConversation.status?.slice(1)}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Messages */}
+                            <div className="flex-1 overflow-y-auto p-4">
+                                {loading ? (
+                                    <div className="flex justify-center items-center h-32">
+                                        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                                    </div>
+                                ) : messages.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center h-full">
+                                        <MessageCircle className={`w-16 h-16 mb-4 ${themeClasses.textMuted}`} />
+                                        <h3 className={`text-lg font-medium mb-2 ${themeClasses.text}`}>No messages yet</h3>
+                                        <p className={themeClasses.textSecondary}>This conversation hasn't started</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-1">
+                                        {messages.map(message => (
+                                            <MessageBubble key={message.id} message={message} />
+                                        ))}
+                                        <div ref={messagesEndRef} />
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex-1 flex items-center justify-center">
+                            <div className="text-center">
+                                <MessageCircle className={`w-20 h-20 mx-auto mb-6 ${themeClasses.textMuted}`} />
+                                <h3 className={`text-xl font-semibold mb-2 ${themeClasses.text}`}>Select a Conversation</h3>
+                                <p className={themeClasses.textSecondary}>Choose a conversation from the list to view messages</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default AdminMessagesMonitor;

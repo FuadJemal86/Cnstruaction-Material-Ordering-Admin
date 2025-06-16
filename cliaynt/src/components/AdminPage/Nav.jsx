@@ -63,7 +63,7 @@ function Nav() {
         { icon: <CreditCard size={20} />, title: 'Payments', path: '/admin-page/payment' },
         { icon: <Tag size={20} />, title: 'Categories', path: '/admin-page/category' },
         { icon: <Building2 size={20} />, title: 'Bank Account', path: '/admin-page/bank-account' },
-        { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/admin-page/complaints' },
+        { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/admin-message-monitor' },
         { icon: <Shield size={20} />, title: 'Supper Admin', path: '/supper-admin' }
 
     ];
@@ -220,12 +220,9 @@ function Nav() {
                             </div>
                         </div>
                         <div className="flex items-center space-x-4">
-                            <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
-                                <Bell size={20} />
-                            </button>
-                            <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
+                            <Link to={'/admin-message-monitor'} className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
                                 <MessageSquare size={20} />
-                            </button>
+                            </Link>
                             <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
                                 <Link to={'/setting-page'}><Settings size={20} /></Link>
                             </button>
