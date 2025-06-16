@@ -20,6 +20,8 @@ import {
     Shield,
 } from "lucide-react";
 import api from '../../api';
+import logo from '../imags/jejan.svg'
+
 
 
 function Nav() {
@@ -104,11 +106,18 @@ function Nav() {
                 {/* Logo section */}
                 <div className="p-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="bg-blue-500 text-white rounded-lg h-10 w-10 flex items-center justify-center">
-                            <span className="font-bold text-xl">A</span>
-                        </div>
-                        {!collapsed && (
-                            <h1 className="font-medium text-lg text-gray-100">Admin Panel</h1>
+                        {!collapsed ? (
+                            <div className="relative mb-1">
+                                <img
+                                    className="relative w-40 h-16"
+                                    src={logo}
+                                    alt="ConstructEasy Logo"
+                                />
+                            </div>
+                        ) : (
+                            <div className="bg-blue-500 text-white rounded-lg h-10 w-10 flex items-center justify-center">
+                                <span className="font-bold text-xl">J</span>
+                            </div>
                         )}
                     </div>
                     <button

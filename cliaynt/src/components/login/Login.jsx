@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Toaster, toast } from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom'
-import logo from '../imags/logo constraction.jpeg'
+import logo from '../imags/jejan.svg'
 import banner from '../imags/login banner.jpg'
 import api from '../../api'
 
@@ -42,19 +42,12 @@ function Login() {
                 <div className="w-full max-w-md mx-auto">
                     {/* Logo and Brand */}
                     <div className="flex items-center justify-center mb-10">
-                        <div className="relative">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full blur-sm opacity-70"></div>
+                        <div className="relative mb-1">
                             <img
+                                className="relative w-48 h-24"
                                 src={logo}
-                                alt="E-Shop Admin"
-                                className="relative w-16 h-16 rounded-full border-2 border-white shadow-lg"
+                                alt="ConstructEasy Logo"
                             />
-                        </div>
-                        <div className="ml-4">
-                            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                                E-Shop Admin
-                            </span>
-                            <p className="text-gray-500 text-sm">Manage your online store</p>
                         </div>
                     </div>
 
