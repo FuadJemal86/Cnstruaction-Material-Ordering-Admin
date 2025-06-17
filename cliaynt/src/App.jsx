@@ -39,7 +39,6 @@ function App() {
                     <Route path='online-suppliers' element={<OnlineSupplier />} />
                     <Route path='removed-supplier' element={<RemovedSupplier />} />
                     <Route path='removed-customer' element={<RemovedCustomer />} />
-
                 </Route>
             </Routes>
         </Router>

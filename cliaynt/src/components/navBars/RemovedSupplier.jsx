@@ -117,53 +117,53 @@ function RemovedSupplier() {
                     </button>
                 </div>
 
-                <div className='w-full overflow-x-auto'>
-                    <table className="w-full border-collapse min-w-[800px]">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {removedSuppliers.map((c, index) => (
-                                <tr
-                                    key={c.id || index}
-                                    className={index % 2 === 0 ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-100"}
-                                >
-                                    <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.companyName}</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.email}</td>
-                                    <td className="p-3 text-sm text-gray-500">{c.phone}</td>
-                                    <td className="p-3 text-sm text-gray-500">
-                                        {new Date(c.createdAt).toLocaleDateString('en-GB', {
-                                            day: 'numeric',
-                                            month: 'long',
-                                            year: 'numeric'
-                                        }).replace(' ', '.')}
-                                    </td>
-                                    <td>
-                                        <span className='text-blue-600 cursor-pointer flex items-center' onClick={e => handleRecover(c.id)}>
-                                            <Recycle size={20} />
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
-                            {removedSuppliers.length === 0 && (
+                <div className="border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
                                 <tr>
-                                    <td colSpan="6" className="p-4 text-center text-gray-500">
-                                        No removed supplier found
-                                    </td>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {removedSuppliers.length > 0 ? removedSuppliers.map((c, index) => (
+                                    <tr key={c.id || index} className="hover:bg-gray-50 transition-colors duration-150">
+                                        <td className="py-4 px-4 text-indigo-600 font-medium">{c.id}</td>
+                                        <td className="py-4 px-4 text-gray-900">{c.companyName}</td>
+                                        <td className="py-4 px-4 text-gray-900">{c.email}</td>
+                                        <td className="py-4 px-4 text-gray-500">{c.phone}</td>
+                                        <td className="py-4 px-4 text-gray-500">
+                                            {new Date(c.createdAt).toLocaleDateString('en-GB', {
+                                                day: 'numeric',
+                                                month: 'long',
+                                                year: 'numeric'
+                                            }).replace(' ', '.')}
+                                        </td>
+                                        <td className="py-4 px-4">
+                                            <div className="flex items-center space-x-2">
+                                                <span onClick={() => handleRecover(c.id)} className="text-blue-600 hover:text-blue-800 cursor-pointer p-2 rounded-full transition duration-150">
+                                                    <Recycle size={20} />
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )) : (
+                                    <tr>
+                                        <td colSpan="6" className="py-8 text-center text-gray-500">
+                                            No removed supplier found
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
                 <div className="flex justify-center items-center mt-6 space-x-2">
                     <button
                         disabled={page === 1}

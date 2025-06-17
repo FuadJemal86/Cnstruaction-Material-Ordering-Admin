@@ -84,38 +84,46 @@ function Category() {
                         Add Category
                     </Link>
                 </div>
-                <div className='w-full overflow-x-auto'>
-                    <table className="w-full border-collapse min-w-[800px]">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {category.map((supplier, index) => (
-                                <tr key={supplier.id || index} className={index % 2 === 0 ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-100"}>
-                                    <td className="p-3 text-sm text-indigo-600 font-medium">{supplier.id}</td>
-                                    <td className="p-3 text-sm text-gray-800">{supplier.category}</td>
-
-                                    <td>
-                                        <div className="flex space-x-1">
-                                            <span onClick={() => handleDelete(supplier.id)} className="p-2 text-red-600 rounded-lg cursor-pointer">
-                                                <Trash2 size={20} />
-                                            </span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            {category.length === 0 && (
+                <div className="border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
                                 <tr>
-                                    <td colSpan="8" className="p-4 text-center text-gray-500">No category found</td>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {category.length > 0 ? (
+                                    category.map((supplier, index) => (
+                                        <tr key={supplier.id || index} className="hover:bg-gray-50 transition-colors duration-150">
+                                            <td className="py-4 px-4 text-indigo-600 font-medium">{supplier.id}</td>
+                                            <td className="py-4 px-4 text-gray-900">{supplier.category}</td>
+                                            <td className="py-4 px-4">
+                                                <div className="flex items-center space-x-2">
+                                                    <span
+                                                        onClick={() => handleDelete(supplier.id)}
+                                                        className="text-red-600 hover:text-red-800 cursor-pointer p-2 rounded-full transition duration-150"
+                                                    >
+                                                        <Trash2 size={20} />
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="3" className="py-8 text-center text-gray-500">
+                                            No category found
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
             </div>
             <div className="flex justify-center items-center mt-6 space-x-2">
                 <button

@@ -159,81 +159,81 @@ function Payment() {
                         <FileSpreadsheet />
                     </button>
                 </div>
-                <div className='w-full overflow-x-auto'>
-                    <table className="min-w-[1200px] border-collapse">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Account</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Bank Transaction</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Payed Status</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Detail</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {payment.map((c, index) => (
-                                <tr
-                                    key={c.id || index}
-                                    className={index % 2 === 0 ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-100"}
-                                >
-                                    <td className="p-3 text-sm text-indigo-600 font-medium">{c.id}</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.customer.name}</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.totalPrice} birr</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.bank.name} {c.bank.accountNumber}</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.bankTransactionId}</td>
-                                    <td className="p-3 text-sm text-gray-800">{c.customer.phone}</td>
-                                    <td className="p-3 text-sm text-gray-500">
-                                        {new Date(c.createdAt).toLocaleDateString('en-GB', {
-                                            day: 'numeric',
-                                            month: 'long',
-                                            year: 'numeric'
-                                        }).replace(' ', '.')}
-                                    </td>
-                                    <td className="p-3 text-sm">
-                                        <select value={c.status}
-
-                                            onChange={e => handleStatus(e.target.value, c.id)}
-
-                                            className={`px-2 py-1 rounded-full text-xs font-medium outline-none ${getStatusBadgeColor(c.status)}`}>
-                                            <option value="PENDING">PENDING</option>
-                                            <option value="COMPLETED">COMPLETED</option>
-                                            <option value="FAILED">FAILED</option>
-                                            <option value="REFUNDED">REFUNDED</option>
-                                        </select>
-                                    </td>
-                                    <td className="p-3 text-sm">
-                                        <select value={c.payedStatus}
-                                            onChange={e => handlePayedStatus(e.target.value, c.id)}
-
-                                            className={`px-2 py-1 rounded-full text-xs font-medium outline-none ${getStatusBadgeColor(c.payedStatus)}`}>
-                                            <option value="PENDING">PENDING</option>
-                                            <option value="PAYED">PAYED</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <div className="flex space-x-1">
-                                            <span onClick={e => handleDetilPayment(c.transactionId)} className="p-2 text-blue-600 rounded-lg cursor-pointer">
-                                                <Eye size={20} />
-                                            </span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            {payment.length === 0 && (
+                <div className="border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
                                 <tr>
-                                    <td colSpan="6" className="p-4 text-center text-gray-500">
-                                        No product found
-                                    </td>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank Transaction</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payed Status</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detail</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {payment.length > 0 ? (
+                                    payment.map((c, index) => (
+                                        <tr key={c.id || index} className="hover:bg-gray-50 transition-colors duration-150">
+                                            <td className="py-4 px-4 text-indigo-600 font-medium">{c.id}</td>
+                                            <td className="py-4 px-4 text-gray-900">{c.customer.name}</td>
+                                            <td className="py-4 px-4 text-gray-900 font-medium">{c.totalPrice} birr</td>
+                                            <td className="py-4 px-4 text-gray-900">{c.bank.name} - {c.bank.accountNumber}</td>
+                                            <td className="py-4 px-4 text-gray-900">{c.bankTransactionId}</td>
+                                            <td className="py-4 px-4 text-gray-900">{c.customer.phone}</td>
+                                            <td className="py-4 px-4 text-gray-500">
+                                                {new Date(c.createdAt).toLocaleDateString('en-GB', {
+                                                    day: 'numeric', month: 'long', year: 'numeric'
+                                                }).replace(' ', '.')}
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <select
+                                                    value={c.status}
+                                                    onChange={e => handleStatus(e.target.value, c.id)}
+                                                    className={`px-3 py-1 rounded-full text-xs font-medium outline-none ${getStatusBadgeColor(c.status)}`}
+                                                >
+                                                    <option value="PENDING">PENDING</option>
+                                                    <option value="COMPLETED">COMPLETED</option>
+                                                    <option value="FAILED">FAILED</option>
+                                                    <option value="REFUNDED">REFUNDED</option>
+                                                </select>
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <select
+                                                    value={c.payedStatus}
+                                                    onChange={e => handlePayedStatus(e.target.value, c.id)}
+                                                    className={`px-3 py-1 rounded-full text-xs font-medium outline-none ${getStatusBadgeColor(c.payedStatus)}`}
+                                                >
+                                                    <option value="PENDING">PENDING</option>
+                                                    <option value="PAYED">PAYED</option>
+                                                </select>
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <div className="flex items-center justify-center">
+                                                    <span onClick={() => handleDetilPayment(c.transactionId)} className="p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 transition duration-150">
+                                                        <Eye size={20} />
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="10" className="py-8 text-center text-gray-500">
+                                            No payments found
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
 
                 {isModalOpen && (
                     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50 p-4">

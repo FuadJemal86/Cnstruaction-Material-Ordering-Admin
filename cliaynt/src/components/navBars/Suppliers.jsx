@@ -204,74 +204,76 @@ function Suppliers() {
                         <FileSpreadsheet />
                     </button>
                 </div>
-                <div className='w-full overflow-x-auto'>
-                    <table className="w-full min-w-[1000px] border-collapse">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Id</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Tin Number</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Licence Number</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">DATE</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {suppliers.map((supplier, index) => (
-                                <tr key={supplier.id || index} className={index % 2 === 0 ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-100"}>
-                                    <td className="p-3 text-sm text-indigo-600 font-medium ">{supplier.id}</td>
-                                    <td className="p-3 text-sm text-gray-800">{supplier.companyName}</td>
-                                    <td className="p-3 text-sm text-gray-800">{supplier.email}</td>
-                                    <td className="p-3 text-sm text-gray-500">{supplier.address}</td>
-                                    <td className="p-3 text-sm text-gray-500">{supplier.tinNumber}</td>
-                                    <td className="p-3 text-sm text-gray-500">{supplier.licenseNumber}</td>
-                                    <td className="p-3 text-sm text-gray-500">
-                                        {new Date(supplier.createdAt).toLocaleDateString('en-GB', {
-                                            day: 'numeric',
-                                            month: 'long',
-                                            year: 'numeric'
-                                        }).replace(' ', '.')}
-                                    </td>
-
-                                    <td className="p-3 text-sm">
-                                        <select
-                                            className={`px-2 py-1 rounded-full text-xs font-medium outline-none ${getStatusBadgeColor(supplier.isApproved ? "Approved" : "Prosses")}`}
-                                            value={supplier.isApproved ? "Approved" : "Prosses"}
-                                            onChange={(e) => handleStatusChange(supplier.id, e.target.value)}
-                                        >
-                                            <option value="Prosses">Prosses</option>
-                                            <option value="Approved">Approved</option>
-                                        </select>
-                                    </td>
-
-                                    <td>
-                                        <div className="flex space-x-1">
-                                            <button className="p-2 text-blue-600 rounded-l">
-                                                <Edit size={20} />
-                                            </button>
-                                            <button className="p-2 text-red-600 rounded-lg">
-                                                <span onClick={e => handleDelete(supplier.id)}>
-                                                    <Trash2 size={20} />
-                                                </span>
-                                            </button>
-                                            <button className="p-2 text-blue-600 rounded-l" onClick={() => handleViewDetails(supplier.id)}>
-                                                <Eye size={20} />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            {suppliers.length === 0 && (
+                <div className="border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
                                 <tr>
-                                    <td colSpan="8" className="p-4 text-center text-gray-500">No suppliers found</td>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tin Number</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">License Number</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {suppliers.length > 0 ? (
+                                    suppliers.map((supplier, index) => (
+                                        <tr key={supplier.id || index} className="hover:bg-gray-50 transition-colors duration-150">
+                                            <td className="py-4 px-4 text-indigo-600 font-medium">{supplier.id}</td>
+                                            <td className="py-4 px-4 text-gray-900">{supplier.companyName}</td>
+                                            <td className="py-4 px-4 text-gray-900">{supplier.email}</td>
+                                            <td className="py-4 px-4 text-gray-500">{supplier.address}</td>
+                                            <td className="py-4 px-4 text-gray-500">{supplier.tinNumber}</td>
+                                            <td className="py-4 px-4 text-gray-500">{supplier.licenseNumber}</td>
+                                            <td className="py-4 px-4 text-gray-500">
+                                                {new Date(supplier.createdAt).toLocaleDateString('en-GB', {
+                                                    day: 'numeric',
+                                                    month: 'long',
+                                                    year: 'numeric'
+                                                }).replace(' ', '.')}
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <select
+                                                    className={`px-3 py-1 rounded-full text-xs font-medium outline-none ${getStatusBadgeColor(supplier.isApproved ? "Approved" : "Prosses")}`}
+                                                    value={supplier.isApproved ? "Approved" : "Prosses"}
+                                                    onChange={(e) => handleStatusChange(supplier.id, e.target.value)}
+                                                >
+                                                    <option value="Prosses">Prosses</option>
+                                                    <option value="Approved">Approved</option>
+                                                </select>
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <div className="flex items-center space-x-2">
+                                                    <button className="p-2 text-blue-600 hover:text-blue-800 rounded-full transition duration-150" onClick={() => handleEdit(supplier.id)}>
+                                                        <Edit size={20} />
+                                                    </button>
+                                                    <button className="p-2 text-red-600 hover:text-red-800 rounded-full transition duration-150" onClick={() => handleDelete(supplier.id)}>
+                                                        <Trash2 size={20} />
+                                                    </button>
+                                                    <button className="p-2 text-green-600 hover:text-green-800 rounded-full transition duration-150" onClick={() => handleViewDetails(supplier.id)}>
+                                                        <Eye size={20} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="9" className="py-8 text-center text-gray-500">
+                                            No suppliers found
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
                 <div className="flex justify-center items-center mt-6 space-x-2">
                     <button
                         disabled={page === 1}
