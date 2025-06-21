@@ -249,9 +249,6 @@ function Suppliers() {
                                             </td>
                                             <td className="py-4 px-4">
                                                 <div className="flex items-center space-x-2">
-                                                    <button className="p-2 text-blue-600 hover:text-blue-800 rounded-full transition duration-150" onClick={() => handleEdit(supplier.id)}>
-                                                        <Edit size={20} />
-                                                    </button>
                                                     <button className="p-2 text-red-600 hover:text-red-800 rounded-full transition duration-150" onClick={() => handleDelete(supplier.id)}>
                                                         <Trash2 size={20} />
                                                     </button>

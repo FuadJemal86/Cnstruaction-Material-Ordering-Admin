@@ -16,6 +16,7 @@ import SupperAdminLogin from './components/supperAdmin/SupperAdminLogin';
 import SupperAdminDashbord from './components/supperAdmin/SupperAdminDashbord';
 import SettingPage from './components/navBars/SettingPage';
 import AdminMessagesMonitor from './components/navBars/AdminMessagesMonitor';
+import AdminDashboard from './components/navBars/AdminDashboard';
 
 function App() {
     return (
@@ -29,6 +30,7 @@ function App() {
 
 
                 <Route path='/admin-page' element={<Nav />}>
+                    <Route path='' element={<AdminDashboard />} />
                     <Route path='order' element={<Orders />} />
                     <Route path='supplier' element={<Suppliers />} />
                     <Route path='customer' element={<Customer />} />

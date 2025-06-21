@@ -39,7 +39,7 @@ function Nav() {
     };
 
     const menuItems = [
-        { icon: <LayoutDashboard size={20} />, title: 'Overview', path: '/' },
+        { icon: <LayoutDashboard size={20} />, title: 'Overview', path: '' },
         { icon: <Package size={20} />, title: 'Orders', path: '/admin-page/order' },
         {
             icon: <ShoppingCart size={20} />,

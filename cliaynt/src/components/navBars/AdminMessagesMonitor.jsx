@@ -3,10 +3,10 @@ import {
     Search, Filter, User, Building2, MessageCircle, ArrowRight,
     RefreshCw, Sun, Moon, Download, Loader2, AlertCircle, XCircle
 } from 'lucide-react';
-import api from '../../api';
 
 const AdminMessagesMonitor = () => {
     // State
+    const [allMessages, setAllMessages] = useState([]);
     const [conversations, setConversations] = useState([]);
     const [selectedConversation, setSelectedConversation] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -18,13 +18,70 @@ const AdminMessagesMonitor = () => {
 
     const messagesEndRef = useRef(null);
 
+    // Helper function to group messages into conversations
+    const groupMessagesIntoConversations = (messages) => {
+        const conversationMap = new Map();
+
+        messages.forEach(message => {
+            // Skip self-messages (where sender and receiver are the same)
+            if (message.senderId === message.receiverId && message.senderType === message.receiverType) {
+                return;
+            }
+
+            // Create a unique conversation key based on participants
+            const participants = [message.senderId, message.receiverId].sort().join('-');
+            const senderTypes = [message.senderType, message.receiverType].sort().join('-');
+            const key = `${participants}-${senderTypes}`;
+
+            if (!conversationMap.has(key)) {
+                // Determine customer and supplier info
+                const isCustomerSender = message.senderType === 'CUSTOMER';
+                const customerId = isCustomerSender ? message.senderId : message.receiverId;
+                const supplierId = isCustomerSender ? message.receiverId : message.senderId;
+                const customerName = isCustomerSender ? message.senderName : message.receiverName;
+                const supplierName = isCustomerSender ? message.receiverName : message.senderName;
+
+                conversationMap.set(key, {
+                    id: key,
+                    customerId,
+                    supplierId,
+                    customerName,
+                    supplierName,
+                    messages: [],
+                    lastMessage: null,
+                    lastMessageTime: null,
+                    messageCount: 0,
+                    status: 'active' // Default status
+                });
+            }
+
+            const conversation = conversationMap.get(key);
+            conversation.messages.push(message);
+            conversation.messageCount++;
+
+            // Update last message info
+            if (!conversation.lastMessageTime || new Date(message.createdAt) > new Date(conversation.lastMessageTime)) {
+                conversation.lastMessage = message.content;
+                conversation.lastMessageTime = message.createdAt;
+            }
+        });
+
+        // Convert map to array and sort by last message time
+        return Array.from(conversationMap.values()).sort((a, b) =>
+            new Date(b.lastMessageTime) - new Date(a.lastMessageTime)
+        );
+    };
+
     // API Functions
     const fetchConversations = async () => {
         try {
             setLoading(true);
             setError(null);
 
-            const response = await fetch(`${api}/admin/conversations`, {
+            // Replace with your actual API base URL
+            const API_BASE = 'http://localhost:3032'; // Update this with your actual API base URL
+
+            const response = await fetch(`${API_BASE}/admin/get-conversation`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,39 +94,21 @@ const AdminMessagesMonitor = () => {
             }
 
             const data = await response.json();
-            setConversations(data.conversations || []);
+
+            if (data.status && data.messagesWithNames) {
+                setAllMessages(data.messagesWithNames);
+                const groupedConversations = groupMessagesIntoConversations(data.messagesWithNames);
+                setConversations(groupedConversations);
+            } else {
+                setConversations([]);
+                setAllMessages([]);
+            }
 
         } catch (error) {
             console.error('Error fetching conversations:', error);
             setError('Failed to load conversations');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchMessages = async (conversationId) => {
-        try {
-            setLoading(true);
-            setError(null);
-
-            const response = await fetch(`${API_BASE}/admin/conversations/${conversationId}/messages`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            setMessages(data.messages || []);
-
-        } catch (error) {
-            console.error('Error fetching messages:', error);
-            setError('Failed to load messages');
+            setConversations([]);
+            setAllMessages([]);
         } finally {
             setLoading(false);
         }
@@ -77,19 +116,14 @@ const AdminMessagesMonitor = () => {
 
     const exportConversations = async () => {
         try {
-            const response = await fetch(`${API_BASE}/admin/conversations/export`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                }
-            });
+            // Create CSV content from the messages
+            const csvHeader = 'ID,Sender ID,Sender Name,Sender Type,Receiver ID,Receiver Name,Receiver Type,Content,Created At\n';
+            const csvContent = allMessages.map(msg =>
+                `${msg.id},"${msg.senderId}","${msg.senderName}","${msg.senderType}","${msg.receiverId}","${msg.receiverName}","${msg.receiverType}","${msg.content.replace(/"/g, '""')}","${msg.createdAt}"`
+            ).join('\n');
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const blob = await response.blob();
+            const fullCsv = csvHeader + csvContent;
+            const blob = new Blob([fullCsv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.style.display = 'none';
@@ -98,6 +132,7 @@ const AdminMessagesMonitor = () => {
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
 
         } catch (error) {
             console.error('Error exporting conversations:', error);
@@ -118,20 +153,29 @@ const AdminMessagesMonitor = () => {
     // Handlers
     const handleSelectConversation = (conversation) => {
         setSelectedConversation(conversation);
-        fetchMessages(conversation.id);
+        // Sort messages by creation time
+        const sortedMessages = [...conversation.messages].sort((a, b) =>
+            new Date(a.createdAt) - new Date(b.createdAt)
+        );
+        setMessages(sortedMessages);
     };
 
     const handleRefresh = () => {
         fetchConversations();
+        // If a conversation is selected, update its messages
         if (selectedConversation) {
-            fetchMessages(selectedConversation.id);
+            const updatedConversation = conversations.find(conv => conv.id === selectedConversation.id);
+            if (updatedConversation) {
+                handleSelectConversation(updatedConversation);
+            }
         }
     };
 
     // Filter conversations
     const filteredConversations = conversations.filter(conv => {
         const matchesSearch = conv.customerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            conv.supplierName?.toLowerCase().includes(searchQuery.toLowerCase());
+            conv.supplierName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            conv.lastMessage?.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesStatus = statusFilter === 'all' || conv.status === statusFilter;
         return matchesSearch && matchesStatus;
     });
@@ -180,7 +224,7 @@ const AdminMessagesMonitor = () => {
 
     // Message Bubble Component
     const MessageBubble = ({ message }) => {
-        const isCustomer = message.senderType === 'customer';
+        const isCustomer = message.senderType === 'CUSTOMER';
 
         return (
             <div className={`flex mb-4 ${isCustomer ? 'justify-start' : 'justify-end'}`}>
@@ -208,7 +252,7 @@ const AdminMessagesMonitor = () => {
                             ? darkMode ? 'text-gray-400' : 'text-gray-600'
                             : 'text-white/70'
                             }`}>
-                            {formatTime(message.timestamp)}
+                            {formatTime(message.createdAt)}
                         </p>
                     </div>
                 </div>
@@ -322,14 +366,14 @@ const AdminMessagesMonitor = () => {
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
                                                 <User className="w-4 h-4 text-blue-500" />
-                                                <span className={`text-sm font-medium ${themeClasses.text}`}>
+                                                <span className={`text-sm font-medium ${themeClasses.text} truncate`}>
                                                     {conv.customerName}
                                                 </span>
                                             </div>
-                                            <ArrowRight className={`w-3 h-3 ${themeClasses.textMuted}`} />
+                                            <ArrowRight className={`w-3 h-3 ${themeClasses.textMuted} flex-shrink-0`} />
                                             <div className="flex items-center gap-2">
                                                 <Building2 className="w-4 h-4 text-green-500" />
-                                                <span className={`text-sm font-medium ${themeClasses.text}`}>
+                                                <span className={`text-sm font-medium ${themeClasses.text} truncate`}>
                                                     {conv.supplierName}
                                                 </span>
                                             </div>
@@ -392,11 +436,7 @@ const AdminMessagesMonitor = () => {
 
                             {/* Messages */}
                             <div className="flex-1 overflow-y-auto p-4">
-                                {loading ? (
-                                    <div className="flex justify-center items-center h-32">
-                                        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-                                    </div>
-                                ) : messages.length === 0 ? (
+                                {messages.length === 0 ? (
                                     <div className="flex flex-col items-center justify-center h-full">
                                         <MessageCircle className={`w-16 h-16 mb-4 ${themeClasses.textMuted}`} />
                                         <h3 className={`text-lg font-medium mb-2 ${themeClasses.text}`}>No messages yet</h3>
