@@ -91,12 +91,12 @@ const AdminDashboard = () => {
     const [pendingSuppliers, setPendingSuppliers] = useState()
     const [suspendedSuppliers, setSuspendedSuppliers] = useState()
     const [newCustomers, setNewCustomers] = useState()
+    const [totalOrders, setTotalOrder] = useState()
+    const [totalBirr, setTotalBirr] = useState()
+    const [recentCustomers, setRecentCustomers] = useState([])
     // Admin metrics data
     const adminMetrics = {
-        totalCustomers: 15420,
-        activeCustomers: 12850,
         totalRevenue: 2847500,
-        totalOrders: 18450,
         disputesCases: 23,
         systemHealth: 99.2
     };
@@ -257,6 +257,71 @@ const AdminDashboard = () => {
 
     }, [])
 
+
+    // total order
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await api.get('/admin/total-order')
+
+                if (result.data.status) {
+                    setTotalOrder(result.data.totalOrder)
+                } else {
+                    console.log(result.data.message)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        fetchData()
+
+    }, [])
+
+    // total birr
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await api.get('/admin/total-birr')
+
+                if (result.data.status) {
+                    setTotalBirr(result.data.totalPayment)
+                } else {
+                    console.log(result.data.message)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        fetchData()
+
+    }, [])
+
+
+    // recent customer
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await api.get('/admin/recent-customer')
+
+                if (result.data.status) {
+                    setRecentCustomers(result.data.lastFiveCustomers)
+                } else {
+                    console.log(result.data.message)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        fetchData()
+
+    }, [])
+
     // Supplier data
     const supplierData = [
         { month: 'Jan', new: 45, approved: 38, rejected: 7, active: 680 },
@@ -296,12 +361,12 @@ const AdminDashboard = () => {
         { name: 'SportsPro Inc', status: 'suspended', products: 89, revenue: 15400, rating: 3.1, joinDate: '2024-06-10' }
     ];
 
-    const recentCustomers = [
-        { name: 'John Smith', status: 'active', orders: 12, spent: 2340, joinDate: '2024-06-19', lastActive: '2 hours ago' },
-        { name: 'Sarah Johnson', status: 'active', orders: 8, spent: 1890, joinDate: '2024-06-17', lastActive: '1 day ago' },
-        { name: 'Mike Chen', status: 'pending', orders: 0, spent: 0, joinDate: '2024-06-20', lastActive: 'Never' },
-        { name: 'Lisa Brown', status: 'suspended', orders: 23, spent: 4560, joinDate: '2024-05-10', lastActive: '1 week ago' }
-    ];
+    // const recentCustomers = [
+    //     { name: 'John Smith', status: 'active', orders: 12, spent: 2340, joinDate: '2024-06-19', lastActive: '2 hours ago' },
+    //     { name: 'Sarah Johnson', status: 'active', orders: 8, spent: 1890, joinDate: '2024-06-17', lastActive: '1 day ago' },
+    //     { name: 'Mike Chen', status: 'pending', orders: 0, spent: 0, joinDate: '2024-06-20', lastActive: 'Never' },
+    //     { name: 'Lisa Brown', status: 'suspended', orders: 23, spent: 4560, joinDate: '2024-05-10', lastActive: '1 week ago' }
+    // ];
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
@@ -540,7 +605,7 @@ const AdminDashboard = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                         <AdminMetricCard
                             title="Active Customers"
-                            value={adminMetrics.activeCustomers}
+                            value={totalCustomers || 0}
                             icon={UserCheck}
                             change={8.5}
                             color="bg-green-600"
@@ -554,14 +619,14 @@ const AdminDashboard = () => {
                         />
                         <AdminMetricCard
                             title="Avg Order Value"
-                            value="$156"
+                            value={totalOrders || 0}
                             icon={ShoppingCart}
                             change={7.3}
                             color="bg-purple-600"
                         />
                         <AdminMetricCard
                             title="Customer LTV"
-                            value="$2,340"
+                            value={`Birr ${totalBirr}` || 0}
                             icon={DollarSign}
                             change={12.1}
                             color="bg-indigo-600"
@@ -591,11 +656,10 @@ const AdminDashboard = () => {
                                     {recentCustomers.map((customer, index) => (
                                         <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                             <div className="flex-1">
-                                                <h4 className="font-medium text-gray-900 text-sm">{customer.name}</h4>
-                                                <StatusBadge status={customer.status} count={customer.orders} />
+                                                <h4 className="font-medium text-gray-900 text-sm">{customer.customer.name}</h4>
+                                                <StatusBadge status={customer.status} count={customer.customer.id} />
                                                 <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                                                    <span>${customer.spent.toLocaleString()}</span>
-                                                    <span>{customer.lastActive}</span>
+                                                    <span>Birr {customer.totalPrice.toLocaleString()}</span>
                                                 </div>
                                             </div>
                                             <button className="p-2 hover:bg-white rounded-lg transition-colors">
