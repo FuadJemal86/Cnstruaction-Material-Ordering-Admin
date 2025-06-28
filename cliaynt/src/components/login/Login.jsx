@@ -23,7 +23,11 @@ function Login() {
         try {
             const result = await api.post('/admin/login', admin)
             if (result.data.loginStatus) {
-                navigate('/admin-page')
+                if (result.data.role === 'ADMIN') {
+                    navigate('/admin-page');
+                } else {
+                    navigate('/supper-admin-dashboard');
+                }
             } else {
                 toast.error(result.data.message || 'Login failed!')
             }
@@ -122,12 +126,6 @@ function Login() {
                             </p>
                         </div>
                     </div>
-
-                    <div className="mt-8 text-center">
-                        <Link to={'/supper-admin'} className="text-sm  font-medium text-blue-600 hover:text-blue-500">
-                            to supper admin? <a href="#"></a>
-                        </Link>
-                    </div>
                 </div>
             </div>
 
@@ -149,7 +147,7 @@ function Login() {
                                 <div className="text-sm text-gray-200">Customers</div>
                             </div>
                             <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-white">
-                                <div className="font-bold text-3xl mb-1">$32K</div>
+                                <div className="font-bold text-3xl mb-1">ETB 32K</div>
                                 <div className="text-sm text-gray-200">Revenue</div>
                             </div>
                             <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-white">

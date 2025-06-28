@@ -94,6 +94,10 @@ const AdminDashboard = () => {
     const [totalOrders, setTotalOrder] = useState()
     const [totalBirr, setTotalBirr] = useState()
     const [recentCustomers, setRecentCustomers] = useState([])
+    const [totalService, setTotalService] = useState()
+    const [customerData, setCustomerData] = useState([])
+    const [systemPerformance, setSystemPerformance] = useState([])
+    const [supplierData, setSupplierGrowth] = useState([])
     // Admin metrics data
     const adminMetrics = {
         totalRevenue: 2847500,
@@ -322,37 +326,117 @@ const AdminDashboard = () => {
 
     }, [])
 
+
+    // total service 
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await api.get('/admin/total-service-birr')
+
+                if (result.data.status) {
+                    setTotalService(result.data.totalServicePayment)
+                } else {
+                    console.log(result.data.message)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        fetchData()
+
+    }, [])
+
+
+    // customer data
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await api.get('/admin/customer-growth')
+
+                if (result.data.status) {
+                    setCustomerData(result.data.stats)
+                } else {
+                    console.log(result.data.message)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        fetchData()
+
+    }, [])
+
+
+    // system performance
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await api.get('/admin/get-system-performance')
+
+                if (result.data.status) {
+                    setSystemPerformance(result.data.finalData)
+                } else {
+                    console.log(result.data.message)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        fetchData()
+
+    }, [])
+
+
+    // supplier growth
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await api.get('/admin/get-supplier-growth')
+
+                if (result.data.status) {
+                    setSupplierGrowth(result.data.state)
+                } else {
+                    console.log(result.data.message)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        fetchData()
+
+    }, [])
+
+
     // Supplier data
-    const supplierData = [
-        { month: 'Jan', new: 45, approved: 38, rejected: 7, active: 680 },
-        { month: 'Feb', new: 52, approved: 44, rejected: 8, active: 724 },
-        { month: 'Mar', new: 38, approved: 32, rejected: 6, active: 756 },
-        { month: 'Apr', new: 67, approved: 58, rejected: 9, active: 814 },
-        { month: 'May', new: 41, approved: 35, rejected: 6, active: 849 },
-        { month: 'Jun', new: 29, approved: 26, rejected: 3, active: 875 }
-    ];
-
-    // Customer behavior data
-    const customerData = [
-        { month: 'Jan', new: 1250, active: 10200, churned: 180 },
-        { month: 'Feb', new: 1480, active: 11100, churned: 220 },
-        { month: 'Mar', new: 1680, active: 11800, churned: 195 },
-        { month: 'Apr', new: 1920, active: 12500, churned: 175 },
-        { month: 'May', new: 2100, active: 13200, churned: 160 },
-        { month: 'Jun', new: 1850, active: 12850, churned: 145 }
-    ];
+    // const supplierData = [
+    //     { month: 'Jan', new: 45, approved: 38, rejected: 7, active: 680 },
+    //     { month: 'Feb', new: 52, approved: 44, rejected: 8, active: 724 },
+    //     { month: 'Mar', new: 38, approved: 32, rejected: 6, active: 756 },
+    //     { month: 'Apr', new: 67, approved: 58, rejected: 9, active: 814 },
+    //     { month: 'May', new: 41, approved: 35, rejected: 6, active: 849 },
+    //     { month: 'Jun', new: 29, approved: 26, rejected: 3, active: 875 }
+    // ];
 
 
-    // System performance data
-    const systemPerformance = [
-        { day: 'Mon', uptime: 99.8, transactions: 2450, errors: 3 },
-        { day: 'Tue', uptime: 99.9, transactions: 2680, errors: 1 },
-        { day: 'Wed', uptime: 98.9, transactions: 2340, errors: 8 },
-        { day: 'Thu', uptime: 99.7, transactions: 2890, errors: 2 },
-        { day: 'Fri', uptime: 99.9, transactions: 3200, errors: 1 },
-        { day: 'Sat', uptime: 99.5, transactions: 2950, errors: 4 },
-        { day: 'Sun', uptime: 99.8, transactions: 2100, errors: 2 }
-    ];
+
+    // // System performance data
+    // const systemPerformance = [
+    //     { day: 'Mon', uptime: 99.8, transactions: 2450, errors: 3 },
+    //     { day: 'Tue', uptime: 99.9, transactions: 2680, errors: 1 },
+    //     { day: 'Wed', uptime: 98.9, transactions: 2340, errors: 8 },
+    //     { day: 'Thu', uptime: 99.7, transactions: 2890, errors: 2 },
+    //     { day: 'Fri', uptime: 99.9, transactions: 3200, errors: 1 },
+    //     { day: 'Sat', uptime: 99.5, transactions: 2950, errors: 4 },
+    //     { day: 'Sun', uptime: 99.8, transactions: 2100, errors: 2 }
+    // ];
 
     const recentSuppliers = [
         { name: 'TechVision Ltd', status: 'pending', products: 45, revenue: 12500, rating: 0, joinDate: '2024-06-20' },
@@ -420,7 +504,7 @@ const AdminDashboard = () => {
                         />
                         <AdminMetricCard
                             title="Platform Revenue"
-                            value={`$${(adminMetrics.totalRevenue / 1000000).toFixed(1)}M`}
+                            value={`Birr ${(totalService)}`}
                             icon={DollarSign}
                             change={15.8}
                             color="bg-purple-600"

@@ -12,7 +12,6 @@ import BankAccount from './components/navBars/BankAccount';
 import OnlineSupplier from './components/navBars/OnlineSupplier';
 import RemovedSupplier from './components/navBars/RemovedSupplier';
 import RemovedCustomer from './components/navBars/RemovedCustomer';
-import SupperAdminLogin from './components/supperAdmin/SupperAdminLogin';
 import SupperAdminDashbord from './components/supperAdmin/SupperAdminDashbord';
 import SettingPage from './components/navBars/SettingPage';
 import AdminMessagesMonitor from './components/navBars/AdminMessagesMonitor';
@@ -23,7 +22,6 @@ function App() {
         <Router>
             <Routes>
                 <Route path='/' element={<Login />} />
-                <Route path='/supper-admin' element={<SupperAdminLogin />} />
                 <Route path='/supper-admin-dashboard' element={<SupperAdminDashbord />} />
                 <Route path='/admin-message-monitor' element={<AdminMessagesMonitor />} />
                 <Route path='/setting-page' element={<SettingPage />} />

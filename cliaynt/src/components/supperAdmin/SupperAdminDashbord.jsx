@@ -142,7 +142,7 @@ function SupperAdminDashbord() {
         try {
             Cookies.remove('supper-token');
 
-            window.location.href = '/supper-admin';
+            window.location.href = '/';
         } catch (err) {
             console.error('Logout failed:', err);
         }

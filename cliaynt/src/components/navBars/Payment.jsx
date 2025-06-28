@@ -167,6 +167,7 @@ function Payment() {
                                     <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
                                     <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
                                     <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">service</th>
                                     <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account</th>
                                     <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank Transaction</th>
                                     <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
@@ -182,7 +183,8 @@ function Payment() {
                                         <tr key={c.id || index} className="hover:bg-gray-50 transition-colors duration-150">
                                             <td className="py-4 px-4 text-indigo-600 font-medium">{c.id}</td>
                                             <td className="py-4 px-4 text-gray-900">{c.customer.name}</td>
-                                            <td className="py-4 px-4 text-gray-900 font-medium">{c.totalPrice} birr</td>
+                                            <td className="py-4 px-4 text-gray-900 font-medium">Birr {c.totalPrice}</td>
+                                            <td className="py-4 px-4 text-gray-900 font-medium">Birr {c.service}</td>
                                             <td className="py-4 px-4 text-gray-900">{c.bank.name} - {c.bank.accountNumber}</td>
                                             <td className="py-4 px-4 text-gray-900">{c.bankTransactionId}</td>
                                             <td className="py-4 px-4 text-gray-900">{c.customer.phone}</td>
