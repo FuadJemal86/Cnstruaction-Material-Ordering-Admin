@@ -3,9 +3,11 @@ import {
     Search, Filter, User, Building2, MessageCircle, ArrowRight,
     RefreshCw, Sun, Moon, Download, Loader2, AlertCircle, XCircle
 } from 'lucide-react';
+import adminValidation from '../hookes/adminVerfication';
 
 const AdminMessagesMonitor = () => {
     // State
+    adminValidation()
     const [allMessages, setAllMessages] = useState([]);
     const [conversations, setConversations] = useState([]);
     const [selectedConversation, setSelectedConversation] = useState(null);

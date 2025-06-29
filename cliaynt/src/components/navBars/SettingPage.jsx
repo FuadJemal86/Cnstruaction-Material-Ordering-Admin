@@ -4,9 +4,11 @@ import { Menu, Bell, User, Settings, LogOut, ChevronRight, Moon, X, Sun, Camera 
 import api from '../../api';
 import Cookies from 'js-cookie';
 import toast, { Toaster } from 'react-hot-toast';
+import adminValidation from '../hookes/adminVerfication';
 
 
 function SettingPage() {
+    adminValidation()
     const [isEditing, setIsEditing] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
@@ -110,7 +112,7 @@ function SettingPage() {
 
     const handleLogout = async () => {
         try {
-            Cookies.remove('s-auth-token');
+            await api.post('/admin/logout')
 
             window.location.href = '/';
         } catch (err) {

@@ -21,10 +21,12 @@ import {
 } from "lucide-react";
 import api from '../../api';
 import logo from '../imags/jejan.svg'
+import adminValidation from '../hookes/adminVerfication';
 
 
 
 function Nav() {
+    adminValidation()
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [adminProfile, setAdminProfile] = useState({})
@@ -64,7 +66,6 @@ function Nav() {
         { icon: <Tag size={20} />, title: 'Categories', path: '/admin-page/category' },
         { icon: <Building2 size={20} />, title: 'Bank Account', path: '/admin-page/bank-account' },
         { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/admin-message-monitor' },
-        { icon: <Shield size={20} />, title: 'Supper Admin', path: '/supper-admin' }
 
     ];
 
