@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Toaster, toast } from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../imags/jejan.svg'
-import banner from '../imags/login banner.jpg'
+import banner from '../imags/left.png'
 import api from '../../api'
 
 function Login() {

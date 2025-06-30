@@ -18,6 +18,7 @@ import {
     Search,
     Settings,
     Shield,
+    DeleteIcon,
 } from "lucide-react";
 import api from '../../api';
 import logo from '../imags/jejan.svg'
@@ -50,7 +51,8 @@ function Nav() {
             path: '/admin-page/supplier',
             subMenu: [
                 { icone: <Globe />, title: 'Online Suppliers', path: '/admin-page/online-suppliers' },
-                { icone: <Trash2 />, title: 'Removed Suppliers', path: '/admin-page/removed-supplier' }
+                { icone: <Trash2 />, title: 'Removed Suppliers', path: '/admin-page/removed-supplier' },
+                { icone: <DeleteIcon />, title: 'Hard Delete', path: '/admin-page/hard-removed-supplier' }
             ]
         },
         {
@@ -59,13 +61,14 @@ function Nav() {
             title: 'Customers',
             path: '/admin-page/customer',
             subMenu: [
-                { icone: <Trash2 />, title: 'Removed Customer', path: '/admin-page/removed-customer' }
+                { icone: <Trash2 />, title: 'Removed Customer', path: '/admin-page/removed-customer' },
+                { icone: <DeleteIcon />, title: 'Hard Delete', path: '/admin-page/hard-removed-customer' }
             ]
         },
         { icon: <CreditCard size={20} />, title: 'Payments', path: '/admin-page/payment' },
         { icon: <Tag size={20} />, title: 'Categories', path: '/admin-page/category' },
         { icon: <Building2 size={20} />, title: 'Bank Account', path: '/admin-page/bank-account' },
-        { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/admin-message-monitor' },
+        { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/hard-remove-customer' },
 
     ];
 

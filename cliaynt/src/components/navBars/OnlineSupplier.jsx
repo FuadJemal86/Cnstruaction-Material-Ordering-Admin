@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import api from '../../api'
 import { Link } from 'react-router-dom';
-import { Printer, FileSpreadsheet } from "lucide-react";
+import { Printer, FileSpreadsheet, Trash2 } from "lucide-react";
 
 function OnlineSupplier() {
     const [onlineSupplier, setOnlineSupplier] = useState([])
@@ -110,7 +110,7 @@ function OnlineSupplier() {
                                                     <td className="py-4 px-4 text-gray-700">{order.phone}</td>
                                                     <td className="py-4 px-4 text-gray-700">{order.email}</td>
                                                     <td className="py-4 px-4 text-gray-500">{order.tinNumber}</td>
-                                                    <td className="py-4 px-4 text-gray-700">{order.licenceNumber}</td>
+                                                    <td className="py-4 px-4 text-gray-700">{order.licenseNumber}</td>
                                                     <td className="py-4 px-4">
                                                         <div className="flex items-center space-x-2">
                                                             <span

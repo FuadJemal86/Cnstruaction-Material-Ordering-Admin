@@ -16,6 +16,8 @@ import SupperAdminDashbord from './components/supperAdmin/SupperAdminDashbord';
 import SettingPage from './components/navBars/SettingPage';
 import AdminMessagesMonitor from './components/navBars/AdminMessagesMonitor';
 import AdminDashboard from './components/navBars/AdminDashboard';
+import HardRemoveCustomer from './components/navBars/HardRemoveCustomer';
+import HardRemoveSupplier from './components/navBars/HardRemoveSupplier';
 
 function App() {
     return (
@@ -38,7 +40,9 @@ function App() {
                     <Route path='bank-account' element={<BankAccount />} />
                     <Route path='online-suppliers' element={<OnlineSupplier />} />
                     <Route path='removed-supplier' element={<RemovedSupplier />} />
+                    <Route path='hard-removed-supplier' element={<HardRemoveSupplier />} />
                     <Route path='removed-customer' element={<RemovedCustomer />} />
+                    <Route path='hard-removed-customer' element={<HardRemoveCustomer />} />
                 </Route>
             </Routes>
         </Router>
