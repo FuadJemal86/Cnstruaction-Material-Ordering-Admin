@@ -3,6 +3,7 @@ import { Edit, Trash2, Eye, Printer, FileSpreadsheet } from "lucide-react";
 import api from '../../api';
 import toast from 'react-hot-toast';
 import { Toaster } from 'react-hot-toast'
+import { BlinkBlur } from 'react-loading-indicators'
 
 
 
@@ -16,6 +17,8 @@ function Payment() {
     const [statusState, setStatusState] = useState({
         status: ''
     })
+    const [Loading, setLoading] = useState(true)
+
     const getStatusBadgeColor = (status) => {
         const statusColors = {
             COMPLETED: "bg-green-100 text-green-800",
@@ -42,8 +45,12 @@ function Payment() {
             }
         } catch (err) {
             console.log(err);
+        } finally {
+            setLoading(false)
         }
     };
+
+
 
     useEffect(() => {
         fetchData(1);
@@ -97,7 +104,18 @@ function Payment() {
             }
         } catch (err) {
             console.log(err)
+        } finally {
+            setLoading(false)
         }
+    }
+    if (Loading) {
+        return (
+            <div className='relative w-full h-full'>
+                <div className="absolute inset-0 flex justify-center items-center text-center bg-white/70 z-30">
+                    <BlinkBlur color="#385d38" size="medium" text="" textColor="" />
+                </div>
+            </div>
+        )
     }
 
     const handleStatus = async (newStatus, id) => {
@@ -137,6 +155,8 @@ function Payment() {
             toast.error(err.response.data.message);
         }
     };
+
+
 
     return (
         <div className="p-4 mt-16 bg-white rounded-lg shadow ">

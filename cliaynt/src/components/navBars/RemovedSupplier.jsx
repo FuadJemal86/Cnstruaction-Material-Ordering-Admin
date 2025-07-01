@@ -4,12 +4,16 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Trash2, Recycle, Printer, FileSpreadsheet } from "lucide-react";
 import Swal from 'sweetalert2';
+import { BlinkBlur } from 'react-loading-indicators'
+
 
 function RemovedSupplier() {
 
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [removedSuppliers, setRemovedSuppliers] = useState([]);
+    const [Loading, setLoading] = useState(true)
+
 
     useEffect(() => {
         fetchData();
@@ -27,8 +31,20 @@ function RemovedSupplier() {
             }
         } catch (err) {
             console.log(err);
+        } finally {
+            setLoading(false)
         }
     };
+
+    if (Loading) {
+        return (
+            <div className='relative w-full h-full'>
+                <div className="absolute inset-0 flex justify-center items-center text-center bg-white/70 z-30">
+                    <BlinkBlur color="#385d38" size="medium" text="" textColor="" />
+                </div>
+            </div>
+        )
+    }
 
     const handlePrint = () => {
         const printContent = document.getElementById("removed-supplier-table");

@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import Swal from 'sweetalert2';
 import toast from 'react-hot-toast';
+import { BlinkBlur } from 'react-loading-indicators'
 
 
 function HardRemoveSupplier() {
@@ -12,6 +13,7 @@ function HardRemoveSupplier() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [suppliers, setSuppliers] = useState([]);
+    const [Loading, setLoading] = useState(true)
 
 
 
@@ -19,6 +21,8 @@ function HardRemoveSupplier() {
     useEffect(() => {
         fetchData();
     }, [page]);
+
+
 
     const fetchData = async () => {
         try {
@@ -32,8 +36,20 @@ function HardRemoveSupplier() {
             }
         } catch (err) {
             console.log(err);
+        } finally {
+            setLoading(false)
         }
     };
+
+    if (Loading) {
+        return (
+            <div className='relative w-full h-full'>
+                <div className="absolute inset-0 flex justify-center items-center text-center bg-white/70 z-30">
+                    <BlinkBlur color="#385d38" size="medium" text="" textColor="" />
+                </div>
+            </div>
+        )
+    }
 
 
     // Function to update status
@@ -119,9 +135,6 @@ function HardRemoveSupplier() {
         }
     }
 
-
-
-        ;
 
 
 

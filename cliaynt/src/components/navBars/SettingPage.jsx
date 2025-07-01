@@ -5,6 +5,7 @@ import api from '../../api';
 import Cookies from 'js-cookie';
 import toast, { Toaster } from 'react-hot-toast';
 import adminValidation from '../hookes/adminVerfication';
+import { BlinkBlur } from 'react-loading-indicators'
 
 
 function SettingPage() {
@@ -13,6 +14,8 @@ function SettingPage() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
     const [profile, setProfile] = useState({});
+    const [Loading, setLoading] = useState(true)
+
 
     const [editedProfile, setEditedProfile] = useState({ ...profile });
 
@@ -81,7 +84,19 @@ function SettingPage() {
             }
         } catch (err) {
             console.log(err)
+        } finally {
+            setLoading(false)
         }
+    }
+
+    if (Loading) {
+        return (
+            <div className=''>
+                <div className="absolute inset-0 flex justify-center items-center text-center bg-white/70 z-30">
+                    <BlinkBlur color="#385d38" size="medium" text="" textColor="" />
+                </div>
+            </div>
+        )
     }
 
     const handleEdit = async (c) => {

@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react'
 import api from '../../api'
 import { Link } from 'react-router-dom';
 import { Printer, FileSpreadsheet, Trash2 } from "lucide-react";
+import { BlinkBlur } from 'react-loading-indicators'
+
 
 function OnlineSupplier() {
     const [onlineSupplier, setOnlineSupplier] = useState([])
+    const [Loading, setLoading] = useState(true)
+
 
     useEffect(() => {
         const feachData = async () => {
@@ -18,11 +22,23 @@ function OnlineSupplier() {
                 }
             } catch (err) {
                 console.log(err)
+            } finally {
+                setLoading(false)
             }
         }
 
         feachData()
     }, [])
+
+    if (Loading) {
+        return (
+            <div className='relative w-full h-full'>
+                <div className="absolute inset-0 flex justify-center items-center text-center bg-white/70 z-30">
+                    <BlinkBlur color="#385d38" size="medium" text="" textColor="" />
+                </div>
+            </div>
+        )
+    }
 
 
     // print the customer table

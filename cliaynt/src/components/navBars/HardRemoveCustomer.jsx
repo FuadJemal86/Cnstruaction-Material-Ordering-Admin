@@ -4,6 +4,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Edit, Trash2, Eye, Printer, FileSpreadsheet } from "lucide-react";
 import Swal from 'sweetalert2';
+import { BlinkBlur } from 'react-loading-indicators'
 
 
 
@@ -12,9 +13,11 @@ function HardRemoveCustomer() {
 
 
 
+
     const [customer, setCustomer] = useState([])
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [Loading, setLoading] = useState(true)
 
     const getStatusBadgeColor = (status) => {
         const statusColors = {
@@ -44,6 +47,8 @@ function HardRemoveCustomer() {
             }
         } catch (err) {
             console.log(err);
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -111,6 +116,16 @@ function HardRemoveCustomer() {
         } catch (err) {
             console.log(err)
         }
+    }
+
+    if (Loading) {
+        return (
+            <div className='relative w-full h-full'>
+                <div className="absolute inset-0 flex justify-center items-center text-center bg-white/70 z-30">
+                    <BlinkBlur color="#385d38" size="medium" text="" textColor="" />
+                </div>
+            </div>
+        )
     }
 
     return (

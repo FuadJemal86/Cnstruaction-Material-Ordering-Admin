@@ -6,6 +6,7 @@ import {
     Package, Truck, Star, Activity, CheckCircle, XCircle, Clock,
     MoreVertical, Search, Filter
 } from 'lucide-react';
+import { BlinkBlur } from 'react-loading-indicators'
 import api from '../../api';
 
 const AdminMetricCard = ({ title, value, icon: Icon, change, color, subtitle, action }) => (
@@ -98,6 +99,8 @@ const AdminDashboard = () => {
     const [customerData, setCustomerData] = useState([])
     const [systemPerformance, setSystemPerformance] = useState([])
     const [supplierData, setSupplierGrowth] = useState([])
+    const [loading, setLoading] = useState(false)
+
     // Admin metrics data
     const adminMetrics = {
         totalRevenue: 2847500,
@@ -119,12 +122,26 @@ const AdminDashboard = () => {
                 }
             } catch (err) {
                 console.log(err)
+            } finally {
+                setLoading(false)
             }
         }
 
         fetchData()
 
     }, [])
+
+    if (loading) {
+        return (
+            <div className='relative w-full h-full'>
+                <div className="absolute inset-0 flex justify-center items-center text-center bg-white/70 z-30">
+                    <BlinkBlur color="#385d38" size="medium" text="" textColor="" />
+                </div>
+            </div>
+        )
+    }
+
+
 
     // total customer
 
@@ -413,6 +430,8 @@ const AdminDashboard = () => {
         fetchData()
 
     }, [])
+
+
 
 
     // Supplier data

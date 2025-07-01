@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import Swal from 'sweetalert2';
 import toast from 'react-hot-toast';
+import { BlinkBlur } from 'react-loading-indicators'
 
 
 function Suppliers() {
@@ -13,6 +14,8 @@ function Suppliers() {
     const [totalPages, setTotalPages] = useState(1);
     const [suppliers, setSuppliers] = useState([]);
     const [supplierData, setSupplierData] = useState([])
+    const [Loading, setLoading] = useState(true)
+
 
     const getStatusBadgeColor = (status) => {
         const statusColors = {
@@ -23,24 +26,31 @@ function Suppliers() {
     };
 
 
+
     useEffect(() => {
+
+        const fetchData = async () => {
+            try {
+                const result = await api.get(`/admin/get-supplier?page=${page}&limit=10`);
+                if (result.data.status) {
+                    setSuppliers(result.data.result);
+                    setPage(result.data.currentPage);
+                    setTotalPages(result.data.totalPages);
+                } else {
+                    console.log(result.data.message);
+                }
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setLoading(false)
+            }
+        };
         fetchData();
     }, [page]);
 
-    const fetchData = async () => {
-        try {
-            const result = await api.get(`/admin/get-supplier?page=${page}&limit=10`);
-            if (result.data.status) {
-                setSuppliers(result.data.result);
-                setPage(result.data.currentPage);
-                setTotalPages(result.data.totalPages);
-            } else {
-                console.log(result.data.message);
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    };
+
+
+
 
 
     // Function to update status
@@ -169,6 +179,8 @@ function Suppliers() {
             }
         } catch (err) {
             console.log(err)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -181,6 +193,16 @@ function Suppliers() {
     const handleCloseZoom = () => {
         setZoomedImage(null);
     };
+
+    if (Loading) {
+        return (
+            <div className='relative w-full h-full'>
+                <div className="absolute inset-0 flex justify-center items-center text-center bg-white/70 z-30">
+                    <BlinkBlur color="#385d38" size="medium" text="" textColor="" />
+                </div>
+            </div>
+        )
+    }
 
 
 

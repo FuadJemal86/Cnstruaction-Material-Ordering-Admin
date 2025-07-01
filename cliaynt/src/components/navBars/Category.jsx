@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Trash2 } from "lucide-react";
 import api from '../../api';
 import Swal from 'sweetalert2';
+import { BlinkBlur } from 'react-loading-indicators'
 
 
 
@@ -20,6 +21,10 @@ function Category() {
     const [category, setCategory] = useState([])
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [Loading, setLoading] = useState(true)
+
+
+
 
     useEffect(() => {
 
@@ -36,11 +41,23 @@ function Category() {
                 }
             } catch (err) {
                 console.log(err)
+            } finally {
+                setLoading(false)
             }
         }
 
         feachData()
     }, [page])
+
+    if (Loading) {
+        return (
+            <div className='relative w-full h-full'>
+                <div className="absolute inset-0 flex justify-center items-center text-center bg-white/70 z-30">
+                    <BlinkBlur color="#385d38" size="medium" text="" textColor="" />
+                </div>
+            </div>
+        )
+    }
 
     const handleDelete = async (id) => {
         try {

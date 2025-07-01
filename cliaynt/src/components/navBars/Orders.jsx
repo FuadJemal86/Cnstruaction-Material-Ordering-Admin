@@ -5,6 +5,8 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Edit, Trash2, Eye, Printer, FileSpreadsheet } from "lucide-react";
 import Swal from 'sweetalert2';
+import { BlinkBlur } from 'react-loading-indicators'
+
 
 function Orders({ orders = [] }) {
     const [statusState, setStatusState] = useState({
@@ -15,6 +17,8 @@ function Orders({ orders = [] }) {
     const [order, setOrder] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [orderItem, setOrderItem] = useState([]);
+    const [Loading, setLoading] = useState(true)
+
 
     const getStatusBadgeColor = (status) => {
         const statusColors = {
@@ -28,6 +32,8 @@ function Orders({ orders = [] }) {
 
         return statusColors[status] || "bg-gray-100 text-gray-800";
     };
+
+
 
     useEffect(() => {
         feacheOrder();
@@ -45,9 +51,19 @@ function Orders({ orders = [] }) {
             }
         } catch (err) {
             console.log(err);
+        } finally {
+            setLoading(false)
         }
     };
-
+    if (Loading) {
+        return (
+            <div className='relative w-full h-full'>
+                <div className="absolute inset-0 flex justify-center items-center text-center bg-white/70 z-30">
+                    <BlinkBlur color="#385d38" size="medium" text="" textColor="" />
+                </div>
+            </div>
+        )
+    }
     const handleStatus = async (newStatus, id) => {
         try {
             const result = await api.put(`/admin/update-order-status/${id}`, {
@@ -203,8 +219,8 @@ function Orders({ orders = [] }) {
                                             </td>
                                             <td className="py-4 px-4">
                                                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${c.address && c.address.length > 0
-                                                        ? 'bg-green-100 text-green-800'
-                                                        : 'bg-red-100 text-red-800'
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : 'bg-red-100 text-red-800'
                                                     }`}>
                                                     {c.address && c.address.length > 0 ? 'Yes' : 'No'}
                                                 </span>
@@ -282,8 +298,8 @@ function Orders({ orders = [] }) {
                             key={num}
                             onClick={() => setPage(num)}
                             className={`px-3 py-1 border rounded transition-colors ${num === page
-                                    ? 'bg-indigo-500 text-white border-indigo-500'
-                                    : 'bg-white text-gray-700 hover:bg-indigo-100'
+                                ? 'bg-indigo-500 text-white border-indigo-500'
+                                : 'bg-white text-gray-700 hover:bg-indigo-100'
                                 }`}
                         >
                             {num}
