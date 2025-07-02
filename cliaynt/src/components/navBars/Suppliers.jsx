@@ -349,10 +349,10 @@ function Suppliers() {
                                     <h4 className="text-sm font-medium text-gray-700 mb-2">Company Profile Image</h4>
                                     <div className="bg-gray-100 p-2 rounded">
                                         <img
-                                            src={`http://localhost:3032/images/${supplierData.userImage}`}
+                                            src={`${api.defaults.baseURL}/images/${supplierData.userImage}`}
                                             alt="Company Profile"
                                             className="w-full h-64 object-contain rounded border cursor-pointer"
-                                            onClick={() => handleImageClick(`http://localhost:3032/images/${supplierData.userImage}`)}
+                                            onClick={() => handleImageClick(`${api.defaults.baseURL}/images/${supplierData.userImage}`)}
                                         />
                                     </div>
                                 </div>
@@ -362,10 +362,10 @@ function Suppliers() {
                                     <h4 className="text-sm font-medium text-gray-700 mb-2">License Document</h4>
                                     <div className="bg-gray-100 p-2 rounded">
                                         <img
-                                            src={`http://localhost:3032/images/${supplierData.licenseFile}`}
+                                            src={`${api.defaults.baseURL}/images/${supplierData.licenseFile}`}
                                             alt="License Document"
                                             className="w-full h-64 object-contain rounded border cursor-pointer"
-                                            onClick={() => handleImageClick(`http://localhost:3032/images/${supplierData.userImage}`)}
+                                            onClick={() => handleImageClick(`${api.defaults.baseURL}/images/${supplierData.userImage}`)}
                                         />
                                     </div>
                                 </div>

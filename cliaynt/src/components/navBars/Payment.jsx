@@ -311,7 +311,7 @@ function Payment() {
                                     <div className="mb-4">
                                         <h3 className="text-lg font-medium mb-2">Payment Screenshot</h3>
                                         <div className="bg-gray-100 p-2 rounded">
-                                            <img src={`http://localhost:3032/images/${detailPayment.paymentInfo.image}`}
+                                            <img src={`${api.defaults.baseURL}/images/${detailPayment.paymentInfo.image}`}
                                                 alt="Payment Screenshot" className="w-full h-auto rounded" />
                                         </div>
                                     </div>

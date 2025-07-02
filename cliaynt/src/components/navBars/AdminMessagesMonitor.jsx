@@ -4,6 +4,7 @@ import {
     RefreshCw, Sun, Moon, Download, Loader2, AlertCircle, XCircle
 } from 'lucide-react';
 import adminValidation from '../hookes/adminVerfication';
+import api from '../../api';
 
 const AdminMessagesMonitor = () => {
     // State
@@ -81,9 +82,8 @@ const AdminMessagesMonitor = () => {
             setError(null);
 
             // Replace with your actual API base URL
-            const API_BASE = 'http://localhost:3032'; // Update this with your actual API base URL
 
-            const response = await fetch(`${API_BASE}/admin/get-conversation`, {
+            const response = await fetch(`${api.defaults.baseURL}/admin/get-conversation`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
