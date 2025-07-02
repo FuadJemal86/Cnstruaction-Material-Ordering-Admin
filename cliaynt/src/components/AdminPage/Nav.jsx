@@ -68,7 +68,7 @@ function Nav() {
         { icon: <CreditCard size={20} />, title: 'Payments', path: '/admin-page/payment' },
         { icon: <Tag size={20} />, title: 'Categories', path: '/admin-page/category' },
         { icon: <Building2 size={20} />, title: 'Bank Account', path: '/admin-page/bank-account' },
-        { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/hard-remove-customer' },
+        { icon: <MessageSquare size={20} />, title: 'Complaints', path: '/admin-message-monitor' },
 
     ];
 

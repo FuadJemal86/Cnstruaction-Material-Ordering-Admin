@@ -28,25 +28,25 @@ function Suppliers() {
 
 
     useEffect(() => {
-
-        const fetchData = async () => {
-            try {
-                const result = await api.get(`/admin/get-supplier?page=${page}&limit=10`);
-                if (result.data.status) {
-                    setSuppliers(result.data.result);
-                    setPage(result.data.currentPage);
-                    setTotalPages(result.data.totalPages);
-                } else {
-                    console.log(result.data.message);
-                }
-            } catch (err) {
-                console.log(err);
-            } finally {
-                setLoading(false)
-            }
-        };
         fetchData();
     }, [page]);
+
+    const fetchData = async () => {
+        try {
+            const result = await api.get(`/admin/get-supplier?page=${page}&limit=10`);
+            if (result.data.status) {
+                setSuppliers(result.data.result);
+                setPage(result.data.currentPage);
+                setTotalPages(result.data.totalPages);
+            } else {
+                console.log(result.data.message);
+            }
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setLoading(false)
+        }
+    };
 
 
 
@@ -76,7 +76,7 @@ function Suppliers() {
         if (supplier) {
             setSelectedSupplier(supplier);
             setIsModalOpen(true);
-            fecthDetailData(supplierId)
+            fetchSupplierData(supplierId)
         }
 
     };
@@ -169,7 +169,8 @@ function Suppliers() {
         }
     }
 
-    const fecthDetailData = async (supplierId) => {
+
+    const fetchSupplierData = async (supplierId) => {
         try {
             const result = await api.get(`/supplier/supplier-data/${supplierId}`)
             if (result.data.status) {
@@ -344,7 +345,6 @@ function Suppliers() {
                         <div className="flex-grow overflow-y-auto p-4">
                             <div className="space-y-6">
                                 {/* Company Profile Image */}
-                                {/* Company Profile Image */}
                                 <div>
                                     <h4 className="text-sm font-medium text-gray-700 mb-2">Company Profile Image</h4>
                                     <div className="bg-gray-100 p-2 rounded">
@@ -365,7 +365,7 @@ function Suppliers() {
                                             src={`${api.defaults.baseURL}/images/${supplierData.licenseFile}`}
                                             alt="License Document"
                                             className="w-full h-64 object-contain rounded border cursor-pointer"
-                                            onClick={() => handleImageClick(`${api.defaults.baseURL}/images/${supplierData.userImage}`)}
+                                            onClick={() => handleImageClick(`${api.defaults.baseURL}/images/${supplierData.licenseFile}`)}
                                         />
                                     </div>
                                 </div>
