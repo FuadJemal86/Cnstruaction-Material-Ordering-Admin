@@ -143,7 +143,7 @@ function SupperAdminDashbord() {
     const handleLogout = async () => {
         try {
             const result = await api.post('/supper-admin/logout')
-
+            window.location.reload()
         } catch (err) {
             console.error('Logout failed:', err);
         }
