@@ -108,7 +108,7 @@ function HardRemoveCustomer() {
                                 text: "Your file has been deleted.",
                                 icon: "success"
                             });
-
+                            fetchData()
                         }
                     }
                 })
