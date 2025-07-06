@@ -32,8 +32,13 @@ function Login() {
                 toast.error(result.data.message || 'Login failed!')
             }
         } catch (err) {
-            console.log(err)
-            toast.error(err.response?.data?.message || 'An error occurred')
+            if (err.response && err.response.status === 400) {
+                toast.error('Wrong email or password!');
+            } else if (err.message) {
+                toast.error(err.message);
+            } else {
+                toast.error('An unexpected error occurred.');
+            }
         }
     }
 
