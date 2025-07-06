@@ -196,10 +196,11 @@ function Nav() {
                                             className="flex items-center flex-1"
                                             onClick={(e) => {
                                                 if (item.subMenu) {
-                                                    e.preventDefault();
+                                                    toggleSubMenu(item.title); // Toggle submenu
                                                 }
                                             }}
                                         >
+
                                             <span className="inline-flex">{item.icon}</span>
                                             {!collapsed && <span className="ml-3 font-medium text-sm sm:text-base">{item.title}</span>}
                                         </Link>
