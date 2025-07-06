@@ -4,9 +4,11 @@ import api from '../../api';
 import toast, { Toaster } from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
+import supperAdminValidation from '../hookes/supperValidation';
 
 function SupperAdminDashbord() {
     // Sample initial admin data
+    supperAdminValidation()
     const [admins, setAdmins] = useState([]);
 
     // States for modal
@@ -140,7 +142,7 @@ function SupperAdminDashbord() {
 
     const handleLogout = async () => {
         try {
-            Cookies.remove('supper-token');
+            const result = await api.post('/supper-admin/logout')
 
             window.location.href = '/';
         } catch (err) {
