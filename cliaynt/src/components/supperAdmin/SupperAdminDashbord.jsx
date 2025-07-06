@@ -144,7 +144,6 @@ function SupperAdminDashbord() {
         try {
             const result = await api.post('/supper-admin/logout')
 
-            window.location.href = '/';
         } catch (err) {
             console.error('Logout failed:', err);
         }
